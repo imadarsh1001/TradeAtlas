@@ -1,0 +1,3 @@
+# Deterministic Evidence Generation and Strict Citation Verification
+
+All mathematical calculations, threshold tests, unit conversions, and data filtering are performed by deterministic Python and DuckDB code, producing immutable Evidence Cards. LangGraph agents are restricted to natural language query parsing and executive briefing synthesis. Furthermore, the synthesis pipeline enforces a deterministic verification step that cross-checks all numeric values and entities in the generated summary against the supplied Evidence Cards, preventing ungrounded hallucinations from reaching commercial buyers.

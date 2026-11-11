@@ -1,0 +1,6 @@
+{
+    "notebook.showCellStatusBar": "visible",
+    "accessibility.signals.notebookCellCompleted": {
+        "sound": "off"
+    }
+}

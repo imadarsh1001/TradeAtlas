@@ -1,3 +1,6 @@
 .venv/
 __pycache__/
 __marimo__/
+.env
+.env.local
+.env.*.local

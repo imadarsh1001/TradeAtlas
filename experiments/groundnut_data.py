@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-RAW = Path(__file__).resolve().parent / "data" / "raw"
+RAW = Path(__file__).resolve().parent.parent / "data" / "raw"
 REVISION = "5c22c9261a290d61fb879b2e3f66f76a691a3e67"
 SOURCE = f"https://github.com/herrrickshaw/india-mandi-arrivals/blob/{REVISION}/data"
 STATES = ["Gujarat", "Rajasthan"]

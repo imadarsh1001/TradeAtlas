@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $pythonArguments = $args
 if ($pythonArguments.Count -eq 0) {
-    $pythonArguments = @('-m', 'marimo', 'edit', '--no-sandbox', 'groundnut_lab.py')
+    $pythonArguments = @('-m', 'marimo', 'edit', '--no-sandbox', 'experiments/groundnut_lab.py')
 }
 
 $python = Join-Path $PSScriptRoot '.venv/Scripts/python.exe'

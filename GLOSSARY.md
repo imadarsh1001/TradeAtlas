@@ -4,6 +4,10 @@ Domain concepts and canonical terminology for agricultural commodity procurement
 
 ## Commodity and Processing
 
+**Edible Oilseeds Complex**:
+The collective commodity scope encompassing Groundnut, Soybean, and Mustard/Rapeseed, representing over 85% of domestic Indian vegetable oil crushing and meal extraction.
+_Avoid_: Oil crops, seed basket, mixed commodities
+
 **Pod**:
 Groundnut in its unshelled form containing the seeds within the pod shell as received from farm harvests.
 _Avoid_: In-shell groundnut, raw unhulled peanut, unpeeled groundnut
@@ -20,7 +24,17 @@ _Avoid_: Peeling ratio, hulling percentage, shelling fraction
 The theoretical price of kernels derived from raw pod wholesale prices, calculated as `(Pod Price / 0.70) + Decortication Allowance`.
 _Avoid_: Converted price, adjusted market price, synthetic kernel price
 
-## Pricing and Cost
+## Geography and Markets
+
+**5-State Oilseed Corridor**:
+The contiguous western and central agricultural production and processing hinterland spanning Gujarat, Rajasthan, Madhya Pradesh, Maharashtra, and Haryana.
+_Avoid_: Western belt, farm states, northern region
+
+**Benchmark Hub Mandi**:
+A designated high-liquidity APMC market exhibiting continuous daily reporting, significant trade volume, and regional price-discovery authority within a state (e.g., Rajkot and Gondal in Gujarat; Bikaner and Kota in Rajasthan; Indore and Ujjain in Madhya Pradesh; Latur in Maharashtra; Rewari in Haryana).
+_Avoid_: Target yard, active market, top mandi
+
+## Pricing, Cost, and Support
 
 **Delivered Cost**:
 The total landed procurement cost per tonne at the buyer's facility, combining base price, freight, and ancillary charges.
@@ -42,11 +56,19 @@ _Avoid_: Complete order, bulk quote, single-ticket offer
 Mandatory statutory or operational costs incurred during procurement, such as mandi cess, loading/unloading, weighment, and brokerage.
 _Avoid_: Hidden fees, extra expenses, handling charges
 
+**MSP Spread**:
+The numerical difference between the prevailing mandi modal price and the official central Minimum Support Price (`Modal Price - MSP`). A negative spread indicates trading at a discount to MSP, signaling localized supply gluts or farmer distress sales.
+_Avoid_: MSP delta, government gap, support discount
+
 ## Data and Reporting
 
 **Macro Supply Context**:
 Regional crop production and seasonal timing estimates from UPAg used to evaluate macro harvest scale, distinct from liquid trade inventory.
 _Avoid_: Inventory data, market supply, purchasable stock
+
+**Macro Supply Balance**:
+The percentage variance between a crop season's latest advance production estimate from UPAg and its 3-year historical baseline, indicating regional harvest surplus or deficit.
+_Avoid_: Harvest ratio, production shift, yield health
 
 **Reporting Break**:
 The November 2025 structural discontinuity in AGMARKNET data resulting from the platform upgrade, preventing arrival volume aggregation across the boundary.

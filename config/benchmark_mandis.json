@@ -1,0 +1,86 @@
+{
+  "corridor_states": ["Gujarat", "Rajasthan", "Madhya Pradesh", "Maharashtra", "Haryana"],
+  "commodities": ["Groundnut", "Soybean", "Mustard"],
+  "msp_benchmark_inr_qtl": {
+    "Groundnut": 6783.0,
+    "Soybean": 4892.0,
+    "Mustard": 5950.0
+  },
+  "hubs": {
+    "Gujarat": {
+      "Groundnut": [
+        {"market": "Rajkot", "district": "Rajkot", "market_id": 60, "priority": 1},
+        {"market": "Gondal", "district": "Rajkot", "market_id": 53, "priority": 2},
+        {"market": "Jetpur(Dist.Rajkot)", "district": "Rajkot", "market_id": 1615, "priority": 3},
+        {"market": "Himatnagar", "district": "Sabarkantha", "market_id": 114, "priority": 4}
+      ],
+      "Mustard": [
+        {"market": "Deesa", "district": "Banaskantha", "market_id": 13, "priority": 1},
+        {"market": "Tharad", "district": "Banaskantha", "market_id": 14, "priority": 2}
+      ],
+      "Soybean": []
+    },
+    "Rajasthan": {
+      "Groundnut": [
+        {"market": "Bikaner", "district": "Bikaner", "market_id": 483, "priority": 1},
+        {"market": "Lunkaransar", "district": "Bikaner", "market_id": 485, "priority": 2},
+        {"market": "Sridungargarh", "district": "Bikaner", "market_id": 486, "priority": 3},
+        {"market": "Pugal Road Grain", "district": "Bikaner", "market_id": 1280, "priority": 4}
+      ],
+      "Mustard": [
+        {"market": "Bharatpur", "district": "Bharatpur", "market_id": 460, "priority": 1},
+        {"market": "Alwar", "district": "Alwar", "market_id": 444, "priority": 2},
+        {"market": "Kota", "district": "Kota", "market_id": 521, "priority": 3},
+        {"market": "Kherli", "district": "Alwar", "market_id": 448, "priority": 4}
+      ],
+      "Soybean": [
+        {"market": "Kota", "district": "Kota", "market_id": 521, "priority": 1},
+        {"market": "Baran", "district": "Baran", "market_id": 455, "priority": 2},
+        {"market": "Jhalawar", "district": "Jhalawar", "market_id": 512, "priority": 3}
+      ]
+    },
+    "Madhya Pradesh": {
+      "Soybean": [
+        {"market": "Indore", "district": "Indore", "market_id": 260, "priority": 1},
+        {"market": "Ujjain", "district": "Ujjain", "market_id": 352, "priority": 2},
+        {"market": "Dewas", "district": "Dewas", "market_id": 240, "priority": 3},
+        {"market": "Neemuch", "district": "Neemuch", "market_id": 302, "priority": 4},
+        {"market": "Sehore", "district": "Sehore", "market_id": 338, "priority": 5}
+      ],
+      "Mustard": [
+        {"market": "Morena", "district": "Morena", "market_id": 298, "priority": 1},
+        {"market": "Gwalior", "district": "Gwalior", "market_id": 250, "priority": 2},
+        {"market": "Bhind", "district": "Bhind", "market_id": 222, "priority": 3}
+      ],
+      "Groundnut": [
+        {"market": "Khargone", "district": "Khargone", "market_id": 280, "priority": 1},
+        {"market": "Chhindwara", "district": "Chhindwara", "market_id": 235, "priority": 2}
+      ]
+    },
+    "Maharashtra": {
+      "Soybean": [
+        {"market": "Latur", "district": "Latur", "market_id": 388, "priority": 1},
+        {"market": "Akola", "district": "Akola", "market_id": 358, "priority": 2},
+        {"market": "Nanded", "district": "Nanded", "market_id": 401, "priority": 3},
+        {"market": "Washim", "district": "Washim", "market_id": 435, "priority": 4},
+        {"market": "Nagpur", "district": "Nagpur", "market_id": 398, "priority": 5}
+      ],
+      "Groundnut": [
+        {"market": "Solapur", "district": "Solapur", "market_id": 425, "priority": 1},
+        {"market": "Dhule", "district": "Dhule", "market_id": 372, "priority": 2}
+      ],
+      "Mustard": []
+    },
+    "Haryana": {
+      "Mustard": [
+        {"market": "Rewari", "district": "Rewari", "market_id": 182, "priority": 1},
+        {"market": "Sirsa", "district": "Sirsa", "market_id": 190, "priority": 2},
+        {"market": "Hisar", "district": "Hisar", "market_id": 164, "priority": 3},
+        {"market": "Bhiwani", "district": "Bhiwani", "market_id": 150, "priority": 4},
+        {"market": "Charkhi Dadri", "district": "Charkhi Dadri", "market_id": 152, "priority": 5}
+      ],
+      "Groundnut": [],
+      "Soybean": []
+    }
+  }
+}

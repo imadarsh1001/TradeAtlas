@@ -5,9 +5,12 @@ description = "Groundnut sourcing and forecasting labs"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "altair>=5,<7",
+    "duckdb>=1.1.0",
+    "httpx>=0.28.0",
     "langchain-openai==1.7.4",
     "langgraph==1.2.20",
     "marimo>=0.20,<1",
+    "mcp>=1.2.0",
     "pandas==3.0.1",
     "pydantic==2.14.3",
 ]

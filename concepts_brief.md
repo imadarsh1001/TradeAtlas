@@ -77,7 +77,7 @@ A proposed refresh design validates a new snapshot before publishing it and pins
 - **Specialist investigation** Benchmark the fixed report, single agent, and collaboration between market and production specialists over the same evidence and calculations. Compare evidence quality, handling of sparse data, cost, and response time. Evaluate buyer value with the later buyer trial.
 - **Buyer release** Let a buyer explore groundnut evidence, get a sourcing lead or qualified state comparison, ask a plain-language sourcing question, and compare delivered quotes entered on the same basis. Provide evidence and next verification steps in every report. Build the interface once the report and its evidence checks work from Python.
 - **Separate learning experiments** Try one Model Context Protocol tool in a second client, one reusable procedure for checking comparable evidence, and a small methodology retrieval test against keyword search. Test forecasting separately against simple price baselines. Test optimization with buyer-supplied costs and constraints and a knowledge graph only when a concrete question and a SQL comparison justify it.
-- **Expansion candidates** Consider soybean for portability after the groundnut proof. The original plan's additional workflows, specialist roles, broader markets, fresh alerts, e-NAM, and global trade extensions remain future work.
+- **Expansion candidates** Consider soybean for portability after the groundnut proof. Individual mandi rankings, split-order optimization, the original plan's additional workflows, specialist roles, broader markets, fresh alerts, e-NAM, and global trade extensions remain future work.
 
 ## Alternatives weighed
 

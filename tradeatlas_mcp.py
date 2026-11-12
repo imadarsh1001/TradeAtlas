@@ -4,7 +4,7 @@ Exposes deterministic agricultural commodity intelligence, mandi prices, and
 quote calculation tools for the Indian Edible Oilseeds Complex.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 from mcp.server.mcpserver import MCPServer
 
 from tradeatlas.calculator import calculate_delivered_cost as calc_delivered_cost
@@ -14,6 +14,7 @@ from tradeatlas.ingest import (
     fetch_macro_supply_balance,
     fetch_spot_weekly_prices,
 )
+from tradeatlas.models import EvidenceEnvelope
 
 mcp = MCPServer(
     "TradeAtlas Procurement Intelligence",
@@ -28,7 +29,7 @@ def get_daily_mandi_prices(
     market: Optional[str] = None,
     arrival_date: Optional[str] = None,
     force_refresh: bool = False,
-) -> List[Dict[str, Any]]:
+) -> EvidenceEnvelope:
     """Fetch daily wholesale mandi prices from data.gov.in (cached in local DuckDB with 6h TTL).
 
     Args:
@@ -39,7 +40,8 @@ def get_daily_mandi_prices(
         force_refresh: Set to True to bypass DuckDB cache and re-query data.gov.in.
 
     Returns:
-        List of records with market, district, variety, grade, min_price, max_price, and modal_price.
+        EvidenceEnvelope: price records plus observation date(s), retrieval time (UTC),
+        coverage count, deep/thin tier label, and caveats (explicit no-data statement when empty).
     """
     return fetch_daily_mandi_prices(
         state=state,
@@ -51,7 +53,7 @@ def get_daily_mandi_prices(
 
 
 @mcp.tool()
-def get_benchmark_hub_summary(state: str, commodity: str) -> Dict[str, Any]:
+def get_benchmark_hub_summary(state: str, commodity: str) -> EvidenceEnvelope:
     """Fetch live benchmark prices and MSP spread across curated hub mandis for a state.
 
     Args:
@@ -59,7 +61,8 @@ def get_benchmark_hub_summary(state: str, commodity: str) -> Dict[str, Any]:
         commodity: 'Groundnut', 'Soybean', or 'Mustard'.
 
     Returns:
-        Consolidated summary comparing benchmark APMC prices against central Minimum Support Price (MSP).
+        EvidenceEnvelope: consolidated hub summary comparing benchmark APMC prices against
+        central Minimum Support Price (MSP), with coverage (hubs reporting / monitored) and tier label.
     """
     return fetch_benchmark_hub_summary(state=state, commodity=commodity)
 
@@ -69,7 +72,7 @@ def get_spot_weekly_prices(
     market_id: int,
     state_id: int,
     commodity_id: int,
-) -> Dict[str, Any]:
+) -> EvidenceEnvelope:
     """Fetch rolling 7-day spot prices from AGMARKNET 2.0 unauthenticated portal endpoint.
 
     Args:
@@ -78,7 +81,8 @@ def get_spot_weekly_prices(
         commodity_id: AGMARKNET commodity ID (e.g. 10 for Groundnut).
 
     Returns:
-        7-day rolling prices broken down by variety with non-reporting (NR) flags.
+        EvidenceEnvelope: 7-day rolling prices broken down by variety with non-reporting (NR) flags,
+        passed through from AGMARKNET 2.0; labelled thin-tier (numeric IDs cannot establish state coverage).
     """
     return fetch_spot_weekly_prices(
         market_id=market_id,
@@ -88,7 +92,7 @@ def get_spot_weekly_prices(
 
 
 @mcp.tool()
-def get_macro_supply_balance(state: str, crop: str) -> Dict[str, Any]:
+def get_macro_supply_balance(state: str, crop: str) -> EvidenceEnvelope:
     """Compute crop harvest supply balance comparing UPAg latest advance estimates against 3-year baseline.
 
     Args:
@@ -96,7 +100,8 @@ def get_macro_supply_balance(state: str, crop: str) -> Dict[str, Any]:
         crop: 'Groundnut', 'Soybean', or 'Mustard'.
 
     Returns:
-        Macro harvest outlook percentage showing harvest surplus or deficit.
+        EvidenceEnvelope: macro harvest outlook percentage showing harvest surplus or deficit,
+        with the crop year, estimation cycle, and basis caveats.
     """
     return fetch_macro_supply_balance(state=state, crop=crop)
 
@@ -110,7 +115,7 @@ def calculate_delivered_cost(
     order_tonnes: float = 100.0,
     is_pod: bool = False,
     decortication_allowance_tonne: float = 1500.0,
-) -> Dict[str, Any]:
+) -> EvidenceEnvelope:
     """Deterministically calculate total delivered landed procurement cost per tonne and order total.
 
     Args:
@@ -123,7 +128,8 @@ def calculate_delivered_cost(
         decortication_allowance_tonne: Processing cost per tonne for decorticating pods to kernels.
 
     Returns:
-        Full cost breakdown with delivered cost per tonne and total order value.
+        EvidenceEnvelope: full cost breakdown with delivered cost per tonne and total order value;
+        deterministic arithmetic on user-supplied inputs (tier deep, coverage "user-supplied inputs").
     """
     return calc_delivered_cost(
         commodity=commodity,

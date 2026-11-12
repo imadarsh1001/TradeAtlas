@@ -1,6 +1,5 @@
 """DuckDB Local Caching Layer for TradeAtlas Live Ingestion."""
 
-import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -54,11 +53,31 @@ def is_cache_fresh(cache_key: str, ttl_hours: float = 6.0) -> bool:
         ).fetchone()
         if not res or not res[0]:
             return False
-        last_fetched = res[0]
+        last_fetched = _as_utc(res[0])
         # Calculate elapsed hours
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         elapsed = (now - last_fetched).total_seconds() / 3600.0
         return elapsed < ttl_hours
+    finally:
+        conn.close()
+
+
+def _as_utc(value: datetime) -> datetime:
+    """Normalize a stored timestamp to timezone-aware UTC (DuckDB TIMESTAMP is naive; stored values are UTC)."""
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
+
+
+def get_cache_fetched_at(cache_key: str) -> Optional[datetime]:
+    """Return the last fetch time for a key as timezone-aware UTC, or None."""
+    conn = get_db_connection()
+    try:
+        res = conn.execute(
+            "SELECT last_fetched FROM cache_metadata WHERE cache_key = ?",
+            [cache_key],
+        ).fetchone()
+        return _as_utc(res[0]) if res and res[0] else None
     finally:
         conn.close()
 
@@ -99,7 +118,8 @@ def save_records_to_cache(cache_key: str, records: List[Dict[str, Any]]) -> None
         return
     conn = get_db_connection()
     try:
-        now = datetime.now()
+        # Stored naive but representing UTC (DuckDB TIMESTAMP has no zone).
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
         # Delete existing entries for this state + commodity if present to avoid stale duplicates
         first = records[0]
         state = first.get("state", "")

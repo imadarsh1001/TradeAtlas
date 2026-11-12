@@ -16,10 +16,12 @@ TradeAtlas answers one buyer question reliably: **"I need N tonnes of commodity 
   - `get_spot_weekly_prices` — 7-day rolling AGMARKNET 2.0 spot prices (India's official agricultural market-price network; unauthenticated, compliant)
   - `get_macro_supply_balance` — UPAg (Unified Portal for Agricultural Statistics) advance estimates vs. 3-year baseline (surplus/deficit signal)
   - `calculate_delivered_cost` — landed cost per tonne incl. the 70% shelling-outturn pod→kernel benchmark
+
+  Every tool returns an **evidence-card envelope** (`tradeatlas.models.EvidenceEnvelope`): the payload plus observation date(s), retrieval time (UTC), a coverage statement, a deep/thin tier label, and caveats — including explicit no-data statements instead of empty lists. **Breaking vs. pre-M1 raw record lists.** Groundnut in Gujarat/Rajasthan is `deep`; everything else is `thin` with an unverified-coverage caveat.
 - **Reproducible experiments** (`experiments/`): groundnut data proof, price backtest (3 baselines × 3 horizons, reporting-break isolated), LangGraph agent benchmark (fixed report vs. single agent vs. specialists), marimo lab ([marimo](https://marimo.io) — reactive Python notebooks).
 - **Spec & decision record**: [MVP plan](TradeAtlas_India_Agricultural_Intelligence_MVP_Plan.md) (historical), [concepts brief](concepts_brief.md) (historical), [glossary](GLOSSARY.md), [personas](PERSONAS.md), [roadmap](docs/ROADMAP.md), and [six ADRs](docs/adr/) (architecture decision records).
 
-**Status:** M0 (foundations) complete → **M1 (core stabilization & evidence retrofit) is next**. See the [roadmap](docs/ROADMAP.md).
+**Status:** M0 and M1 complete (evidence-card envelopes, 33-test offline suite, source manifest) → **M2 (analyst lens) is next**. See the [roadmap](docs/ROADMAP.md).
 
 ## Quickstart
 

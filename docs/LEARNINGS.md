@@ -72,3 +72,9 @@ api.agmarknet.gov.in/v1/
   * `.env.example` is committed to track required keys without leaking credentials.
 * **Network & Sandbox Guardrails**:
   * Commands requiring external HTTPS calls to government or university endpoints (`api.data.gov.in`, `api.agmarknet.gov.in`, `github.com`) require standard external networking.
+* **TLS Verification Confirmed (2026-11-13)**:
+  * Both endpoints returned `HTTP 200` with certificate verification **enabled** (default httpx, no `verify=False`): `api.data.gov.in` (2 Gujarat groundnut records) and `api.agmarknet.gov.in` spot-weekly (Rajkot APMC).
+  * Earlier probes had run with `verify=False`, so certificate validity was unconfirmed until this check; `verify=False` has since been removed from the codebase (enforced by `tests/test_ingest.py::test_no_verify_false_anywhere_in_package`).
+* **Windows Application Control / uv quirks**:
+  * The `pytest.exe` console-script trampoline in `.venv/Scripts/` is blocked by local Application Control policy (os error 4551). Run the suite as `uv run python -m pytest tests/ -q` instead; `uv run python` and the direct `.venv/Scripts/python.exe` both work.
+  * `langsmith`'s pytest plugin (transitive via langchain) fails to import under the same policy (`xxhash` DLL blocked); it is blocked explicitly via `addopts = "-p no:langsmith"` in `pyproject.toml`.

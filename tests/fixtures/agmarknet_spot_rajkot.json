@@ -1,0 +1,67 @@
+{
+ "success": true,
+ "message": "Data fetched successfully.",
+ "title": "Market-wise Prices during last week Commodity: Groundnut, State/UT: Gujarat",
+ "columns": [
+  {
+   "key": "variety",
+   "title": "Market - Variety"
+  },
+  {
+   "key": "2026-11-10",
+   "title": "10-11-2026"
+  },
+  {
+   "key": "2026-11-09",
+   "title": "09-11-2026"
+  },
+  {
+   "key": "2026-11-08",
+   "title": "08-11-2026"
+  },
+  {
+   "key": "2026-11-07",
+   "title": "07-11-2026"
+  },
+  {
+   "key": "2026-11-06",
+   "title": "06-11-2026"
+  },
+  {
+   "key": "2026-11-05",
+   "title": "05-11-2026"
+  },
+  {
+   "key": "2026-11-04",
+   "title": "04-11-2026"
+  },
+  {
+   "key": "unitOfPrice",
+   "title": "Unit of Price"
+  }
+ ],
+ "data": [
+  {
+   "variety": "Rajkot APMC - Bold",
+   "2026-11-10": "NR",
+   "2026-11-09": "NR",
+   "2026-11-08": "NR",
+   "2026-11-07": "NR",
+   "2026-11-06": "NR",
+   "2026-11-05": "NR",
+   "2026-11-04": 7850.0,
+   "unitOfPrice": "Rs./Quintal"
+  },
+  {
+   "variety": "Rajkot APMC - G20",
+   "2026-11-10": "NR",
+   "2026-11-09": "NR",
+   "2026-11-08": "NR",
+   "2026-11-07": "NR",
+   "2026-11-06": "NR",
+   "2026-11-05": "NR",
+   "2026-11-04": 8050.0,
+   "unitOfPrice": "Rs./Quintal"
+  }
+ ]
+}

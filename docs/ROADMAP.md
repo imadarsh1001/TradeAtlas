@@ -23,7 +23,7 @@
 | **Exit condition** | Met retrospectively: experiments reproduce from a clean checkout; the 5 tools return live data; decisions recorded in ADRs. |
 | **Skills shown** | Data science, data engineering |
 
-### M1 — Core stabilization & evidence retrofit
+### M1 — Core stabilization & evidence retrofit ✅ (done)
 
 | | |
 | --- | --- |
@@ -107,4 +107,4 @@ Each item enters the milestone plan only through its gate — the roadmap above 
 
 ## Current status
 
-**M0 is complete. M1 — Core stabilization & evidence retrofit — is next.** Sequencing, not dates, governs; no milestone carries a calendar commitment.
+**M0 and M1 are complete. M2 — Analyst lens — is next.** M1 shipped via the OpenSpec change `core-stabilization-evidence-retrofit` (evidence-card envelopes on all 5 tools, 33-test offline suite, source manifest, TLS/UTC hygiene). Sequencing, not dates, governs; no milestone carries a calendar commitment.

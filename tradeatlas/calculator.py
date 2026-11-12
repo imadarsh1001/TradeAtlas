@@ -2,6 +2,8 @@
 
 from typing import Any, Dict
 
+from tradeatlas.models import EvidenceEnvelope, utc_now_iso
+
 
 def calculate_delivered_cost(
     commodity: str,
@@ -11,7 +13,7 @@ def calculate_delivered_cost(
     order_tonnes: float = 100.0,
     is_pod: bool = False,
     decortication_allowance_tonne: float = 1500.0,
-) -> Dict[str, Any]:
+) -> EvidenceEnvelope:
     """Calculate delivered landed procurement cost per tonne and order total.
 
     Parameters:
@@ -38,15 +40,31 @@ def calculate_delivered_cost(
 
     total_order_cost = landed_cost_per_tonne * order_tonnes
 
-    return {
+    result: Dict[str, Any] = {
         "commodity": commodity,
         "input_price_rs_qtl": round(base_price_rs_qtl, 2),
         "raw_price_per_tonne": round(raw_seed_cost_per_tonne, 2),
         "valuation_basis": valuation_basis,
         "effective_material_cost_per_tonne": round(effective_kernel_cost_tonne, 2),
+        "decortication_allowance_per_tonne": round(decortication_allowance_tonne, 2),
         "freight_per_tonne": round(freight_per_tonne, 2),
         "ancillary_per_tonne": round(ancillary_per_tonne, 2),
         "delivered_cost_per_tonne": round(landed_cost_per_tonne, 2),
         "order_volume_tonnes": round(order_tonnes, 2),
         "total_delivered_cost_inr": round(total_order_cost, 2),
     }
+
+    caveats = (
+        ["Kernel-equivalent benchmark uses a 70% shelling outturn and the supplied decortication allowance; "
+         "verify the actual outturn and processing cost for the specific lot."]
+        if is_pod
+        else []
+    )
+
+    return EvidenceEnvelope(
+        payload=result,
+        coverage="user-supplied inputs",
+        tier="deep",
+        retrieved_at=utc_now_iso(),
+        caveats=caveats,
+    )

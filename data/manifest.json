@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "description": "Provenance manifest for pinned data and configuration files. Every file under data/raw/ and config/ MUST have an entry here (enforced by tests/test_manifest.py).",
+    "hash_algorithm": "sha256"
+  },
+  "files": [
+    {
+      "path": "data/raw/apy_state.csv.gz",
+      "sha256": "a62f9e9e79d6c7fa3b55fb6fde3f285999ff73f3e9ff3f4821ad4212c1e1c331",
+      "source": "Prepared UPAg state APY extract from github.com/herrrickshaw/india-mandi-arrivals (portal report callbacks)",
+      "retrieved_date": "2026-11-11",
+      "terms": "Publisher licence presumed open per publisher DATA_SOURCES.md; confirm exact release terms before external distribution"
+    },
+    {
+      "path": "data/raw/state_monthly.csv.gz",
+      "sha256": "0c8018504242f769a05baac386691983f9ad9eef3cc655b48c127367c1077d32",
+      "source": "Prepared AGMARKNET state-monthly price/arrival extract from github.com/herrrickshaw/india-mandi-arrivals",
+      "retrieved_date": "2026-11-11",
+      "terms": "Publisher licence presumed open per publisher DATA_SOURCES.md; confirm exact release terms before external distribution"
+    },
+    {
+      "path": "config/benchmark_mandis.json",
+      "sha256": "2b9afa50530bdb07ed8042835e48174b6a77098f8aafb15eda4f473dadede8fc",
+      "source": "Project-authored benchmark hub configuration (ADR 0005)",
+      "retrieved_date": "2026-11-12",
+      "terms": "Project-authored; hub market IDs sourced from AGMARKNET 2.0 public filters endpoint"
+    }
+  ]
+}

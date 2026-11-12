@@ -40,8 +40,8 @@ Refreshing a cache key SHALL replace that state+commodity's previous records wit
 - **THEN** the cache holds only the latest record set for that key
 
 #### Scenario: Timestamps are UTC
-- **WHEN** any cache timestamp is written or read
-- **THEN** it is timezone-aware and expressed in UTC
+- **WHEN** a cache timestamp is written
+- **THEN** it is stored as UTC (naive, per the DuckDB TIMESTAMP convention) and any timestamp exposed to consumers is timezone-aware UTC
 
 ### Requirement: TLS-verified HTTP clients
 Outbound HTTP clients SHALL be constructed with certificate verification enabled; the codebase MUST NOT disable verification (no `verify=False` anywhere in `tradeatlas/`).

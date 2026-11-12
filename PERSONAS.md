@@ -2,7 +2,7 @@
 
 Three personas share one deterministic evidence core ([ADR 0006](docs/adr/0006-persona-expansion-and-reconciled-roadmap.md)). All are **synthetic design fictions** — they keep every feature honest against a real decision, not a demographic simulation. A real-buyer recruitment gate exists for the buyer trial phase (see Buyer, below).
 
-**Primary persona rule:** when lenses conflict, the Buyer decides. Shared features are justified by the buyer first.
+**Primary persona rule:** when lenses conflict, the Buyer decides. Shared features are justified by the buyer first. The recruitment gate is Buyer-specific by design; the other personas remain synthetic-only throughout.
 
 ---
 
@@ -18,6 +18,7 @@ Three personas share one deterministic evidence core ([ADR 0006](docs/adr/0006-p
 | **Success signal** | Prepares a usable quote request (quantity, product form, grade, destination, window) with evidence and next verification steps attached. |
 | **Hard honesty rules** | Arrivals are not sales; production is not purchasable inventory; recommendations state that quantities, grades, supplier availability, and freight still need direct confirmation. Kernel requirements use the 70% shelling-outturn benchmark with a visible caveat. |
 | **Recruitment gate** | The buyer trial (real contact, matched-task comparison) proceeds only if a real procurement contact is recruited; otherwise the persona stays synthetic and the docs say so. |
+| **Scope exclusions** | Split-order optimization, monitoring alerts, e-NAM selling, international trade context. |
 
 ## 2. Sell-side — farmer / FPO (Farmer Producer Organisation) / small trader
 

@@ -8,7 +8,7 @@
 
 1. Deterministic code owns 100% of arithmetic, filtering, and evidence; LLMs parse queries and write briefings only ([ADR 0002](adr/0002-deterministic-evidence-and-citation-verification.md)).
 2. Every milestone ends with a verifiable exit condition and its own golden eval suite — evaluation is built at exit gates, never deferred.
-3. Tiered depth: groundnut is deep-tier in its proof states, Gujarat and Rajasthan (full guarantees); soybean and mustard are thin-tier (live data, labelled unverified coverage) ([ADR 0006](adr/0006-persona-expansion-and-reconciled-roadmap.md)).
+3. Tiered depth: groundnut is deep-tier in its proof states, Gujarat and Rajasthan (full guarantees); soybean and mustard are thin-tier (live data, labelled unverified coverage); groundnut queried outside the proof states is also thin-tier ([ADR 0006](adr/0006-persona-expansion-and-reconciled-roadmap.md)).
 4. Official, compliant data access only ([ADR 0004](adr/0004-live-mandi-data-ingestion-architecture.md)).
 
 ---

@@ -1,5 +1,7 @@
 # TradeAtlas — India Agricultural Intelligence MVP
 
+> **📜 Historical document.** The execution roadmap now lives in [docs/ROADMAP.md](docs/ROADMAP.md); scope and persona changes are recorded in [ADR 0006](docs/adr/0006-persona-expansion-and-reconciled-roadmap.md). This plan is retained as the product's founding context — its §10 Sprint 1 checklist is archived as-is (largely superseded by the experiments in `experiments/` and the live MCP layer).
+
 Project implementation plan · Version 1.0 · 11 November 2026
 
 *Editorial note: The Sprint 1 checklist and closing roadmap were reconstructed from the surrounding project discussion because the export omitted the checklist and cut off the end of the original plan.*

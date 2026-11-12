@@ -1,5 +1,7 @@
 # TradeAtlas — Groundnut sourcing intelligence
 
+> **📜 Historical document.** Roadmap decisions now live in [docs/ROADMAP.md](docs/ROADMAP.md), personas in [PERSONAS.md](PERSONAS.md), and the scope expansion to the Edible Oilseeds Complex in [ADR 0006](docs/adr/0006-persona-expansion-and-reconciled-roadmap.md). Retained as the record of the groundnut-phase design review.
+
 **Author** Pending confirmation  
 **Date** 2026-11-11  
 **Status** Goldfish review complete. Conceptual review and grilling aligned with domain model and architectural decisions.
@@ -14,13 +16,13 @@ The hypothesis reviewed here guides the proposed first release. The original pla
 
 The immediate goal is to practice data science, machine learning, and AI on the groundnut scenario. Start with Python files that run from the command line and can be explored in a notebook. Each exercise should produce an inspectable result that the next exercise can reuse. Use the resulting evidence and workflow to guide the later buyer interface.
 
-The first exercise profiles state-month coverage and paired prices and checks crop-year production estimates using pinned extracts. [Groundnut data proof](groundnut_data_proof.py)
+The first exercise profiles state-month coverage and paired prices and checks crop-year production estimates using pinned extracts. [Groundnut data proof](experiments/groundnut_data_proof.py)
 
-The second exercise scores two baselines and a fitted linear trend at one-, two-, and three-month horizons. The results show error and the number of scored months on either side of the November 2025 reporting change. [Groundnut price backtest](groundnut_price_backtest.py)
+The second exercise scores two baselines and a fitted linear trend at one-, two-, and three-month horizons. The results show error and the number of scored months on either side of the November 2025 reporting change. [Groundnut price backtest](experiments/groundnut_price_backtest.py)
 
-The third exercise compares a fixed report, a single evidence selector, and market and production specialists in LangGraph. All three use the same pinned evidence. The default run replays available evidence to check the graph, evidence validation, and quote calculation. A model-backed run tests which evidence the model selects and records model calls and tokens. [Groundnut agent benchmark](groundnut_agent_benchmark.py)
+The third exercise compares a fixed report, a single evidence selector, and market and production specialists in LangGraph. All three use the same pinned evidence. The default run replays available evidence to check the graph, evidence validation, and quote calculation. A model-backed run tests which evidence the model selects and records model calls and tokens. [Groundnut agent benchmark](experiments/groundnut_agent_benchmark.py)
 
-From the TradeAtlas directory, run `uv sync --locked` to install the pinned environment. Run `uv run --locked python -m marimo edit groundnut_lab.py` to open the notebook, or use `./run-tradeatlas.ps1` as a PowerShell shortcut. The notebook runs its cells when the editor opens. Keep the terminal running while you use the editor. [Groundnut lab](groundnut_lab.py)
+From the TradeAtlas directory, run `uv sync --locked` to install the pinned environment. Run `uv run --locked python -m marimo edit groundnut_lab.py` to open the notebook, or use `./run-tradeatlas.ps1` as a PowerShell shortcut. The notebook runs its cells when the editor opens. Keep the terminal running while you use the editor. [Groundnut lab](experiments/groundnut_lab.py)
 
 The project pins Python 3.12.14 in `.python-version`. With this exact version, `uv` uses the standard CPython virtual-environment launcher on this Windows setup. If an older TradeAtlas environment still has the blocked launcher, refresh it in place with `uv venv --allow-existing --python 3.12.14 .venv` using the same installed Python version.
 

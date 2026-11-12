@@ -77,3 +77,19 @@ _Avoid_: Data anomaly, portal glitch, missing data
 **Evidence Card**:
 An immutable, deterministically computed statement of verified market or production observation, including coverage limits.
 _Avoid_: LLM assertion, insight bullet, agent observation
+
+**Tiered Coverage**:
+The two-tier honesty guarantee for commodity scope: deep-tier commodities carry the full verification set (coverage checks, reconciliation, backtests), while thin-tier commodities are served live but explicitly labelled as unverified coverage.
+_Avoid_: Full coverage, verified data, beta quality
+
+**Golden Suite**:
+A versioned set of evaluation questions with expected evidence and a scoring rubric, used to gate a milestone's exit.
+_Avoid_: Test set, QA checklist, benchmark folder
+
+**Verification Gate**:
+The deterministic check that every numeric value and entity in an agent-generated briefing matches the supplied Evidence Cards before the report reaches a user.
+_Avoid_: LLM self-check, hallucination filter, fact-check prompt
+
+**Qualified Partial Report**:
+A report issued with explicitly named data gaps and next verification steps when full evidence is unavailable, instead of an unsupported complete answer.
+_Avoid_: Best-effort answer, partial guess, degraded report

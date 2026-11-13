@@ -93,3 +93,15 @@ _Avoid_: LLM self-check, hallucination filter, fact-check prompt
 **Qualified Partial Report**:
 A report issued with explicitly named data gaps and next verification steps when full evidence is unavailable, instead of an unsupported complete answer.
 _Avoid_: Best-effort answer, partial guess, degraded report
+
+**MAE**:
+Mean Absolute Error — the average absolute distance between predicted and actual values, in the series' own units (₹/quintal for prices). Lower is better; only comparable across groups scored on identical targets.
+_Avoid_: Average error, accuracy, mean deviation
+
+**MASE**:
+Mean Absolute Scaled Error — MAE divided by a scaling factor q (the seasonal-naive in-sample error, q = mean |y_t − y_{t−12}|), making errors comparable across series and horizons. MASE below 1 beats the seasonal-naive reference; the scaling factor q is always disclosed with the score.
+_Avoid_: Relative error, normalized MAE, accuracy ratio
+
+**Modified Z-Score**:
+The robust anomaly score (Iglewicz–Hoaglin: 0.6745·(x−median)/MAD) used to flag statistically unusual monthly price changes at a threshold of 3.5. A flag is a signal to investigate, not a proven market event.
+_Avoid_: Z-score, outlier score, anomaly alert

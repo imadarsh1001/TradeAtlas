@@ -5,6 +5,9 @@
 # The pinned extract provides one historical snapshot without release vintages.
 # Treat each completed month as available at its cutoff for this exercise.
 # Method reference: https://otexts.com/fpp3/tscv.html
+#
+# NOTE: historical M0 evidence, kept as-is. The authoritative productized
+# harness is tradeatlas/forecasting.py (verified against this script's output).
 
 # %%
 from statistics import linear_regression

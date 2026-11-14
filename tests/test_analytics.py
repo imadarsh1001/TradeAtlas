@@ -10,7 +10,13 @@ from tradeatlas.analytics import (
     detect_anomalies,
     detect_price_anomalies,
 )
+from tradeatlas.forecasting import load_monthly_prices
 from tests.conftest import make_series
+
+
+def make_series_from_pinned_shape():
+    """The real pinned Gujarat series (full 94 months, no drop-last)."""
+    return load_monthly_prices()["Gujarat"]
 
 
 def _smooth_series(months: int, start: str = "2023-01") -> list:
@@ -78,6 +84,33 @@ def test_nan_pairs_skipped_and_counted():
 def test_detection_is_deterministic():
     series = make_series(_smooth_series(30))
     assert detect_anomalies(series) == detect_anomalies(series)
+
+
+def test_pinned_anomaly_flags_are_literal_tripwires():
+    # Regression tripwire proven by mutation testing (>= vs > survived green once).
+    gujarat = detect_anomalies(make_series_from_pinned_shape())
+    assert {f["month"] for f in gujarat["flags"]} == {"2020-09", "2020-10"}
+    rajasthan = detect_anomalies(load_monthly_prices()["Rajasthan"])
+    assert {f["month"] for f in rajasthan["flags"]} == {"2024-06"}
+
+
+def test_infinite_ratio_after_zero_is_skipped():
+    values = _smooth_series(10)
+    values[3] = 0.0  # ratio through zero → inf, must be skipped not scored
+    result = detect_anomalies(make_series(values))
+    assert all(f["score"] == f["score"] and abs(f["score"]) != float("inf") for f in result["flags"])
+    assert result["skipped_nan"] >= 2  # change into and out of the zero month
+
+
+def test_all_empty_series_yields_no_data_envelope_naming_selector(monkeypatch):
+    import tradeatlas.analytics as analytics_mod
+    empty = make_series([None] * 6, start="2024-01")
+    monkeypatch.setattr(
+        analytics_mod, "_pinned_state_series", lambda state, commodity: (empty, None)
+    )
+    env = check_series_coverage("Gujarat", "Groundnut")
+    assert env.no_data is True
+    assert "Gujarat" in env.payload["error"] and "Groundnut" in env.payload["error"]
 
 
 # --- Coverage core (task 3.2) ---

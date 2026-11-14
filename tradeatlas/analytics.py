@@ -45,10 +45,12 @@ def _pinned_state_series(state: str, commodity: str) -> Tuple[Optional[pd.Series
 
 
 def _log_changes(series: pd.Series) -> pd.Series:
-    """Month-over-month log change; NaN for missing/non-positive pairs."""
+    """Month-over-month log change; NaN for missing, non-positive, or non-finite pairs."""
     floats = series.astype(float)
     ratios = floats / floats.shift(1)
-    return ratios.map(lambda r: math.log(r) if pd.notna(r) and r > 0 else pd.NA)
+    return ratios.map(
+        lambda r: math.log(r) if pd.notna(r) and r > 0 and math.isfinite(r) else pd.NA
+    )
 
 
 def detect_anomalies(series: pd.Series, boundary: pd.Period = REPORTING_CHANGE) -> Dict[str, Any]:
@@ -139,7 +141,7 @@ def detect_price_anomalies(state: str, commodity: str) -> EvidenceEnvelope:
         coverage=f"{result['examined']} scored changes examined, {len(result['flags'])} flagged for ({state}, {commodity})",
         tier=tier_for(state, commodity),
         retrieved_at=retrieved_at,
-        observation_dates=[str(series.index.max())],
+        observation_dates=[str(series.dropna().index[-1])],
         caveats=caveats,
         no_data=False,
     )
@@ -188,7 +190,19 @@ def check_series_coverage(state: str, commodity: str) -> EvidenceEnvelope:
             no_data=True,
         )
 
-    report = coverage_report(series)
+    try:
+        report = coverage_report(series)
+    except ValueError:
+        # Known state whose column is entirely empty after loader filtering.
+        error = f"No observed months for ({state}, {commodity}) in the pinned extract."
+        return EvidenceEnvelope(
+            payload={"error": error},
+            coverage=f"0 observed months for ({state}, {commodity})",
+            tier=tier_for(state, commodity),
+            retrieved_at=retrieved_at,
+            caveats=[error],
+            no_data=True,
+        )
     return EvidenceEnvelope(
         payload=report,
         coverage=f"{report['observed_months']} observed months for ({state}, {commodity})",

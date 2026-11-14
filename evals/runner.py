@@ -125,10 +125,14 @@ def run_suite(persona: str, suite_path: str = None, results_dir: str = None) -> 
         raise ValueError(f"{suite_file}: expected top-level {{'version': 1, 'cases': [...]}}")
 
     results: List[Dict[str, Any]] = []
+    seen_ids = set()
     for case in suite["cases"]:
         missing = [f for f in REQUIRED_FIELDS if f not in case or case[f] in (None, "")]
         if missing:
             raise ValueError(f"Case '{case.get('id', '?')}': missing fields {missing}")
+        if case["id"] in seen_ids:
+            raise ValueError(f"Case '{case['id']}': duplicate case id")
+        seen_ids.add(case["id"])
         if case["kind"] not in KINDS:
             raise ValueError(f"Case '{case['id']}': unknown kind '{case['kind']}'")
         resolver = RESOLVERS.get(case["target"])

@@ -32,7 +32,7 @@ Scores SHALL be grouped into targets before November 2025 and targets from Novem
 - **THEN** each group contains targets from only one side of the November 2025 boundary
 
 ### Requirement: MAE and MASE scoring
-The harness SHALL report mean absolute error and mean absolute scaled error. The MASE scaling factor q SHALL be computed per state × target-period group as the mean of |y_t − y_{t−12}| over the group's scored targets t whose t−12 exists in the training panel — mirroring the seasonal baseline's own lookback. q is a scaling constant, not a scored metric, and SHALL be printed per group so MASE = MAE / q is checkable. If no such pair exists for a group, MASE SHALL be reported as null for that group.
+The harness SHALL report mean absolute error and mean absolute scaled error. The MASE scaling factor q SHALL be computed per printed group (state × target-period × horizon) as the mean of |y_t − y_{t−12}| over the group's scored targets t whose t−12 exists in the training panel — mirroring the seasonal baseline's own lookback. q is a scaling constant, not a scored metric, and SHALL be printed per group so MASE = MAE / q is checkable. If a group has no such pair with a nonzero seasonal error — including an all-flat seasonal panel where q = 0 — MASE SHALL be reported as null for that group.
 
 #### Scenario: MASE is MAE over the scaling factor
 - **WHEN** a group reports MAE, MASE, and q
@@ -41,6 +41,10 @@ The harness SHALL report mean absolute error and mean absolute scaled error. The
 #### Scenario: Post-break groups have a computable q
 - **WHEN** the post-break groups are scored on the pinned extract
 - **THEN** q is computed from the scored targets' seasonal lookback pairs (11 pairs on the pinned data) rather than being undefined
+
+#### Scenario: Flat seasonal panel yields null MASE
+- **WHEN** every scored target's y_t equals its y_{t−12} (q = 0) while the baselines still produce errors
+- **THEN** the group reports MAE normally and MASE as null
 
 ### Requirement: Pinned-source verification and provenance
 Report generation SHALL verify the pinned extract's SHA-256 against the manifest before scoring and SHALL record the source revision read from the manifest's `revision` field.

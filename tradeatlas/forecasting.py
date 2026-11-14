@@ -49,7 +49,7 @@ def _verify_pinned_extract() -> Dict[str, Any]:
         actual = file_digest(source_file, "sha256").hexdigest()
     if actual != entry["sha256"]:
         raise ValueError(
-            f"{path} differs from the pinned digest {entry['sha256'][:12]}… (got {actual[:12]}…)"
+            f"{path} differs from the pinned digest {entry['sha256']} (got {actual})"
         )
     return entry
 
@@ -139,11 +139,21 @@ def _scaling_factors(forecasts: pd.DataFrame, groups: List[str]) -> pd.Series:
     return seasonal_error.groupby([forecasts[g] for g in groups]).mean()
 
 
-def build_report(clock: Optional[Callable[[], str]] = None) -> Dict[str, Any]:
-    """Build the reproducible backtest report; run timestamp isolated in generated_at."""
+def build_report(
+    clock: Optional[Callable[[], str]] = None,
+    prices: Optional[pd.DataFrame] = None,
+) -> Dict[str, Any]:
+    """Build the reproducible backtest report; run timestamp isolated in generated_at.
+
+    `prices` overrides the pinned loader (synthetic-panel testing); the pinned
+    path verifies the extract and cites its manifest revision.
+    """
     clock = clock or utc_now_iso
-    entry = _verify_pinned_extract()
-    prices = load_monthly_prices()
+    if prices is None:
+        entry = _verify_pinned_extract()
+        prices = load_monthly_prices()
+    else:
+        entry = {"revision": "synthetic"}
     forecasts, summary = evaluate_panel(prices)
     groups = ["State", "Target period", "Months ahead"]
     q = _scaling_factors(forecasts, groups)

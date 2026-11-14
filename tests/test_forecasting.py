@@ -147,6 +147,21 @@ def test_post_break_groups_have_computable_q(evaluation):
     assert post_groups.notna().all() and (post_groups > 0).all()
 
 
+def test_flat_seasonal_panel_yields_null_mase():
+    # 36 months repeating [100, 105, 103] → every y_t == y_{t−12} → q = 0 → MASE null,
+    # while MAE stays positive (the baselines still err within the cycle).
+    values = [100.0, 105.0, 103.0] * 12
+    prices = make_series(values, start="2022-01")
+    panel = pd.DataFrame({"Gujarat": prices, "Rajasthan": prices})
+    report = build_report(clock=lambda: "2026-11-13T00:00:00+00:00", prices=panel)
+    flat = [g for g in report["groups"] if g["q"] is None]  # q=0 → null in the report
+    assert flat, "expected null-q groups on the flat seasonal panel"
+    assert all(all(m is None for m in g["mase"].values()) for g in flat)
+    # On a period-3 cycle the h=3 last-observed error is exactly 0 — assert on the
+    # linear trend instead, which errs against the cycle mean on every horizon.
+    assert all(g["mae"]["Linear trend"] > 0 for g in flat)
+
+
 # --- Report (task 2.3) ---
 
 def test_report_reproducible_with_injected_clock():

@@ -25,15 +25,15 @@ The runner SHALL reject a case missing any required field, naming the case and t
 - **THEN** the runner fails naming the case and the unknown target
 
 ### Requirement: Scoring rubric per kind
-The runner SHALL score `numeric-exact` cases by comparing the resolver's computed value rounded to 2 decimals against `expected` (pass iff equal); `evidence-fidelity` cases by checking the named envelope assertions in `expected` (e.g. tier equals, caveat substring present, coverage shape); `abstention` cases by requiring the explicit no-data/error signal to fire naming the selector (pass iff `no_data` is true or the payload error names the selector).
+The runner SHALL score `numeric-exact` cases by comparing the resolver's computed value rounded to 2 decimals against `expected` rounded to 2 decimals (pass iff equal); `evidence-fidelity` cases by checking the named envelope assertions in `expected` (e.g. tier equals, caveat substring present, coverage shape); `abstention` cases by requiring the explicit no-data signal **and** the selector named in the payload or error (pass iff `no_data` is true and the selector appears in the payload or its error) — the conjunction prevents an unrelated no-data envelope from scoring a false pass.
 
 #### Scenario: Numeric-exact compares rounded values
 - **WHEN** a numeric-exact case's computed value differs from `expected` after rounding both to 2 decimals
 - **THEN** the case fails and the results file records both values
 
-#### Scenario: Abstention requires the explicit signal
-- **WHEN** an abstention case's resolver returns an envelope with `no_data` true or a payload error naming the selector
-- **THEN** the case passes; any populated answer fails it
+#### Scenario: Abstention requires the explicit signal naming the selector
+- **WHEN** an abstention case's resolver returns an envelope with `no_data` true and the selector named in the payload or error
+- **THEN** the case passes; a missing selector name or a populated answer fails it
 
 ### Requirement: Runner records results
 The runner SHALL execute a suite against the current code, score each case by its kind, and write `evals/results/<persona>.json` containing per-case pass/fail, the scored value, and run metadata (timestamp, git short SHA as code version). The results directory SHALL be git-ignored (runs are reproducible from the suite plus code, not archived artifacts).

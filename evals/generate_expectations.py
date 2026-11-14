@@ -68,11 +68,15 @@ def _delivered_cost_pods() -> float:
     return float(envelope.payload["delivered_cost_per_tonne"])
 
 
-def _anomaly_flag_gujarat() -> float:
-    from tradeatlas.analytics import detect_price_anomalies
+def _daily_rajashtan_top_modal() -> float:
+    from tradeatlas.ingest import fetch_daily_mandi_prices
 
-    envelope = detect_price_anomalies(state="Gujarat", commodity="Groundnut")
-    return float(envelope.payload["flags"][0]["value"])
+    with isolated_cache():
+        envelope = fetch_daily_mandi_prices(
+            state="Rajasthan", commodity="Groundnut",
+            transport=_fixture_transport(EVALS_FIXTURES, "datagov_bikaner_groundnut.json"),
+        )
+    return float(envelope.payload[0]["modal_price"])
 
 
 DERIVATIONS = {
@@ -80,7 +84,7 @@ DERIVATIONS = {
     "buyer-hub-msp-rajkot": _hub_rajkot_msp_spread,
     "buyer-delivered-cost-kernels": _delivered_cost_kernels,
     "buyer-delivered-cost-pods": _delivered_cost_pods,
-    "buyer-anomaly-flag-gujarat": _anomaly_flag_gujarat,
+    "buyer-price-comparison-rajasthan": _daily_rajashtan_top_modal,
 }
 
 

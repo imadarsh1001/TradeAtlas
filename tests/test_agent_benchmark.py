@@ -62,7 +62,7 @@ def test_fidelity_fails_on_uninvoked_source_tool():
     record = make_record([call("check_series_coverage", {"state": "Rajasthan", "commodity": "Groundnut"})])
     answer = make_answer("s", [figure("detect_price_anomalies", {"state": "Rajasthan", "commodity": "Groundnut"}, 1.0)])
     outcome = _score_agent_evidence_fidelity(record, answer, {"figures": [], "summary_signals": []})
-    assert outcome["passed"] is False and "does not match" in outcome["scored_value"][0]
+    assert outcome["passed"] is False and "does not agree" in outcome["scored_value"][0]
 
 
 def test_fidelity_fails_on_selector_mismatch_in_canonical_form():
@@ -82,7 +82,7 @@ def test_fidelity_fails_on_drifted_value_and_missing_signal():
          "summary_signals": ["September 2020"]},
     )
     assert outcome["passed"] is False
-    assert any("!= expected" in f for f in outcome["scored_value"])
+    assert any("not found in answer" in f for f in outcome["scored_value"])
     assert any("missing signal" in f for f in outcome["scored_value"])
 
 
@@ -155,21 +155,39 @@ def test_suites_exist_with_pinned_composition_and_validate():
 
 
 def test_replay_mode_scores_traced_cases_and_discloses_missing(tmp_path, monkeypatch):
+    """Machinery verification on dedicated tmp fixtures — decoupled from the
+    committed canonical trace set, which the live benchmark evolves by design
+    (recordings supersede hand-authored placeholders and carry real outcomes)."""
     def forbidden_model(*args, **kwargs):
         raise AssertionError("a live ChatOpenAI was constructed during replay")
 
     monkeypatch.setattr("tradeatlas.agent.graph.ChatOpenAI", forbidden_model)
-    payload = run_suite("buyer", results_dir=tmp_path, mode="replay")
+    fixture_trace = {
+        "version": 1, "question": "Any unusual groundnut prices in Gujarat recently?",
+        "model_messages": [
+            {"role": "ai", "content": "", "tool_calls": [{"name": "detect_price_anomalies", "args": {"state": "Gujarat", "commodity": "Groundnut"}, "id": "c1", "type": "tool_call"}], "usage_metadata": {"input_tokens": 10, "output_tokens": 5, "total_tokens": 15}},
+            {"role": "ai", "content": "One flag.", "tool_calls": [], "usage_metadata": {"input_tokens": 20, "output_tokens": 5, "total_tokens": 25}},
+        ],
+        "structured_response": {"summary": "September 2020 flag.", "figures": [{"value": 4186.56, "unit": "INR/quintal", "source_tool": "detect_price_anomalies", "selector": {"state": "Gujarat", "commodity": "Groundnut"}}]},
+    }
+    traces_dir = tmp_path / "traces" / "buyer"
+    traces_dir.mkdir(parents=True)
+    (traces_dir / "machinery-fixture.json").write_text(json.dumps(fixture_trace), encoding="utf-8")
+    suite_path = tmp_path / "machinery.json"
+    suite_path.write_text(json.dumps({"version": 1, "cases": [
+        {"id": "machinery-traced", "persona": "buyer", "question": fixture_trace["question"],
+         "kind": "agent-evidence-fidelity", "target": "agent", "args": {}, "trace": "machinery-fixture.json",
+         "expected": {"figures": [{"source_tool": "detect_price_anomalies", "selector": {"state": "Gujarat", "commodity": "Groundnut"}, "value": 4186.56}], "summary_signals": ["September 2020"]}},
+        {"id": "machinery-untraced", "persona": "buyer", "question": "q",
+         "kind": "agent-abstention", "target": "agent", "args": {},
+         "expected": {"unavailability_signal": "unavailable"}},
+    ]}), encoding="utf-8")
+    payload = run_suite("buyer", suite_path=suite_path, results_dir=tmp_path / "res", mode="replay", traces_dir=tmp_path / "traces")
     assert payload["mode"] == "replay"
     by_id = {c["id"]: c for c in payload["cases"]}
-    # the two trace-bound buyer cases score; the other 13 are disclosed, never passed
-    assert by_id["buyer-anomaly-flag-gujarat"]["passed"] is True
-    assert by_id["buyer-missing-selector-state"]["passed"] is True
-    assert payload["replayed"] == 2
-    assert len(payload["missing_traces"]) == 13
-    for case_id in payload["missing_traces"]:
-        assert by_id[case_id].get("skipped") is True and by_id[case_id]["passed"] is False
-    assert payload["passed"] == 2 and payload["total"] == 15
+    assert by_id["machinery-traced"]["passed"] is True
+    assert by_id["machinery-untraced"].get("skipped") is True and by_id["machinery-untraced"]["passed"] is False
+    assert payload["replayed"] == 1 and payload["missing_traces"] == ["machinery-untraced"]
 
 
 def test_replay_adversarial_injection_case_scores(tmp_path, monkeypatch):
@@ -309,7 +327,7 @@ def test_generated_expectations_are_stable():
     suite = json.loads((EVALS / "golden" / "buyer.json").read_text(encoding="utf-8"))
     numeric = [f for c in suite["cases"] for f in c["expected"].get("figures", []) if "value" in f]
     assert len(numeric) == 5
-    assert {f["value"] for f in numeric} == {7650.0, 117.0, 52134.5, 75592.14, 4186.56}
+    assert {f["value"] for f in numeric} == {7650.0, 117.0, 52134.5, 75592.14, 7100.0}
 
 
 def test_generator_zero_diff_on_unchanged_code():

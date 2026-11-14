@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "question": "What's the delivered cost per tonne if I buy unshelled groundnut pods at 5123.45 INR/quintal with 900 INR/tonne freight?",
+  "model_id": "z-ai/glm-5.3-flash",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "calculate_delivered_cost",
+          "args": {
+            "commodity": "Groundnut",
+            "base_price_rs_qtl": 5123.45,
+            "freight_per_tonne": 900,
+            "is_pod": true
+          },
+          "id": "87e11ec3-bdc7-4155-8219-bfc9a6190b3e",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2497,
+        "output_tokens": 142,
+        "total_tokens": 2639,
+        "input_token_details": {
+          "cache_read": 1920
+        },
+        "output_token_details": {
+          "reasoning": 99
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "Here's the deterministic cost breakdown for your quote (calculation tool, Groundnut, base 5,123.45 INR/qtl pods, freight 900 INR/t, no ancillary charges supplied):\n\n**Delivered cost: 75,592.14 INR/tonne** (kernel-equivalent benchmark)\n\n| Component | INR/tonne |\n|---|---|\n| Raw pod price (5,123.45 \u00d7 10) | 51,234.50 |\n| Effective material cost (70% shelling outturn) | 74,692.14 |\n| Decortication allowance | 1,500.00 |\n| Freight | 900.00 |\n| Ancillary (mandi cess, loading, brokerage, weighment) | 0.00 |\n| **Delivered cost per tonne** | **75,592.14** |\n\n- **Order total (default 100 MT): 7,559,214.29 INR** \u2014 tell me your actual volume if it differs.\n- Tier: deep (user-supplied inputs); retrieval timestamped 2026-11-14T18:58:37 UTC.\n\n**Caveat from the tool:** the kernel-equivalent figure assumes a 70% shelling outturn and the standard 1,500 INR/t decortication allowance \u2014 verify the actual outturn and processing cost for your specific lot, as both directly move the delivered number. Also note ancillary charges were set to zero; add them if your mandi terms include cess/brokerage/weighment.",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 2802,
+        "output_tokens": 620,
+        "total_tokens": 3422,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 288
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "**Delivered cost: 75,592.14 INR/tonne** (kernel-equivalent basis, unshelled pods).",
+    "figures": [
+      {
+        "value": 75592.14,
+        "unit": "INR/tonne",
+        "source_tool": "calculate_delivered_cost",
+        "selector": {
+          "commodity": "Groundnut",
+          "base_price_rs_qtl": 5123.45,
+          "freight_per_tonne": 900,
+          "is_pod": true
+        }
+      }
+    ]
+  }
+}

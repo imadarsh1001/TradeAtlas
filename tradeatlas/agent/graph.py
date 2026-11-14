@@ -8,7 +8,9 @@ retry budget and is deliberately absent here. Model id comes from pinned configu
 import os
 from typing import Any, List, Optional, Tuple
 
+from langchain_core.runnables import RunnableLambda
 from langchain_openai import ChatOpenAI
+from pydantic import BaseModel
 from langgraph.prebuilt import create_react_agent
 
 from tradeatlas.agent.answer import AgentAnswer
@@ -43,9 +45,34 @@ def get_model_id() -> str:
     return model_id
 
 
+class _AgentChatModel(ChatOpenAI):
+    """ChatOpenAI with the agent's structured-output contract made provider-agnostic.
+
+    langchain-openai coerces Pydantic-class schemas to strict json_schema, which
+    providers reject for the free-form `selector` object the answer contract
+    requires (`additionalProperties: false` is unsatisfiable — Groq 400s outright).
+    Sending the JSON-schema dict with strict=False is accepted across providers;
+    the model output is then validated client-side against the Pydantic class, so
+    an unvalidated answer is still never emitted (the M3-a contract).
+    """
+
+    def with_structured_output(self, schema: Any, **kwargs: Any) -> Any:
+        if isinstance(schema, type) and issubclass(schema, BaseModel):
+            kwargs.setdefault("method", "json_schema")
+            kwargs.setdefault("strict", False)
+            inner = super().with_structured_output(schema.model_json_schema(), **kwargs)
+            return inner | RunnableLambda(lambda value: schema.model_validate(value))
+        return super().with_structured_output(schema, **kwargs)
+
+
 def build_chat_model(model_id: Optional[str] = None) -> ChatOpenAI:
-    """Build the live chat model for the pinned id (requires provider credentials)."""
-    return ChatOpenAI(model=model_id or get_model_id())
+    """Build the live chat model for the pinned id (requires provider credentials).
+
+    Per-request latency is bounded (timeout + bounded retries) so a hung provider
+    call fails and is recorded instead of stalling a benchmark for hours — while
+    leaving room for reasoning models whose legitimate turns run 1-2 minutes.
+    """
+    return _AgentChatModel(model=model_id or get_model_id(), timeout=300.0, max_retries=1)
 
 
 def build_agent(chat_model: Any, recorder: Optional[ToolCallRecorder] = None) -> Any:

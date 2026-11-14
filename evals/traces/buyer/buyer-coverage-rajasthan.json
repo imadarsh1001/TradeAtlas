@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "question": "How complete is the Rajasthan groundnut price history before I rely on it for comparisons?",
+  "model_id": "z-ai/glm-5.3-flash",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "check_series_coverage",
+          "args": {
+            "state": "Rajasthan",
+            "commodity": "Groundnut"
+          },
+          "id": "33e9da4a-ecb3-4fe8-be5e-f0cdb580c5e3",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2476,
+        "output_tokens": 210,
+        "total_tokens": 2686,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 189
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "Rajasthan groundnut history is in strong shape \u2014 **deep tier, no gaps** \u2014 with one structural caveat worth knowing before you compare across it.\n\n**Coverage (per check_series_coverage, state=Rajasthan, commodity=Groundnut):**\n- **94 observed months**, **0 missing months**, longest gap **0**\n- Latest month in the series: **2026-10**; staleness vs. the extract's own last month: **0 months**\n\n**The one caveat \u2014 a series break:**\n- The history splits into **82 months pre-break** and **12 months post-break** (94 total). The tool treats these as separate segments, so trend statistics are computed **within-segment only**. In practice: year-over-year or trend comparisons that straddle the break point are less trustworthy than comparisons made within the recent 12-month segment.\n\n**Data-handling note:** this is a pinned snapshot \u2014 staleness is measured against the extract's own last month, not the wall clock \u2014 so \"0 stale\" means current relative to the extract, not verified as of today.\n\n**Bottom line:** safe to rely on for recent-window comparisons (within the last 12 months, post-break segment). For anything referencing the older 82-month history, keep the break in mind and avoid blending pre- and post-break observations into a single trend.",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 2670,
+        "output_tokens": 483,
+        "total_tokens": 3153,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 206
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "Rajasthan groundnut coverage is deep-tier and complete \u2014 94 consecutive months with no gaps \u2014 but note the series break: 82 pre-break months vs. only 12 post-break months.",
+    "figures": [
+      {
+        "value": 94.0,
+        "unit": "observed months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 0.0,
+        "unit": "missing months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 0.0,
+        "unit": "longest gap (months)",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 82.0,
+        "unit": "pre-break months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 12.0,
+        "unit": "post-break months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 0.0,
+        "unit": "months of staleness (latest month 2026-10)",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      }
+    ]
+  }
+}

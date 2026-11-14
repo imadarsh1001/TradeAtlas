@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "question": "Delivered cost for 100 MT of groundnut kernels at 5123.45 INR/quintal with 900 INR/tonne freight?",
+  "model_id": "z-ai/glm-5.3-flash",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "calculate_delivered_cost",
+          "args": {
+            "commodity": "Groundnut",
+            "base_price_rs_qtl": 5123.45,
+            "freight_per_tonne": 900,
+            "is_pod": false,
+            "decortication_allowance_tonne": 0
+          },
+          "id": "14180963-7e23-44d5-bade-55a374077859",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2491,
+        "output_tokens": 169,
+        "total_tokens": 2660,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 113
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "**Delivered cost for 100 MT groundnut kernels (kernels, not pods):**\n\n| Component | Value |\n|---|---|\n| Base price | 5,123.45 INR/qtl \u2192 51,234.50 INR/tonne |\n| Freight | 900.00 INR/tonne |\n| Ancillary (mandi cess, loading, brokerage, weighment) | 0 INR/tonne (not supplied) |\n| **Delivered cost per tonne** | **52,134.50 INR** |\n| **Total for 100 MT** | **5,213,450.00 INR (\u224852.13 lakh)** |\n\nSource: `calculate_delivered_cost` with commodity=Groundnut, base_price_rs_qtl=5,123.45, freight_per_tonne=900, is_pod=false, decortication_allowance=0. This is a deterministic calculation on your supplied inputs (deep tier, coverage \"user-supplied inputs\") \u2014 no market-price evidence was fetched.\n\nNotes:\n- Since this is a kernels quote (not raw pods), no 70% shelling outturn or decortication allowance was applied.\n- Ancillary charges were taken as zero because none were provided; if you share mandi cess/loading/brokerage figures, I can rerun with those included.",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 2766,
+        "output_tokens": 290,
+        "total_tokens": 3056,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 10
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "Calculating delivered cost for 100 MT groundnut kernels at 5123.45 INR/qtl with 900 INR/tonne freight using the pricing tool.",
+    "figures": [
+      {
+        "value": 5123.45,
+        "unit": "INR/quintal",
+        "source_tool": "calculate_delivered_cost",
+        "selector": {
+          "commodity": "groundnut_kernels",
+          "quantity_tonnes": 100,
+          "freight_per_tonne": 900
+        }
+      }
+    ]
+  }
+}

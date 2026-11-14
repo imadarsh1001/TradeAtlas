@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "question": "How does the Rajkot groundnut quote compare against MSP right now \u2014 is the market firm or distressed?",
+  "model_id": "z-ai/glm-5.3-flash",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "get_daily_mandi_prices",
+          "args": {
+            "state": "Gujarat",
+            "commodity": "Groundnut",
+            "market": "Rajkot"
+          },
+          "id": "f1a8534b-f812-420a-9f04-a827fca7bd2b",
+          "type": "tool_call"
+        },
+        {
+          "name": "get_benchmark_hub_summary",
+          "args": {
+            "state": "Gujarat",
+            "commodity": "Groundnut"
+          },
+          "id": "bf68dd31-8c1a-40ce-8bbd-14e233228197",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2480,
+        "output_tokens": 132,
+        "total_tokens": 2612,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 77
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "get_macro_supply_balance",
+          "args": {
+            "state": "Gujarat",
+            "crop": "Groundnut"
+          },
+          "id": "94b14138-c2c3-46b4-951f-de80b5cd67f9",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 3193,
+        "output_tokens": 199,
+        "total_tokens": 3392,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 176
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "**Rajkot is trading firm \u2014 a modest premium to MSP \u2014 but the firmness is narrow, not market-wide.**\n\n**Rajkot vs MSP (as of 12/11/2026, G20 FAQ):**\n- Rajkot APMC modal price: **\u20b96,900/qtl** (range \u20b96,700\u20137,100) \u2014 from `get_daily_mandi_prices` (Gujarat, Groundnut, market=Rajkot)\n- MSP benchmark: **\u20b96,783/qtl** \u2014 from `get_benchmark_hub_summary` (Gujarat, Groundnut)\n- **Spread: +\u20b9117/qtl (~+1.7%) \u2192 flagged \"Premium to MSP (Firm Market)\"**\n\n**Caveats a buyer should weigh:**\n- **The firmness is thin at the edges.** Rajkot's own minimum (\u20b96,700) sits *below* MSP \u2014 only the modal/max is above it. Nearby **Gondal APMC modal is \u20b96,700, i.e. \u20b983 *below* MSP**, flagged \"Distress / Surplus\" in the same hub summary. So the firm reading is specific to Rajkot's modal trades, not the district.\n- **Partial coverage:** only 2 of 4 monitored Gujarat hubs reported today (Jetpur, Himatnagar: not reported), per `get_benchmark_hub_summary`.\n- **Macro picture points the other way:** `get_macro_supply_balance` (Gujarat, Groundnut) shows a 2025-26 Third Advance Estimate of **6.267 MT vs a 3-year baseline of 4.799 MT \u2014 a +30.6% harvest surplus**. Heavy expected arrivals typically cap premiums; note advance estimates get revised.\n\n**Bottom line:** At the quote level, Rajkot is firm (+\u20b9117 over MSP), but with a supply surplus of ~31%, distressed pricing one mandi over, and half the hubs silent, I'd read this as firmness on quality-lotted lots rather than broad market strength \u2014 worth tightening arrival/quality specs before paying the premium.",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 3430,
+        "output_tokens": 801,
+        "total_tokens": 4231,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 358
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "**Firm at Rajkot: modal \u20b96,900/qtl is a +\u20b9117 (+1.7%) premium to MSP \u20b96,783 \u2014 not distressed.** But the firmness is thin at the edges and supply context is bearish.",
+    "figures": [
+      {
+        "value": 6900.0,
+        "unit": "INR/qtl",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut",
+          "market": "Rajkot"
+        }
+      },
+      {
+        "value": 6783.0,
+        "unit": "INR/qtl",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 117.0,
+        "unit": "INR/qtl",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 30.6,
+        "unit": "pct",
+        "source_tool": "get_macro_supply_balance",
+        "selector": {
+          "state": "Gujarat",
+          "crop": "Groundnut"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "question": "What are groundnut prices in Punjab today?",
+  "model_id": "z-ai/glm-5.3-flash",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "get_daily_mandi_prices",
+          "args": {
+            "state": "Punjab",
+            "commodity": "Groundnut"
+          },
+          "id": "815a726e-20f9-4d7e-93b1-e4b490b3cbf4",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2468,
+        "output_tokens": 445,
+        "total_tokens": 2913,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 421
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "No groundnut price data is available for Punjab in today's snapshot.\n\n- **Tool:** get_daily_mandi_prices (state=Punjab, commodity=Groundnut)\n- **Result:** 0 records reported (no_data=true, tier: thin)\n- **Caveat from the tool:** Absence of a report is not evidence that no trade occurred \u2014 Punjab mandis may simply not have filed data in this snapshot (retrieved 2026-11-14 21:13 UTC).\n\nA few honest limitations:\n\n1. I won't substitute another state or date for what you asked \u2014 no Punjab figure can be reported from the evidence.\n2. My other coverage is limited to the five-state corridor (Gujarat, Rajasthan, Madhya Pradesh, Maharashtra, Haryana) for benchmark/MSP summaries and macro supply balances, and the pinned monthly price series covers only Gujarat and Rajasthan groundnut \u2014 so none of those can speak to Punjab.\n\nIf useful, I can pull today's groundnut prices from a nearby corridor state (e.g., Haryana or Rajasthan) as a directional reference \u2014 just say the word.",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 2650,
+        "output_tokens": 363,
+        "total_tokens": 3013,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 134
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "**No groundnut prices available for Punjab today.**\n\n- **Tool:** get_daily_mandi_prices (state=Punjab, commodity=Groundnut)\n- **Result:** 0 records returned (no_data=true) \u2014 no mandi in Punjab reported a groundnut price in this snapshot (retrieved 2026-11-14 21:13 UTC).\n- **Caveat:** Per the tool's own caveat, absence of a report is not evidence that no trade occurred \u2014 Punjab markets may simply not have filed data today.\n\nI won't report a price figure without evidence, and I won't silently substitute a different state. If helpful, I can pull today's groundnut benchmark prices from corridor states (e.g., Gujarat or Rajasthan) or the MSP reference \u2014 just ask.",
+    "figures": []
+  }
+}

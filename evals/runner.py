@@ -145,30 +145,55 @@ def _canonical_key(tool: str, args: Dict[str, Any]) -> Optional[str]:
     return json.dumps(canonical, sort_keys=True) if canonical is not None else None
 
 
+def _selector_agrees(tool: str, call_arguments: Dict[str, Any], selector: Dict[str, Any]) -> bool:
+    """A figure's selector agrees with an executed call when, on every argument the
+    call meaningfully set (non-default), the figure's selector states the same
+    value. Record-level extra keys in the figure's selector (market, variety,
+    grade — data a model cites from the envelope's records) are permitted; a
+    CONTRADICTED value is not. None-valued canonical defaults are skipped."""
+    canonical = _canonical_key(tool, call_arguments)
+    if canonical is None:
+        return False
+    import json as _json
+
+    for key, value in _json.loads(canonical).items():
+        if value is None or value is False:
+            continue
+        if key in selector and selector[key] != value:
+            return False
+    return True
+
+
 def _score_agent_evidence_fidelity(record: Any, answer: Any, expected: Dict[str, Any]) -> Dict[str, Any]:
-    """Every answer figure traces to an executed call (canonical form); expected
-    figures appear with matching values (2dp); expected summary signals present
-    (case-insensitive — live-model wording varies, facts must not)."""
+    """Every answer figure traces to an executed call (selector agreement on the
+    call's meaningful keys — see _selector_agrees); expected figures appear with
+    matching values (2dp); expected summary signals present (case-insensitive —
+    live-model wording varies, facts must not)."""
     failures: List[str] = []
-    executed = set()
-    for call in _successful_calls(record):
-        key = _canonical_key(call.tool, call.arguments)
-        if key is not None:
-            executed.add((call.tool, key))
+    calls = _successful_calls(record)
     figures = list(answer.figures) if answer is not None else []
     for figure in figures:
-        if (figure.source_tool, _canonical_key(figure.source_tool, figure.selector)) not in executed:
-            failures.append(f"figure via {figure.source_tool} does not match any executed call")
+        if not any(
+            call.tool == figure.source_tool and _selector_agrees(call.tool, call.arguments, figure.selector)
+            for call in calls
+        ):
+            failures.append(f"figure via {figure.source_tool} does not agree with any executed call")
     for exp in expected.get("figures", []):
-        exp_key = _canonical_key(exp["source_tool"], exp["selector"])
-        match = next(
-            (f for f in figures if f.source_tool == exp["source_tool"] and _canonical_key(f.source_tool, f.selector) == exp_key),
-            None,
-        )
-        if match is None:
-            failures.append(f"expected figure via {exp['source_tool']} not found in answer")
-        elif "value" in exp and round(float(match.value), 2) != round(float(exp["value"]), 2):
-            failures.append(f"figure value {match.value} != expected {exp['value']}")
+        candidates = [
+            f
+            for f in figures
+            if f.source_tool == exp["source_tool"] and _selector_agrees(exp["source_tool"], exp["selector"], f.selector)
+        ]
+        if "value" in exp:
+            match = next((f for f in candidates if round(float(f.value), 2) == round(float(exp["value"]), 2)), None)
+            if match is None:
+                failures.append(
+                    f"expected figure via {exp['source_tool']} (value {exp['value']}) not found in answer; "
+                    f"cited: {[(f.source_tool, f.value) for f in figures]}"
+                )
+        else:
+            if not candidates:
+                failures.append(f"expected figure via {exp['source_tool']} not found in answer")
     summary = (answer.summary if answer is not None else "") or ""
     for signal in expected.get("summary_signals", []):
         if signal.lower() not in summary.lower():
@@ -384,11 +409,14 @@ def run_suite(
     mode: str = "replay",
     model_factory: Optional[Callable[[], Any]] = None,
     traces_dir: Optional[Path] = None,
+    case_ids: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
     """Execute one golden suite and write results; raises on malformed cases.
 
     `traces_dir` overrides the persona's trace root (tests inject a temp dir so
-    live simulations never write into the committed fixture tree).
+    live simulations never write into the committed fixture tree). `case_ids`
+    resumes a long benchmark: every case stays validated, only the named ones
+    execute, and the results file records the filtered run.
     """
     if mode not in {"replay", "live"}:
         raise ValueError(f"Unknown mode '{mode}'")
@@ -405,6 +433,11 @@ def run_suite(
     suite = json.loads(suite_file.read_text(encoding="utf-8"))
     if suite.get("version") != 1 or not isinstance(suite.get("cases"), list):
         raise ValueError(f"{suite_file}: expected top-level {{'version': 1, 'cases': [...]}}")
+    if case_ids is not None:
+        known = {c.get("id") for c in suite["cases"]}
+        unknown = set(case_ids) - known
+        if unknown:
+            raise ValueError(f"Unknown case ids for {persona}: {sorted(unknown)}")
 
     results: List[Dict[str, Any]] = []
     missing_traces: List[str] = []
@@ -412,6 +445,8 @@ def run_suite(
     has_agent_cases = False
     seen_ids = set()
     for case in suite["cases"]:
+        if case_ids is not None and case["id"] not in case_ids:
+            continue
         missing = [f for f in REQUIRED_FIELDS if f not in case or case[f] in (None, "")]
         if missing:
             raise ValueError(f"Case '{case.get('id', '?')}': missing fields {missing}")

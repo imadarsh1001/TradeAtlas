@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "question": "What are groundnut prices in Gujarat today? Give me the current mandi quote.",
+  "model_id": "z-ai/glm-5.3-flash",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "get_daily_mandi_prices",
+          "args": {
+            "state": "Gujarat",
+            "commodity": "Groundnut"
+          },
+          "id": "38a5b910-4ca0-47eb-9f0c-ed1cdfcb14d1",
+          "type": "tool_call"
+        },
+        {
+          "name": "get_benchmark_hub_summary",
+          "args": {
+            "state": "Gujarat",
+            "commodity": "Groundnut"
+          },
+          "id": "4524d779-c9b5-4e53-a672-258757fe0d09",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2476,
+        "output_tokens": 110,
+        "total_tokens": 2586,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 63
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "Here's the latest Gujarat groundnut picture. One honest caveat up front: the freshest mandi quotes on file are dated **12/11/2026** \u2014 two days behind today's retrieval (2026-11-14) \u2014 so no same-day quote exists yet.\n\n**Latest reported mandi quotes** (\u20b9/quintal, AGMARKNET daily feed \u2014 `get_daily_mandi_prices`, Gujarat, Groundnut):\n\n| Mandi | District | Variety / Grade | Min | Max | Modal | Arrival date |\n|---|---|---|---|---|---|---|\n| Veraval APMC | Gir Somnath | G20 / FAQ | 6,755 | 7,890 | **7,650** | 12/11/2026 |\n| Dahod APMC | Dahod | Other / Local | 7,000 | 7,300 | **7,200** | 12/11/2026 |\n\n**Benchmark hubs** (`get_benchmark_hub_summary`, Gujarat, Groundnut): 0 of the 4 monitored hub mandis \u2014 Rajkot, Gondal, Jetpur, Himatnagar \u2014 reported today. Absence of a report is not evidence that no trade occurred, but I can't give you a Rajkot-area quote for today.\n\n**MSP context** (same hub-summary tool): central MSP benchmark is **\u20b96,783/qtl**. Against that, the Veraval G20 modal of 7,650 sits roughly **+\u20b9867 (+12.8%) above MSP**, and Dahod Local at 7,200 is **+\u20b9417 (+6.1%) above MSP** (spread arithmetic computed from those two tool outputs).\n\nBottom line: the current workable quote is **\u20b97,200\u20137,650/qtl modal** (G20 FAQ at Veraval being the quality reference), but it's a 12-Nov observation. If you need a tradeable number for today, I'd re-check once the hub mandis file their daily reports \u2014 happy to pull a specific mandi (e.g., Rajkot) or a 7-day spot series if you want the recent trend.",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 3158,
+        "output_tokens": 837,
+        "total_tokens": 3995,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 376
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "**Freshest mandi quotes available \u2014 note they are dated 12/11/2026, two days behind today's pull (retrieved 14 Nov 2026), so no same-day quote exists yet.**",
+    "figures": [
+      {
+        "value": 7650.0,
+        "unit": "INR/qtl modal",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut",
+          "market": "Veraval APMC",
+          "variety": "G20",
+          "grade": "FAQ",
+          "arrival_date": "12/11/2026"
+        }
+      },
+      {
+        "value": 7200.0,
+        "unit": "INR/qtl modal",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut",
+          "market": "Dahod APMC",
+          "variety": "Other",
+          "grade": "Local",
+          "arrival_date": "12/11/2026"
+        }
+      },
+      {
+        "value": 6783.0,
+        "unit": "INR/qtl MSP benchmark",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      }
+    ]
+  }
+}

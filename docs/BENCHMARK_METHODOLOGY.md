@@ -1,5 +1,10 @@
 # Agent Benchmark Methodology
 
+> **Status (2026-11-15): the first live campaign is PAUSED mid-run** — see
+> [BENCHMARK_FINDINGS.md](BENCHMARK_FINDINGS.md) for the provider stack matrix, product fixes it
+> forced out, and the gentle protocol v2 that governs resumption (one provider per session, pacing,
+> 429 backoff, daily caps, resume-by-case-ids). No M3 exit verdict is claimed yet.
+
 How the agent golden suites are built, what each execution mode may claim, and how to run the live benchmark. Companion to [ANALYST_METHODOLOGY.md](ANALYST_METHODOLOGY.md) (deterministic-tool suites) and the `golden-evals` / `agent-run-records` capability specs.
 
 ## Suites

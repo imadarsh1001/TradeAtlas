@@ -1,5 +1,6 @@
 """DuckDB Local Caching Layer for TradeAtlas Live Ingestion."""
 
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -9,38 +10,54 @@ import duckdb
 CACHE_DIR = Path(__file__).resolve().parent.parent / "data" / "cache"
 DB_PATH = CACHE_DIR / "live_mandi.duckdb"
 
+# Concurrent connections run CREATE TABLE IF NOT EXISTS as catalog write
+# transactions, which DuckDB rejects as write-write conflicts — surfaced by the
+# agent benchmark when a model makes two cache-touching tool calls in one turn
+# (langgraph's ToolNode executes them on parallel threads). The schema is
+# therefore created exactly once per database file, under a lock; and cache
+# WRITES are serialized process-wide (DuckDB MVCC rejects concurrent
+# delete+insert on the same rows).
+_SCHEMA_LOCK = threading.Lock()
+_INITIALIZED: set = set()
+_WRITE_LOCK = threading.Lock()
+
 
 def get_db_connection() -> duckdb.DuckDBPyConnection:
-    """Initialize and return a DuckDB connection with initialized schemas."""
+    """Return a connection to a database whose schema is guaranteed to exist."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    conn = duckdb.connect(str(DB_PATH))
-    conn.execute(
-        """
-        CREATE TABLE IF NOT EXISTS mandi_daily_cache (
-            state VARCHAR,
-            district VARCHAR,
-            market VARCHAR,
-            commodity VARCHAR,
-            variety VARCHAR,
-            grade VARCHAR,
-            arrival_date VARCHAR,
-            min_price DOUBLE,
-            max_price DOUBLE,
-            modal_price DOUBLE,
-            fetched_at TIMESTAMP
-        );
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE IF NOT EXISTS cache_metadata (
-            cache_key VARCHAR PRIMARY KEY,
-            last_fetched TIMESTAMP,
-            record_count INTEGER
-        );
-        """
-    )
-    return conn
+    if str(DB_PATH) not in _INITIALIZED:
+        with _SCHEMA_LOCK:
+            if str(DB_PATH) not in _INITIALIZED:
+                conn = duckdb.connect(str(DB_PATH))
+                conn.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS mandi_daily_cache (
+                        state VARCHAR,
+                        district VARCHAR,
+                        market VARCHAR,
+                        commodity VARCHAR,
+                        variety VARCHAR,
+                        grade VARCHAR,
+                        arrival_date VARCHAR,
+                        min_price DOUBLE,
+                        max_price DOUBLE,
+                        modal_price DOUBLE,
+                        fetched_at TIMESTAMP
+                    );
+                    """
+                )
+                conn.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS cache_metadata (
+                        cache_key VARCHAR PRIMARY KEY,
+                        last_fetched TIMESTAMP,
+                        record_count INTEGER
+                    );
+                    """
+                )
+                conn.close()
+                _INITIALIZED.add(str(DB_PATH))
+    return duckdb.connect(str(DB_PATH))
 
 
 def is_cache_fresh(cache_key: str, ttl_hours: float = 6.0) -> bool:
@@ -124,42 +141,43 @@ def save_records_to_cache(cache_key: str, records: List[Dict[str, Any]]) -> None
         first = records[0]
         state = first.get("state", "")
         commodity = first.get("commodity", "")
-        conn.execute(
-            "DELETE FROM mandi_daily_cache WHERE LOWER(state) = LOWER(?) AND LOWER(commodity) = LOWER(?)",
-            [state, commodity],
-        )
-
-        # Insert new records
-        insert_rows = []
-        for r in records:
-            insert_rows.append(
-                (
-                    r.get("state"),
-                    r.get("district"),
-                    r.get("market"),
-                    r.get("commodity"),
-                    r.get("variety"),
-                    r.get("grade"),
-                    str(r.get("arrival_date", "")),
-                    float(r.get("min_price", 0.0) or 0.0),
-                    float(r.get("max_price", 0.0) or 0.0),
-                    float(r.get("modal_price", 0.0) or 0.0),
-                    now,
-                )
+        with _WRITE_LOCK:  # parallel tool calls: DuckDB MVCC rejects concurrent delete+insert on the same rows
+            conn.execute(
+                "DELETE FROM mandi_daily_cache WHERE LOWER(state) = LOWER(?) AND LOWER(commodity) = LOWER(?)",
+                [state, commodity],
             )
 
-        conn.executemany(
-            """
-            INSERT INTO mandi_daily_cache VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            insert_rows,
-        )
+            # Insert new records
+            insert_rows = []
+            for r in records:
+                insert_rows.append(
+                    (
+                        r.get("state"),
+                        r.get("district"),
+                        r.get("market"),
+                        r.get("commodity"),
+                        r.get("variety"),
+                        r.get("grade"),
+                        str(r.get("arrival_date", "")),
+                        float(r.get("min_price", 0.0) or 0.0),
+                        float(r.get("max_price", 0.0) or 0.0),
+                        float(r.get("modal_price", 0.0) or 0.0),
+                        now,
+                    )
+                )
 
-        conn.execute(
-            """
-            INSERT OR REPLACE INTO cache_metadata VALUES (?, ?, ?)
-            """,
-            [cache_key, now, len(records)],
-        )
+            conn.executemany(
+                """
+                INSERT INTO mandi_daily_cache VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                insert_rows,
+            )
+
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO cache_metadata VALUES (?, ?, ?)
+                """,
+                [cache_key, now, len(records)],
+            )
     finally:
         conn.close()

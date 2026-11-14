@@ -78,3 +78,7 @@ api.agmarknet.gov.in/v1/
 * **Windows Application Control / uv quirks**:
   * The `pytest.exe` console-script trampoline in `.venv/Scripts/` is blocked by local Application Control policy (os error 4551). Run the suite as `uv run python -m pytest tests/ -q` instead; `uv run python` and the direct `.venv/Scripts/python.exe` both work.
   * `langsmith`'s pytest plugin (transitive via langchain) fails to import under the same policy (`xxhash` DLL blocked); it is blocked explicitly via `addopts = "-p no:langsmith"` in `pyproject.toml`.
+
+## Agent benchmark live-run findings (2026-11-15)
+
+First live campaign paused mid-run: provider tool-call/schema strictness varies (Groq validates tool args server-side and 400s the run; strict json_schema rejects the free-form selector — fixed via non-strict json_schema + client-side validation), langgraph executes multi-tool-call turns on parallel threads (DuckDB catalog DDL conflicts — fixed by once-per-DB schema init + serialized writes), and free-tier providers rate-limit hard under parallel suites (one provider per session; pacing + resume-by-case-ids in the runner). Full log: [BENCHMARK_FINDINGS.md](BENCHMARK_FINDINGS.md).

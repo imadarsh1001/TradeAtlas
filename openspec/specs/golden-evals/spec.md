@@ -71,7 +71,7 @@ The golden suites SHALL include an agent Buyer suite (exactly 15 cases: 9 `agent
 - **THEN** `evals/golden/buyer.json` contains exactly 15 and `evals/golden/adversarial.json` exactly 10 cases in the pinned kind composition, all with unique ids, each case's topic mapped to a tool selector in the suite itself
 
 ### Requirement: Agent evidence-fidelity scoring
-`agent-evidence-fidelity` cases SHALL be scored from the run record: the case passes when every answer figure's source tool names a tool executed in that run and its selector matches that tool call's arguments in schema-canonical form — both sides reduced by the runner to defaults-filled, type-coerced form before exact comparison — and each expected figure value equals the case's checked-in expectation rounded to 2 decimals, and every expected summary signal appears in the answer.
+`agent-evidence-fidelity` cases SHALL be scored from the run record: the case passes when every answer figure's source tool names a tool executed in that run and its selector AGREES with that tool call's schema-canonical arguments — on every argument the call meaningfully set, the figure's selector states the same value; record-level extra keys the model cites from the envelope's records (market, variety, grade) are permitted, a contradicted value is not — and each expected figure value equals the case's checked-in expectation rounded to 2 decimals, and every expected summary signal appears in the answer.
 
 #### Scenario: A figure traced to an uninvoked tool fails fidelity
 - **WHEN** an agent answer cites a figure whose selector does not match any executed tool call in canonical form

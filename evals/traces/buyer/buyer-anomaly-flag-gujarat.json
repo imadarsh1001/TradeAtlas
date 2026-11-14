@@ -1,15 +1,11 @@
 {
   "version": 1,
   "question": "Any unusual groundnut prices in Gujarat recently?",
+  "model_id": "z-ai/glm-5.3-flash",
   "model_messages": [
     {
       "role": "ai",
       "content": "",
-      "usage_metadata": {
-        "input_tokens": 100,
-        "output_tokens": 20,
-        "total_tokens": 120
-      },
       "tool_calls": [
         {
           "name": "detect_price_anomalies",
@@ -17,28 +13,82 @@
             "state": "Gujarat",
             "commodity": "Groundnut"
           },
-          "id": "c2",
+          "id": "867222bf-397e-4275-840e-3c1e8c8bd849",
+          "type": "tool_call"
+        },
+        {
+          "name": "check_series_coverage",
+          "args": {
+            "state": "Gujarat",
+            "commodity": "Groundnut"
+          },
+          "id": "284cf254-7eff-4bfd-bc54-ab996bd143d6",
           "type": "tool_call"
         }
-      ]
+      ],
+      "usage_metadata": {
+        "input_tokens": 2468,
+        "output_tokens": 108,
+        "total_tokens": 2576,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 62
+        }
+      }
     },
     {
       "role": "ai",
-      "content": "One statistically unusual move stands out in the Gujarat groundnut series.",
+      "content": "**No unusual groundnut prices recently in Gujarat** \u2014 the recent months came back clean.\n\n**What the anomaly scan found** (`detect_price_anomalies`, state=Gujarat, commodity=Groundnut):\n- Only **2 flags in the entire series**, and both are old:\n  - **2020-09**: \u20b94,186.56 \u2014 flagged as a **drop** (score \u22125.42)\n  - **2020-10**: \u20b94,881.72 \u2014 flagged as a **spike** (score +3.97)\n- The post-November-2025 segment (11 scored monthly changes) produced **zero flags**.\n- 92 monthly changes were examined overall; nothing in the current period stands out statistically.\n\n**Data quality** (`check_series_coverage`, same selectors): deep tier \u2014 94 observed months, no gaps (longest gap: 0), latest month **2026-10**, and 0 months of trailing staleness. So the \"nothing unusual recently\" result rests on a complete, current series.\n\n**Caveats**: The flags use a robust MAD method (modified z-score, threshold 3.5) \u2014 a statistical signal to investigate, not a proven market event. Note the 2020 flags fall in a pre-break segment of the pinned series, so their scores are computed against that era's volatility, not today's.\n\nIf you want to sanity-check the current level itself, I can pull the latest benchmark hub prices or MSP spread for Gujarat groundnut.",
+      "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 100,
-        "output_tokens": 20,
-        "total_tokens": 120
+        "input_tokens": 3037,
+        "output_tokens": 493,
+        "total_tokens": 3530,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 179
+        }
       }
     }
   ],
   "structured_response": {
-    "summary": "Gujarat groundnut shows one statistically unusual move: September 2020 dropped to 4,186.56 INR/quintal (modified z-score -5.42). Everything else sits within normal variation.",
+    "summary": "No unusual groundnut prices recently in Gujarat \u2014 the two flagged anomalies are both from 2020, and the last 12 months of data (Nov 2025 onward) show no statistical flags.",
     "figures": [
       {
-        "value": 4186.56,
-        "unit": "INR/quintal",
+        "value": 0.0,
+        "unit": "anomalies in recent segment",
         "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 2.0,
+        "unit": "total flags (2020-09 drop: \u20b94,186.56, score \u22125.42; 2020-10 spike: \u20b94,881.72, score +3.97)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 11.0,
+        "unit": "scored monthly changes since Nov 2025, none flagged",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 0.0,
+        "unit": "months of staleness; latest month 2026-10",
+        "source_tool": "check_series_coverage",
         "selector": {
           "state": "Gujarat",
           "commodity": "Groundnut"

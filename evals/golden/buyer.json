@@ -115,8 +115,7 @@
             "selector": {
               "state": "Gujarat",
               "commodity": "Groundnut"
-            },
-            "value": 4186.56
+            }
           }
         ],
         "summary_signals": [
@@ -161,7 +160,8 @@
             "selector": {
               "state": "Rajasthan",
               "commodity": "Groundnut"
-            }
+            },
+            "value": 7100.0
           }
         ],
         "summary_signals": [

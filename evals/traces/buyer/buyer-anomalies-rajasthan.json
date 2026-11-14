@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "question": "Has Rajasthan groundnut shown any statistically unusual price moves lately?",
+  "model_id": "z-ai/glm-5.3-flash",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "detect_price_anomalies",
+          "args": {
+            "state": "Rajasthan",
+            "commodity": "Groundnut"
+          },
+          "id": "5587a927-d85a-4e79-8a83-2aef1b56ae77",
+          "type": "tool_call"
+        },
+        {
+          "name": "check_series_coverage",
+          "args": {
+            "state": "Rajasthan",
+            "commodity": "Groundnut"
+          },
+          "id": "d4b2a852-dae2-4747-b9f0-dfb15bca427e",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2471,
+        "output_tokens": 137,
+        "total_tokens": 2608,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 91
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "**Short answer: No unusual moves recently.** The only statistical flag in the Rajasthan groundnut series is old \u2014 June 2024.\n\n**What the detector found** (robust MAD, modified z-score, threshold 3.5):\n- **1 flag out of 92 scored monthly changes** \u2014 June **2024** at \u20b94,937.16, a **drop** (score \u22123.69). That's ~2.4 years before the series' latest month, so nothing \"lately.\"\n- All recent months through the series' latest observation (**October 2026**) fall within normal bounds.\n\n**Data quality backing this** (from the pinned extract):\n- 94 observed months, **no missing months**, longest gap 0 \u2014 a complete series.\n- Trailing staleness: **0 months** vs. the extract's own range (latest month 2026-10).\n- Segments scored separately around the November 2025 break (82 pre-break, 12 post-break changes), so the recent 12 months were judged against their own regime.\n\n**Caveats worth keeping in mind:**\n- A statistical flag is a signal to investigate, not a proven market event \u2014 and in this case the single flag is stale anyway.\n- Staleness is measured against the extract's own last month, not the wall clock.\n\nIf you want to know what's *actually* happening in Rajasthan groundnut prices right now (mandi levels, MSP spread, or a delivered-cost quote), I can pull live wholesale data \u2014 just say the word.",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 3008,
+        "output_tokens": 437,
+        "total_tokens": 3445,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 114
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "No \u2014 Rajasthan groundnut shows no statistically unusual price moves in the recent period. The series is healthy (94 months, no gaps, zero staleness), and the only flagged anomaly is old: a single drop in June 2024, well over two years before the latest observation (Oct 2026).",
+    "figures": [
+      {
+        "value": 0.0,
+        "unit": "flags in the most recent segment",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 1.0,
+        "unit": "total flags (2024-06, direction=drop, score=-3.69, value=4937.16)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 92.0,
+        "unit": "scored monthly changes examined",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 11.0,
+        "unit": "scored changes in the November-2025-onward segment (none flagged)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 94.0,
+        "unit": "observed months, no missing months, latest = 2026-10, staleness = 0 months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      }
+    ]
+  }
+}

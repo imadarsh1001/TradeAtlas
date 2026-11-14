@@ -1,0 +1,16 @@
+{
+  "records": [
+    {
+      "state": "Rajasthan",
+      "district": "Bikaner",
+      "market": "Bikaner APMC",
+      "commodity": "Groundnut",
+      "variety": "G20",
+      "grade": "FAQ",
+      "arrival_date": "12/11/2026",
+      "min_price": 6900,
+      "max_price": 7300,
+      "modal_price": 7100
+    }
+  ]
+}

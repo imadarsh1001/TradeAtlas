@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "question": "Any unusual groundnut prices in Gujarat recently?",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "usage_metadata": {
+        "input_tokens": 100,
+        "output_tokens": 20,
+        "total_tokens": 120
+      },
+      "tool_calls": [
+        {
+          "name": "detect_price_anomalies",
+          "args": {
+            "state": "Gujarat",
+            "commodity": "Groundnut"
+          },
+          "id": "c2",
+          "type": "tool_call"
+        }
+      ]
+    },
+    {
+      "role": "ai",
+      "content": "One statistically unusual move stands out in the Gujarat groundnut series.",
+      "usage_metadata": {
+        "input_tokens": 100,
+        "output_tokens": 20,
+        "total_tokens": 120
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "Gujarat groundnut shows one statistically unusual move: September 2020 dropped to 4,186.56 INR/quintal (modified z-score -5.42). Everything else sits within normal variation.",
+    "figures": [
+      {
+        "value": 4186.56,
+        "unit": "INR/quintal",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      }
+    ]
+  }
+}

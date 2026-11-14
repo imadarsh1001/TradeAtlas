@@ -1,0 +1,28 @@
+{
+  "records": [
+    {
+      "state": "Gujarat",
+      "district": "Rajkot",
+      "market": "Rajkot APMC",
+      "commodity": "Groundnut",
+      "variety": "G20",
+      "grade": "FAQ",
+      "arrival_date": "12/11/2026",
+      "min_price": 6700,
+      "max_price": 7100,
+      "modal_price": 6900
+    },
+    {
+      "state": "Gujarat",
+      "district": "Rajkot",
+      "market": "Gondal APMC",
+      "commodity": "Groundnut",
+      "variety": "G20",
+      "grade": "FAQ",
+      "arrival_date": "12/11/2026",
+      "min_price": 6500,
+      "max_price": 6900,
+      "modal_price": 6700
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "records": [
+    {
+      "state": "Gujarat",
+      "district": "Banaskantha",
+      "market": "Deesa APMC",
+      "commodity": "Mustard",
+      "variety": "Laha",
+      "grade": "FAQ",
+      "arrival_date": "12/11/2026",
+      "min_price": 5400,
+      "max_price": 5800,
+      "modal_price": 5600
+    }
+  ]
+}

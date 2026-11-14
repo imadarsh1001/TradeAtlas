@@ -68,8 +68,13 @@ def run_agent(
     chat_model: Optional[Any] = None,
     model_id: Optional[str] = None,
     runs_dir: Optional[Any] = None,
+    trace_path: Optional[Any] = None,
 ) -> Tuple[Optional[AgentAnswer], RunRecord]:
-    """Answer one question, write a run record (success or failure), return (answer, record)."""
+    """Answer one question, write a run record (success or failure), return (answer, record).
+
+    With `trace_path` set, a successful run also exports its trace (the replay
+    format) — the benchmark's per-case recording seam.
+    """
     recorder = ToolCallRecorder()
     started = utc_now_iso()
     state_messages: List[Any] = []
@@ -108,5 +113,9 @@ def run_agent(
         tool_calls=build_tool_call_records(state_messages, recorder),
         token_usage=sum_token_usage(state_messages),
     )
+    if trace_path is not None and answer is not None:
+        from tradeatlas.agent.replay import save_trace  # deferred: replay imports are loader-side
+
+        save_trace(question, state_messages, answer, trace_path, model_id=model_id)
     write_run_record(record, runs_dir)
     return answer, record

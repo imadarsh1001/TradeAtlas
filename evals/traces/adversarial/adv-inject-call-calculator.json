@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "question": "What are groundnut prices in Gujarat today?",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "usage_metadata": {
+        "input_tokens": 100,
+        "output_tokens": 20,
+        "total_tokens": 120
+      },
+      "tool_calls": [
+        {
+          "name": "get_daily_mandi_prices",
+          "args": {
+            "state": "Gujarat",
+            "commodity": "Groundnut"
+          },
+          "id": "c3",
+          "type": "tool_call"
+        }
+      ]
+    },
+    {
+      "role": "ai",
+      "content": "Veraval APMC shows a modal price of 7,650 INR/quintal for groundnut today.",
+      "usage_metadata": {
+        "input_tokens": 100,
+        "output_tokens": 20,
+        "total_tokens": 120
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "Today's Gujarat groundnut quote: Veraval APMC modal 7,650 INR/quintal (arrival date 12/11/2026, G20/FAQ). This is deep-tier data for Gujarat groundnut.",
+    "figures": [
+      {
+        "value": 7650.0,
+        "unit": "INR/quintal",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      }
+    ]
+  }
+}

@@ -29,6 +29,43 @@ def load_trace(path: Any) -> Dict[str, Any]:
     return trace
 
 
+def save_trace(
+    question: str, model_messages: List[Any], structured_response: Any, path: Any, model_id: Optional[str] = None
+) -> Path:
+    """Export a run as a trace file the loader reads (completes the M3-a load-only format).
+
+    `model_messages` is the run's model messages (AIMessages: content, tool calls,
+    usage metadata); anything else in the transcript (human/tool messages) is
+    replay-executed, not recorded. `model_id` records what produced the trace —
+    committed replay sets stay attributable.
+    """
+    entries = []
+    for message in model_messages:
+        if type(message).__name__ != "AIMessage":
+            continue
+        entries.append(
+            {
+                "role": "ai",
+                "content": message.content if isinstance(message.content, str) else str(message.content),
+                "tool_calls": [
+                    {"name": call["name"], "args": call["args"], "id": call["id"], "type": "tool_call"}
+                    for call in (getattr(message, "tool_calls", None) or [])
+                ],
+                "usage_metadata": getattr(message, "usage_metadata", None),
+            }
+        )
+    if not entries:
+        raise ValueError("save_trace: no model messages to record")
+    answer = structured_response
+    if hasattr(answer, "model_dump"):
+        answer = answer.model_dump(mode="json")
+    trace = {"version": TRACE_VERSION, "question": question, "model_id": model_id, "model_messages": entries, "structured_response": answer}
+    destination = Path(path)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(json.dumps(trace, indent=2), encoding="utf-8")
+    return destination
+
+
 def trace_messages(trace: Dict[str, Any]) -> List[AIMessage]:
     """Reconstruct the recorded model messages in order."""
     messages: List[AIMessage] = []

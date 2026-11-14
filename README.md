@@ -21,7 +21,7 @@ TradeAtlas answers one buyer question reliably: **"I need N tonnes of commodity 
 
   Every tool returns an **evidence-card envelope** (`tradeatlas.models.EvidenceEnvelope`): the payload plus observation date(s), retrieval time (UTC), a coverage statement, a deep/thin tier label, and caveats — including explicit no-data statements instead of empty lists. **Breaking vs. pre-M1 raw record lists.** Groundnut in Gujarat/Rajasthan is `deep`; everything else is `thin` with an unverified-coverage caveat.
 - **Forecasting harness** (`tradeatlas/forecasting.py`): rolling-cutoff backtest of three baselines at 1–3 month horizons with MAE/MASE and reporting-break isolation — `uv run python -m tradeatlas.forecasting`
-- **Golden evals** (`evals/`): versioned per-persona suites with a runner recording results — `uv run python -m evals.runner analyst`
+- **Golden evals** (`evals/`): versioned per-persona suites with a runner recording results — analyst (M2 tools) plus agent Buyer/adversarial suites scored from run records in two modes ([methodology](docs/BENCHMARK_METHODOLOGY.md)): `uv run python -m evals.runner analyst` · `uv run python -m evals.runner buyer`
 - **Reproducible experiments** (`experiments/`): groundnut data proof, price backtest (3 baselines × 3 horizons, reporting-break isolated), LangGraph agent benchmark (fixed report vs. single agent vs. specialists), marimo lab ([marimo](https://marimo.io) — reactive Python notebooks).
 - **Spec & decision record**: [MVP plan](TradeAtlas_India_Agricultural_Intelligence_MVP_Plan.md) (historical), [concepts brief](concepts_brief.md) (historical), [glossary](GLOSSARY.md), [personas](PERSONAS.md), [roadmap](docs/ROADMAP.md), and [six ADRs](docs/adr/) (architecture decision records).
 

@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "buyer-daily-price-gujarat",
+      "persona": "buyer",
+      "question": "What are groundnut prices in Gujarat today? Give me the current mandi quote.",
+      "kind": "agent-evidence-fidelity",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "figures": [
+          {
+            "source_tool": "get_daily_mandi_prices",
+            "selector": {
+              "state": "Gujarat",
+              "commodity": "Groundnut"
+            },
+            "value": 7650.0
+          }
+        ],
+        "summary_signals": [
+          "Gujarat",
+          "quintal"
+        ]
+      }
+    },
+    {
+      "id": "buyer-hub-msp-rajkot",
+      "persona": "buyer",
+      "question": "How does the Rajkot groundnut quote compare against MSP right now — is the market firm or distressed?",
+      "kind": "agent-evidence-fidelity",
+      "target": "agent",
+      "args": {},
+      "fixture": "datagov_hub_rajkot_groundnut.json",
+      "expected": {
+        "figures": [
+          {
+            "source_tool": "get_benchmark_hub_summary",
+            "selector": {
+              "state": "Gujarat",
+              "commodity": "Groundnut"
+            },
+            "value": 117.0
+          }
+        ],
+        "summary_signals": [
+          "Rajkot",
+          "MSP"
+        ]
+      }
+    },
+    {
+      "id": "buyer-delivered-cost-kernels",
+      "persona": "buyer",
+      "question": "Delivered cost for 100 MT of groundnut kernels at 5123.45 INR/quintal with 900 INR/tonne freight?",
+      "kind": "agent-evidence-fidelity",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "figures": [
+          {
+            "source_tool": "calculate_delivered_cost",
+            "selector": {
+              "commodity": "Groundnut",
+              "base_price_rs_qtl": 5123.45,
+              "freight_per_tonne": 900.0
+            },
+            "value": 52134.5
+          }
+        ],
+        "summary_signals": [
+          "delivered cost"
+        ]
+      }
+    },
+    {
+      "id": "buyer-delivered-cost-pods",
+      "persona": "buyer",
+      "question": "What's the delivered cost per tonne if I buy unshelled groundnut pods at 5123.45 INR/quintal with 900 INR/tonne freight?",
+      "kind": "agent-evidence-fidelity",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "figures": [
+          {
+            "source_tool": "calculate_delivered_cost",
+            "selector": {
+              "commodity": "Groundnut",
+              "base_price_rs_qtl": 5123.45,
+              "freight_per_tonne": 900.0,
+              "is_pod": true
+            },
+            "value": 75592.14
+          }
+        ],
+        "summary_signals": [
+          "pods",
+          "delivered cost"
+        ]
+      }
+    },
+    {
+      "id": "buyer-anomaly-flag-gujarat",
+      "persona": "buyer",
+      "question": "Any unusual groundnut prices in Gujarat recently?",
+      "kind": "agent-evidence-fidelity",
+      "target": "agent",
+      "args": {},
+      "trace": "buyer-anomaly-flag-gujarat.json",
+      "expected": {
+        "figures": [
+          {
+            "source_tool": "detect_price_anomalies",
+            "selector": {
+              "state": "Gujarat",
+              "commodity": "Groundnut"
+            },
+            "value": 4186.56
+          }
+        ],
+        "summary_signals": [
+          "September 2020"
+        ]
+      }
+    },
+    {
+      "id": "buyer-coverage-rajasthan",
+      "persona": "buyer",
+      "question": "How complete is the Rajasthan groundnut price history before I rely on it for comparisons?",
+      "kind": "agent-evidence-fidelity",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "figures": [
+          {
+            "source_tool": "check_series_coverage",
+            "selector": {
+              "state": "Rajasthan",
+              "commodity": "Groundnut"
+            }
+          }
+        ],
+        "summary_signals": [
+          "Rajasthan"
+        ]
+      }
+    },
+    {
+      "id": "buyer-price-comparison-rajasthan",
+      "persona": "buyer",
+      "question": "And what are groundnut prices looking like in Rajasthan today?",
+      "kind": "agent-evidence-fidelity",
+      "target": "agent",
+      "args": {},
+      "fixture": "datagov_bikaner_groundnut.json",
+      "expected": {
+        "figures": [
+          {
+            "source_tool": "get_daily_mandi_prices",
+            "selector": {
+              "state": "Rajasthan",
+              "commodity": "Groundnut"
+            }
+          }
+        ],
+        "summary_signals": [
+          "Rajasthan",
+          "7100"
+        ]
+      }
+    },
+    {
+      "id": "buyer-supply-balance-gujarat",
+      "persona": "buyer",
+      "question": "What does the macro supply picture for Gujarat groundnut look like this season?",
+      "kind": "agent-evidence-fidelity",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "figures": [
+          {
+            "source_tool": "get_macro_supply_balance",
+            "selector": {
+              "state": "Gujarat",
+              "crop": "Groundnut"
+            }
+          }
+        ],
+        "summary_signals": [
+          "supply",
+          "Gujarat"
+        ]
+      }
+    },
+    {
+      "id": "buyer-anomalies-rajasthan",
+      "persona": "buyer",
+      "question": "Has Rajasthan groundnut shown any statistically unusual price moves lately?",
+      "kind": "agent-evidence-fidelity",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "figures": [
+          {
+            "source_tool": "detect_price_anomalies",
+            "selector": {
+              "state": "Rajasthan",
+              "commodity": "Groundnut"
+            }
+          }
+        ],
+        "summary_signals": [
+          "Rajasthan"
+        ]
+      }
+    },
+    {
+      "id": "buyer-unsupported-commodity",
+      "persona": "buyer",
+      "question": "What are chickpea prices in Gujarat today?",
+      "kind": "agent-abstention",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "unavailability_signal": "chickpea"
+      }
+    },
+    {
+      "id": "buyer-unsupported-state",
+      "persona": "buyer",
+      "question": "What are groundnut prices in Punjab today?",
+      "kind": "agent-abstention",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "unavailability_signal": "Punjab"
+      }
+    },
+    {
+      "id": "buyer-missing-selector-state",
+      "persona": "buyer",
+      "question": "What are groundnut prices today?",
+      "kind": "agent-abstention",
+      "target": "agent",
+      "args": {},
+      "trace": "buyer-missing-selector-state.json",
+      "expected": {
+        "unavailability_signal": "state"
+      }
+    },
+    {
+      "id": "buyer-missing-form",
+      "persona": "buyer",
+      "question": "What's the delivered cost for 100 MT of groundnut?",
+      "kind": "agent-abstention",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "unavailability_signal": "pods or kernels"
+      }
+    },
+    {
+      "id": "buyer-no-arrivals",
+      "persona": "buyer",
+      "question": "How many tonnes of groundnut arrived at Rajkot APMC last week?",
+      "kind": "agent-abstention",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "unavailability_signal": "arrival"
+      }
+    },
+    {
+      "id": "buyer-no-grades",
+      "persona": "buyer",
+      "question": "Which groundnut grades are currently available across Gujarat mandis?",
+      "kind": "agent-abstention",
+      "target": "agent",
+      "args": {},
+      "expected": {
+        "unavailability_signal": "grade"
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "question": "What are groundnut prices today?",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "usage_metadata": {
+        "input_tokens": 100,
+        "output_tokens": 20,
+        "total_tokens": 120
+      },
+      "tool_calls": [
+        {
+          "name": "get_daily_mandi_prices",
+          "args": {
+            "commodity": "Groundnut"
+          },
+          "id": "c1",
+          "type": "tool_call"
+        }
+      ]
+    },
+    {
+      "role": "ai",
+      "content": "I can pull current groundnut prices, but I need to know which state you're sourcing in \u2014 Gujarat or Rajasthan? The daily price tool needs a state.",
+      "usage_metadata": {
+        "input_tokens": 100,
+        "output_tokens": 20,
+        "total_tokens": 120
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "I can pull current groundnut prices, but I need to know which state you're sourcing in \u2014 the daily price tool requires a state (Gujarat or Rajasthan are the deep-coverage states).",
+    "figures": []
+  }
+}

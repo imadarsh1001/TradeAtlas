@@ -26,6 +26,12 @@ dev = ["pytest>=8"]
 # langchain) fails to import under local Application Control policy; its
 # tracing is not used by this suite.
 addopts = "-p no:langsmith_plugin"
+filterwarnings = [
+    # create_react_agent is the prebuilt constructor actually exported by the
+    # pinned langgraph 1.2.20; its successor lives in `langchain.agents`, a
+    # package this project deliberately does not depend on. Revisit at M3-d.
+    "ignore:create_react_agent has been moved:DeprecationWarning",
+]
 
 [tool.marimo.runtime]
 auto_instantiate = true

@@ -52,17 +52,22 @@ uv run --locked python experiments/groundnut_agent_benchmark.py
 
 ```text
 tradeatlas/            Deterministic core: ingest, cache, calculator, forecasting, analytics, models
+tradeatlas/agent/      Agent layer (M3 Build 1): single agent over the evidence tools, run records, replay
 tradeatlas_mcp.py      MCP server (7 tools)
 config/                Benchmark hub mandis + MSP benchmarks
 data/raw/              Pinned historical extracts (UPAg APY — area/production/yield — AGMARKNET state-monthly)
 data/manifest.json     SHA-256 provenance for pinned files (enforced by tests)
-evals/                 Golden suites + runner (analyst suite gates M2)
+evals/                 Golden suites + runner (analyst suite gates M2) · agent trace fixtures · git-ignored results & run records
 experiments/           Research scripts and marimo lab (M0 evidence)
 docs/adr/              Architecture decision records (ADRs)
 docs/ROADMAP.md        Reconciled milestones — source of truth
 PERSONAS.md            Buyer (primary) · Sell-side · Analyst
 GLOSSARY.md            Canonical domain terminology
 ```
+
+## Agent layer (M3 Build 1)
+
+A single LangGraph agent turns a natural-language question into evidence-card tool calls and a validated structured answer — every figure carries its source tool and selector arguments, and envelope payloads are treated strictly as data, never instructions. Every run writes a JSON record (model id, prompt version, code version, per-tool-call telemetry, token usage) under `evals/runs/`; the test suite drives the agent through recorded traces in `evals/traces/`, so no test needs network or a live model. Manual run: `uv run python -m tradeatlas.agent "your question"` (requires `TRADEATLAS_AGENT_MODEL` and provider credentials).
 
 ## Data sources & compliance
 

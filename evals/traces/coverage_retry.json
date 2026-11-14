@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "question": "How complete is the Rajasthan groundnut series?",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "check_series_coverage",
+          "args": {"commodity": "Groundnut"},
+          "id": "call_retry_1",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {"input_tokens": 398, "output_tokens": 24, "total_tokens": 422}
+    },
+    {
+      "role": "ai",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "check_series_coverage",
+          "args": {"state": "Rajasthan", "commodity": "Groundnut"},
+          "id": "call_retry_2",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {"input_tokens": 830, "output_tokens": 35, "total_tokens": 865}
+    },
+    {
+      "role": "ai",
+      "content": "The Rajasthan groundnut series is complete through 2026-10.",
+      "tool_calls": [],
+      "usage_metadata": {"input_tokens": 1520, "output_tokens": 78, "total_tokens": 1598}
+    }
+  ],
+  "structured_response": {
+    "summary": "The Rajasthan groundnut series is complete: 94 observed months through 2026-10 with no gaps.",
+    "figures": [
+      {
+        "value": 94.0,
+        "unit": "months",
+        "source_tool": "check_series_coverage",
+        "selector": {"state": "Rajasthan", "commodity": "Groundnut"}
+      }
+    ]
+  }
+}

@@ -8,3 +8,6 @@ data/cache/
 
 # Golden-eval results are regenerated per run (see docs/ANALYST_METHODOLOGY.md)
 evals/results/
+
+# Agent run records are regenerated per run (see tradeatlas/agent/run_records.py)
+evals/runs/

@@ -1,0 +1,165 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "analyst-forecast-gujarat-pre-h1-last-observed-mae",
+      "persona": "analyst",
+      "question": "What is the pre-break, one-month-ahead MAE of the last-observed baseline for Gujarat?",
+      "kind": "numeric-exact",
+      "target": "forecast_group",
+      "args": {
+        "state": "Gujarat",
+        "target_period": "Before November 2025",
+        "months_ahead": 1,
+        "metric": "mae",
+        "method": "Last observed"
+      },
+      "expected": 191.55
+    },
+    {
+      "id": "analyst-forecast-rajasthan-pre-h1-seasonal-mase",
+      "persona": "analyst",
+      "question": "Does the seasonal baseline score MASE 1.0 by construction for Rajasthan pre-break?",
+      "kind": "numeric-exact",
+      "target": "forecast_group",
+      "args": {
+        "state": "Rajasthan",
+        "target_period": "Before November 2025",
+        "months_ahead": 1,
+        "metric": "mase",
+        "method": "Same month last year"
+      },
+      "expected": 1.0
+    },
+    {
+      "id": "analyst-forecast-gujarat-post-h1-linear-trend-mae",
+      "persona": "analyst",
+      "question": "What is the post-break, one-month-ahead MAE of the linear trend for Gujarat?",
+      "kind": "numeric-exact",
+      "target": "forecast_group",
+      "args": {
+        "state": "Gujarat",
+        "target_period": "November 2025 onward",
+        "months_ahead": 1,
+        "metric": "mae",
+        "method": "Linear trend"
+      },
+      "expected": 607.41
+    },
+    {
+      "id": "analyst-coverage-gujarat-observed-months",
+      "persona": "analyst",
+      "question": "How many months does the pinned Gujarat series observe?",
+      "kind": "numeric-exact",
+      "target": "coverage_report",
+      "args": {
+        "state": "Gujarat",
+        "commodity": "Groundnut",
+        "field": "observed_months"
+      },
+      "expected": 94.0
+    },
+    {
+      "id": "analyst-anomaly-gujarat-envelope",
+      "persona": "analyst",
+      "question": "Does the Gujarat anomaly result carry deep tier and the method/threshold caveats?",
+      "kind": "evidence-fidelity",
+      "target": "anomaly_result",
+      "args": {
+        "state": "Gujarat",
+        "commodity": "Groundnut"
+      },
+      "expected": {
+        "tier": "deep",
+        "caveat_contains": [
+          "3.5",
+          "signal to investigate"
+        ]
+      }
+    },
+    {
+      "id": "analyst-coverage-gujarat-envelope",
+      "persona": "analyst",
+      "question": "Does the Gujarat coverage result carry deep tier and the break/staleness fields?",
+      "kind": "evidence-fidelity",
+      "target": "coverage_report",
+      "args": {
+        "state": "Gujarat",
+        "commodity": "Groundnut"
+      },
+      "expected": {
+        "tier": "deep",
+        "payload_has": [
+          "pre_break_months",
+          "post_break_months",
+          "latest_month"
+        ]
+      }
+    },
+    {
+      "id": "analyst-anomaly-rajasthan-envelope",
+      "persona": "analyst",
+      "question": "Does the Rajasthan anomaly result carry the signal caveat and its payload structure?",
+      "kind": "evidence-fidelity",
+      "target": "anomaly_result",
+      "args": {
+        "state": "Rajasthan",
+        "commodity": "Groundnut"
+      },
+      "expected": {
+        "caveat_contains": [
+          "signal to investigate"
+        ],
+        "payload_has": [
+          "flags",
+          "examined"
+        ]
+      }
+    },
+    {
+      "id": "analyst-coverage-unknown-state-abstains",
+      "persona": "analyst",
+      "question": "What happens when coverage is requested for a state outside the pinned extract?",
+      "kind": "abstention",
+      "target": "coverage_report",
+      "args": {
+        "state": "Maharashtra",
+        "commodity": "Groundnut",
+        "selector": "Maharashtra"
+      },
+      "expected": {
+        "no_data": true
+      }
+    },
+    {
+      "id": "analyst-anomaly-unknown-commodity-abstains",
+      "persona": "analyst",
+      "question": "What happens when anomaly detection is requested for a commodity outside the pinned extract?",
+      "kind": "abstention",
+      "target": "anomaly_result",
+      "args": {
+        "state": "Gujarat",
+        "commodity": "Soybean",
+        "selector": "Soybean"
+      },
+      "expected": {
+        "no_data": true
+      }
+    },
+    {
+      "id": "analyst-coverage-unknown-commodity-abstains",
+      "persona": "analyst",
+      "question": "What happens when coverage is requested for a commodity outside the pinned extract?",
+      "kind": "abstention",
+      "target": "coverage_report",
+      "args": {
+        "state": "Gujarat",
+        "commodity": "Mustard",
+        "selector": "Mustard"
+      },
+      "expected": {
+        "no_data": true
+      }
+    }
+  ]
+}

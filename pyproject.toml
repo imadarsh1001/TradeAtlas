@@ -22,9 +22,10 @@ package = false
 dev = ["pytest>=8"]
 
 [tool.pytest.ini_options]
-# langsmith's pytest plugin (transitive via langchain) fails to import under
-# local Application Control policy; its tracing is not used by this suite.
-addopts = "-p no:langsmith"
+# langsmith's pytest plugin (entry point `langsmith_plugin`, transitive via
+# langchain) fails to import under local Application Control policy; its
+# tracing is not used by this suite.
+addopts = "-p no:langsmith_plugin"
 
 [tool.marimo.runtime]
 auto_instantiate = true

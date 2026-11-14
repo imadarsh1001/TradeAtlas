@@ -5,3 +5,6 @@ __marimo__/
 .env.local
 .env.*.local
 data/cache/
+
+# Golden-eval results are regenerated per run (see docs/ANALYST_METHODOLOGY.md)
+evals/results/

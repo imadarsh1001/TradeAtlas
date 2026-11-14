@@ -60,3 +60,23 @@ def test_delivered_cost_through_server():
     )
     assert "59342.86" in serialized
     assert "Kernel Equivalent Benchmark" in serialized
+
+
+# --- M2 tools: real pinned-data paths (offline: file reads only, no network) ---
+
+def test_detect_price_anomalies_through_server():
+    serialized = _serialized(_call("detect_price_anomalies", {"state": "Gujarat", "commodity": "Groundnut"}))
+    assert "coverage" in serialized and "tier" in serialized
+    assert "signal to investigate" in serialized
+
+
+def test_check_series_coverage_through_server():
+    serialized = _serialized(_call("check_series_coverage", {"state": "Gujarat", "commodity": "Groundnut"}))
+    assert "observed_months" in serialized
+    assert "2026-10" in serialized
+
+
+def test_detect_price_anomalies_unknown_commodity_through_server():
+    serialized = _serialized(_call("detect_price_anomalies", {"state": "Gujarat", "commodity": "Soybean"}))
+    assert "no_data" in serialized
+    assert "Soybean" in serialized

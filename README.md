@@ -10,18 +10,22 @@ TradeAtlas answers one buyer question reliably: **"I need N tonnes of commodity 
 
 ## What works today
 
-- **MCP (Model Context Protocol) server** (`tradeatlas_mcp.py`) with 5 deterministic tools, consumable from Claude Code, Cursor, or any MCP client:
+- **MCP (Model Context Protocol) server** (`tradeatlas_mcp.py`) with 7 deterministic tools, consumable from Claude Code, Cursor, or any MCP client:
   - `get_daily_mandi_prices` — live daily wholesale prices from data.gov.in (DuckDB-cached, 6 h TTL)
   - `get_benchmark_hub_summary` — curated benchmark hub mandis vs. the central Minimum Support Price (MSP) spread
   - `get_spot_weekly_prices` — 7-day rolling AGMARKNET 2.0 spot prices (India's official agricultural market-price network; unauthenticated, compliant)
   - `get_macro_supply_balance` — UPAg (Unified Portal for Agricultural Statistics) advance estimates vs. 3-year baseline (surplus/deficit signal)
   - `calculate_delivered_cost` — landed cost per tonne incl. the 70% shelling-outturn pod→kernel benchmark
+  - `detect_price_anomalies` — robust MAD flagging of unusual monthly price changes (threshold 3.5, per-segment)
+  - `check_series_coverage` — month coverage, gaps, and trailing staleness for the pinned series
 
   Every tool returns an **evidence-card envelope** (`tradeatlas.models.EvidenceEnvelope`): the payload plus observation date(s), retrieval time (UTC), a coverage statement, a deep/thin tier label, and caveats — including explicit no-data statements instead of empty lists. **Breaking vs. pre-M1 raw record lists.** Groundnut in Gujarat/Rajasthan is `deep`; everything else is `thin` with an unverified-coverage caveat.
+- **Forecasting harness** (`tradeatlas/forecasting.py`): rolling-cutoff backtest of three baselines at 1–3 month horizons with MAE/MASE and reporting-break isolation — `uv run python -m tradeatlas.forecasting`
+- **Golden evals** (`evals/`): versioned per-persona suites with a runner recording results — `uv run python -m evals.runner analyst`
 - **Reproducible experiments** (`experiments/`): groundnut data proof, price backtest (3 baselines × 3 horizons, reporting-break isolated), LangGraph agent benchmark (fixed report vs. single agent vs. specialists), marimo lab ([marimo](https://marimo.io) — reactive Python notebooks).
 - **Spec & decision record**: [MVP plan](TradeAtlas_India_Agricultural_Intelligence_MVP_Plan.md) (historical), [concepts brief](concepts_brief.md) (historical), [glossary](GLOSSARY.md), [personas](PERSONAS.md), [roadmap](docs/ROADMAP.md), and [six ADRs](docs/adr/) (architecture decision records).
 
-**Status:** M0 and M1 complete (evidence-card envelopes, 33-test offline suite, source manifest) → **M2 (analyst lens) is next**. See the [roadmap](docs/ROADMAP.md).
+**Status:** M0–M2 complete (evidence-card tools, forecasting harness, anomaly/coverage detection, golden evals) → **M3 (agent layer) is next**. See the [roadmap](docs/ROADMAP.md).
 
 ## Quickstart
 
@@ -47,10 +51,12 @@ uv run --locked python experiments/groundnut_agent_benchmark.py
 ## Repository layout
 
 ```text
-tradeatlas/            Deterministic core: ingest, cache, calculator
-tradeatlas_mcp.py      MCP server (5 tools)
+tradeatlas/            Deterministic core: ingest, cache, calculator, forecasting, analytics, models
+tradeatlas_mcp.py      MCP server (7 tools)
 config/                Benchmark hub mandis + MSP benchmarks
 data/raw/              Pinned historical extracts (UPAg APY — area/production/yield — AGMARKNET state-monthly)
+data/manifest.json     SHA-256 provenance for pinned files (enforced by tests)
+evals/                 Golden suites + runner (analyst suite gates M2)
 experiments/           Research scripts and marimo lab (M0 evidence)
 docs/adr/              Architecture decision records (ADRs)
 docs/ROADMAP.md        Reconciled milestones — source of truth

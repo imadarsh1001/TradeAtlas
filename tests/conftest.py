@@ -4,12 +4,19 @@ import json
 from pathlib import Path
 
 import httpx
+import pandas as pd
 import pytest
 
 from tradeatlas import cache as cache_mod
 from tradeatlas import ingest as ingest_mod
 
 FIXTURES = Path(__file__).parent / "fixtures"
+
+
+def make_series(values, start: str = "2024-01") -> pd.Series:
+    """Synthetic monthly series for analytics tests; None entries stay as gaps (NaN)."""
+    months = pd.period_range(start, periods=len(values), freq="M")
+    return pd.Series([float(v) if v is not None else float("nan") for v in values], index=months)
 
 
 @pytest.fixture(scope="session")

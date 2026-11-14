@@ -7,6 +7,10 @@ quote calculation tools for the Indian Edible Oilseeds Complex.
 from typing import List, Optional
 from mcp.server.mcpserver import MCPServer
 
+from tradeatlas.analytics import (
+    check_series_coverage as run_coverage_check,
+    detect_price_anomalies as run_anomaly_detection,
+)
 from tradeatlas.calculator import calculate_delivered_cost as calc_delivered_cost
 from tradeatlas.ingest import (
     fetch_benchmark_hub_summary,
@@ -140,6 +144,36 @@ def calculate_delivered_cost(
         is_pod=is_pod,
         decortication_allowance_tonne=decortication_allowance_tonne,
     )
+
+
+@mcp.tool()
+def detect_price_anomalies(state: str, commodity: str) -> EvidenceEnvelope:
+    """Flag statistically unusual monthly price observations (robust MAD, threshold 3.5) from the pinned series.
+
+    Args:
+        state: State in the pinned extract ('Gujarat' or 'Rajasthan').
+        commodity: 'Groundnut' (the pinned extract's commodity).
+
+    Returns:
+        EvidenceEnvelope: flagged observations (month, value, score, direction) with per-segment
+        statistics, method/threshold caveats, and examined/flagged coverage.
+    """
+    return run_anomaly_detection(state=state, commodity=commodity)
+
+
+@mcp.tool()
+def check_series_coverage(state: str, commodity: str) -> EvidenceEnvelope:
+    """Report month coverage, gaps, and trailing staleness for a pinned state/commodity series.
+
+    Args:
+        state: State in the pinned extract ('Gujarat' or 'Rajasthan').
+        commodity: 'Groundnut' (the pinned extract's commodity).
+
+    Returns:
+        EvidenceEnvelope: observed/missing months, longest gap, latest month, pre/post-break
+        month counts (separate), and trailing staleness vs. the extract's own range.
+    """
+    return run_coverage_check(state=state, commodity=commodity)
 
 
 if __name__ == "__main__":

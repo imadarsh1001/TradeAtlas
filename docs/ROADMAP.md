@@ -31,12 +31,12 @@
 | **Exit condition** | `uv run pytest` green; every tool output is self-describing (age, coverage, tier). |
 | **Skills shown** | Architecture, engineering rigor |
 
-### M2 — Analyst lens
+### M2 — Analyst lens ✅ (done)
 
 | | |
 | --- | --- |
 | **Deliverables** | Backtest harness productized from `experiments/groundnut_price_backtest.py` into the package (last-observed naive, same-month-last-year, linear trend; MASE — Mean Absolute Scaled Error — and MAE — Mean Absolute Error — at 1–3 month horizons; reporting-break isolation preserved). Deterministic anomaly detection and coverage/gap-detection tools. Methodology notes. Stage gate: one ML model only after the baseline harness passes. |
-| **Exit condition** | Reproducible MASE/MAE backtest report generated from package code; anomaly and coverage tools return evidence cards. Analyst golden suite passes. |
+| **Exit condition** | Met: reproducible MASE/MAE backtest report generated from package code (`python -m tradeatlas.forecasting`); anomaly and coverage tools return evidence cards (`detect_price_anomalies`, `check_series_coverage` MCP tools); Analyst golden suite passes (10/10 via `python -m evals.runner analyst`). |
 | **Skills shown** | Data science, machine learning |
 
 ### M3 — Agent layer
@@ -107,4 +107,4 @@ Each item enters the milestone plan only through its gate — the roadmap above 
 
 ## Current status
 
-**M0 and M1 are complete. M2 — Analyst lens — is next.** M1 shipped via the OpenSpec change `core-stabilization-evidence-retrofit` (evidence-card envelopes on all 5 tools, 33-test offline suite, source manifest, TLS/UTC hygiene). Sequencing, not dates, governs; no milestone carries a calendar commitment.
+**M0, M1, and M2 are complete. M3 — Agent layer — is next.** M2 shipped via the OpenSpec change `productize-analyst-lens` (backtest harness with MAE/MASE, anomaly + coverage evidence-card tools, golden-eval infrastructure with the 10-case Analyst suite, methodology notes). The ML stage gate is now open: a future change may add one ML model against the passing baseline harness. Sequencing, not dates, governs; no milestone carries a calendar commitment.

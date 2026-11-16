@@ -67,7 +67,7 @@ GLOSSARY.md            Canonical domain terminology
 
 ## Agent layer (M3 Build 1)
 
-A single LangGraph agent turns a natural-language question into evidence-card tool calls and a validated structured answer — every figure carries its source tool and selector arguments, and envelope payloads are treated strictly as data, never instructions. Every run writes a JSON record (model id, prompt version, code version, per-tool-call telemetry, token usage) under `evals/runs/`; the test suite drives the agent through recorded traces in `evals/traces/`, so no test needs network or a live model. Manual run: `uv run python -m tradeatlas.agent "your question"` (requires `TRADEATLAS_AGENT_MODEL` and provider credentials).
+A single LangGraph agent turns a natural-language question into evidence-card tool calls and a validated structured answer — every figure carries its source tool and selector arguments, and envelope payloads are treated strictly as data, never instructions. Every run writes a JSON record (model id, prompt version, code version, per-tool-call telemetry, token usage) under `evals/runs/`; the test suite drives the agent through recorded traces in `evals/traces/`, so no test needs network or a live model. Manual run: `uv run python -m tradeatlas.agent "your question"` (requires `TRADEATLAS_AGENT_MODEL` naming an enabled entry in the model registry and Cloudflare AI Gateway credentials — all live LLM traffic routes through the gateway under registry governance: per-model params, RPM/daily limits, pacing).
 
 ## Data sources & compliance
 

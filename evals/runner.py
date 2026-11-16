@@ -6,24 +6,32 @@ id, persona, question, kind, target, args, expected (rubric). Resolver kinds
 resolver. Agent kinds (agent-evidence-fidelity | agent-abstention |
 agent-injection-resistance) bind target to the literal "agent" and are scored
 from the M3-a run record — two modes: replay verification (default, CI-safe,
-recorded traces) and live benchmark (--agent; hermetic data, real model).
+recorded traces) and live benchmark (--agent; hermetic data, real model routed
+through the model registry + Cloudflare AI Gateway).
 
-Results: evals/results/<persona>.json (git-ignored — reproducible from suite + code).
+Live runs are paced (inter-case delay, RPM floor), survive transport failures
+(bounded retries, then skip-and-continue), respect per-entry daily caps, and
+append one ledger row per case (evals/results/run_ledger.jsonl) — the
+drop-decision evidence for the next run. Results:
+evals/results/<persona>.json (git-ignored — reproducible from suite + code).
 """
 
 import argparse
 import functools
 import json
+import os
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
+import time
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
+from evals import ledger
+from tradeatlas.agent.run_records import code_version as _code_version  # deduped: same helper lives on run records
 from tradeatlas.models import EvidenceEnvelope
 
 REQUIRED_FIELDS = ["id", "persona", "question", "kind", "target", "args", "expected"]
@@ -36,18 +44,22 @@ TRACES_DIR = EVALS_DIR / "traces"
 FIXTURES_DIR = EVALS_DIR / "fixtures"
 TESTS_FIXTURES_DIR = EVALS_DIR.parent / "tests" / "fixtures"
 
+# Gentle-protocol pacing + transport-failure policy (docs/BENCHMARK_FINDINGS.md §5):
+# inter-case delay (30-60s band; 45s default), never faster than the entry's RPM
+# allows; transport failures retry with linear backoff, then the case is skipped
+# as provider-unavailable and the suite continues.
+INTER_CASE_DELAY_ENV = "TRADEATLAS_INTER_CASE_DELAY"
+DEFAULT_DELAY_S = 45.0
+MAX_TRANSPORT_ATTEMPTS = 3
+RETRY_BACKOFF_S = 5.0
+
 _report_cache: Dict[str, Any] = {}
 
 
-def _code_version() -> str:
-    """Short git SHA of the current checkout ('unknown' outside a repo)."""
-    try:
-        return subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"],
-            capture_output=True, text=True, check=True,
-        ).stdout.strip()
-    except Exception:
-        return "unknown"
+def _sleep(seconds: float) -> None:
+    """Pacing/backoff sleep (module-level so tests can intercept it)."""
+    if seconds > 0:
+        time.sleep(seconds)
 
 
 def _cached_report() -> Dict[str, Any]:
@@ -365,6 +377,8 @@ def isolated_cache():
 def _run_agent_case(
     case: Dict[str, Any], persona: str, mode: str, model_factory: Optional[Callable[[], Any]],
     traces_root: Path,
+    live_model: Optional[Any] = None,
+    live_model_id: Optional[str] = None,
 ) -> Tuple[Optional[Any], Optional[Any], bool]:
     """Execute one agent case; returns (answer, record, skipped)."""
     from tradeatlas.agent.graph import run_agent
@@ -381,9 +395,11 @@ def _run_agent_case(
         if model_factory is not None:
             model, model_id = model_factory(), "live-benchmark(scripted)"  # simulations record what produced them
         else:
-            from tradeatlas.agent.graph import get_model_id
-
-            model, model_id = _build_live_model(), get_model_id()  # the record names the real model
+            if live_model is None or live_model_id is None:
+                # The real-live path builds once in run_suite's preflight (design D9) —
+                # a per-case build here would bypass ledger attribution.
+                raise RuntimeError("real-live case execution requires the prebuilt registry model")
+            model, model_id = live_model, live_model_id  # the record names the raw model id
         trace_path = traces_root / persona / f"{case['id']}.json"  # live mode always exports
     with _hermetic_data(case):
         answer, record = run_agent(
@@ -396,12 +412,6 @@ def _run_agent_case(
     return answer, record, False
 
 
-def _build_live_model() -> Any:
-    from tradeatlas.agent.graph import build_chat_model
-
-    return build_chat_model()  # get_model_id() fast-fails in run_suite before any case runs
-
-
 def run_suite(
     persona: str,
     suite_path: str = None,
@@ -410,23 +420,52 @@ def run_suite(
     model_factory: Optional[Callable[[], Any]] = None,
     traces_dir: Optional[Path] = None,
     case_ids: Optional[List[str]] = None,
+    delay_seconds: Optional[float] = None,
 ) -> Dict[str, Any]:
     """Execute one golden suite and write results; raises on malformed cases.
 
     `traces_dir` overrides the persona's trace root (tests inject a temp dir so
     live simulations never write into the committed fixture tree). `case_ids`
     resumes a long benchmark: every case stays validated, only the named ones
-    execute, and the results file records the filtered run.
+    execute, and the results file records the filtered run. `delay_seconds`
+    overrides the live inter-case delay (env TRADEATLAS_INTER_CASE_DELAY, else
+    DEFAULT_DELAY_S); replay mode never paces.
+
+    In live mode WITHOUT a model_factory (the real benchmark path), the model is
+    resolved once through the registry (enabled entries only; gateway credentials
+    fail-fast here), transport-class failures retry up to MAX_TRANSPORT_ATTEMPTS
+    then the case is skipped as provider-unavailable, cases that would exceed the
+    entry's daily cap are skipped as daily-cap, and every executed case appends a
+    run-ledger row. Simulated runs (model_factory set) bypass ledger/usage/pacing
+    so tests never pollute the benchmark evidence.
     """
     if mode not in {"replay", "live"}:
         raise ValueError(f"Unknown mode '{mode}'")
     if not _SAFE_NAME.match(str(persona)):
         raise ValueError(f"Persona '{persona}' must be a safe name (it becomes a directory)")
     traces_root = Path(traces_dir) if traces_dir is not None else TRACES_DIR
+    entry = None
+    live_model = None
+    live_model_id = None
+    pace_seconds = 0.0
     if mode == "live" and model_factory is None:
         from tradeatlas.agent.graph import get_model_id
+        from tradeatlas.agent.model_registry import build_model_for_entry, resolve_model_entry
 
-        get_model_id()  # clear named error before any case runs
+        entry = resolve_model_entry(get_model_id())  # enabled-only, named errors
+        live_model = build_model_for_entry(entry)  # gateway creds fail-fast before any case
+        live_model_id = entry.model  # records/traces keep naming the raw model id
+        if delay_seconds is not None:
+            delay = delay_seconds
+        else:
+            raw = os.environ.get(INTER_CASE_DELAY_ENV)
+            try:
+                delay = float(raw) if raw is not None else DEFAULT_DELAY_S
+            except ValueError:
+                raise RuntimeError(
+                    f"{INTER_CASE_DELAY_ENV} must be a number of seconds, got {raw!r}"
+                ) from None
+        pace_seconds = max(delay, 60.0 / max(entry.rpm_limit, 1))
     suite_file = Path(suite_path) if suite_path else EVALS_DIR / "golden" / f"{persona}.json"
     out_dir = Path(results_dir) if results_dir else EVALS_DIR / "results"
 
@@ -444,6 +483,7 @@ def run_suite(
     replayed = 0
     has_agent_cases = False
     seen_ids = set()
+    executed_live = False
     for case in suite["cases"]:
         if case_ids is not None and case["id"] not in case_ids:
             continue
@@ -459,7 +499,44 @@ def run_suite(
         if case["kind"] in AGENT_KINDS:
             has_agent_cases = True
             _validate_agent_case(case)  # agent kinds branch before the resolver dispatch
-            answer, record, skipped = _run_agent_case(case, persona, mode, model_factory, traces_root)
+            if mode == "live" and model_factory is None:
+                if executed_live and pace_seconds > 0:
+                    _sleep(pace_seconds)  # gentle protocol: cases land minutes apart, not seconds
+                if ledger.daily_cap_reached(entry):
+                    results.append(
+                        {"id": case["id"], "kind": case["kind"], "skipped": True, "passed": False,
+                         "classification": "daily-cap",
+                         "scored_value": f"skipped: daily cap reached for '{entry.key}' "
+                         f"(~{entry.daily_limit}/day; resume via --case-ids)",
+                         "expected": case["expected"]}
+                    )
+                    ledger.record_case_outcome(
+                        model_key=entry.key, model_id=live_model_id, persona=persona,
+                        case_id=case["id"], outcome="daily-cap", duration_s=0.0, model_touches=0,
+                    )
+                    continue
+            started = time.monotonic()
+            attempt = 0
+            while True:
+                answer, record, skipped = _run_agent_case(
+                    case, persona, mode, model_factory, traces_root,
+                    live_model=live_model, live_model_id=live_model_id,
+                )
+                if skipped:  # replay-only (missing trace) — nothing to classify or retry
+                    break
+                failure_class = ledger.classify_failure(record.failure_reason)
+                if (
+                    mode == "live"
+                    and model_factory is None  # simulations never incur real backoff sleeps
+                    and failure_class == "transport"
+                    and attempt < MAX_TRANSPORT_ATTEMPTS - 1
+                ):
+                    attempt += 1
+                    _sleep(RETRY_BACKOFF_S * attempt)  # linear backoff 5s, 10s, ...
+                    continue
+                break
+            attempts_used = attempt + 1
+            duration_s = time.monotonic() - started
             if skipped:
                 missing_traces.append(case["id"])
                 results.append(
@@ -469,13 +546,38 @@ def run_suite(
                 continue
             replayed += 1
             if record.failure_reason is not None or answer is None:
-                outcome = {"passed": False, "scored_value": f"run failed: {record.failure_reason}"}
+                if mode == "live" and model_factory is None and failure_class == "transport":
+                    outcome = {
+                        "passed": False,
+                        "classification": "provider-unavailable",
+                        "scored_value": f"provider-unavailable after {attempts_used} attempt(s): "
+                        f"{record.failure_reason}",
+                    }
+                else:
+                    outcome = {"passed": False, "scored_value": f"run failed: {record.failure_reason}"}
             else:
                 outcome = AGENT_SCORERS[case["kind"]](record, answer, case["expected"])
             results.append(
                 {"id": case["id"], "kind": case["kind"], "run_id": record.run_id, **outcome,
                  "expected": case["expected"]}
             )
+            if mode == "live" and model_factory is None:
+                # Real-run evidence only: usage counters + the drop-decision ledger.
+                touches = record.model_touches or 0
+                tokens = record.token_usage.total_tokens if record.token_usage else None
+                ledger.record_usage(entry.key, touches)
+                if outcome.get("classification") == "provider-unavailable":
+                    ledger_outcome = "provider-unavailable"
+                elif outcome.get("passed"):
+                    ledger_outcome = "passed"
+                else:
+                    ledger_outcome = "failed"
+                ledger.record_case_outcome(
+                    model_key=entry.key, model_id=live_model_id, persona=persona,
+                    case_id=case["id"], outcome=ledger_outcome, duration_s=duration_s,
+                    model_touches=touches, total_tokens=tokens, failure_class=failure_class,
+                )
+                executed_live = True
             continue
 
         resolver = RESOLVERS.get(case["target"])
@@ -511,14 +613,25 @@ def run_suite(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run a golden eval suite")
-    parser.add_argument("persona", help="Suite persona, e.g. analyst")
-    parser.add_argument("--agent", action="store_true", help="Live benchmark mode (real model; hermetic data)")
+    parser.add_argument("persona", nargs="?", default=None, help="Suite persona, e.g. analyst / buyer / adversarial")
+    parser.add_argument("--agent", action="store_true", help="Live benchmark mode (registry-resolved model; hermetic data)")
+    parser.add_argument("--case-ids", default=None, help="Comma-separated case ids to run (resume a paused benchmark)")
+    parser.add_argument("--delay", type=float, default=None, help="Live inter-case delay in seconds (default TRADEATLAS_INTER_CASE_DELAY or 45)")
+    parser.add_argument("--history", action="store_true", help="Print the per-model ledger summary and exit")
     args = parser.parse_args()
-    payload = run_suite(args.persona, mode="live" if args.agent else "replay")
+    if args.history:
+        print(ledger.format_history())
+        return 0
+    if not args.persona:
+        parser.error("persona is required unless --history")
+    case_ids = [c.strip() for c in args.case_ids.split(",") if c.strip()] if args.case_ids else None
+    payload = run_suite(args.persona, mode="live" if args.agent else "replay", case_ids=case_ids, delay_seconds=args.delay)
     if payload.get("missing_traces"):
         print(f"Skipped (no recorded trace): {', '.join(payload['missing_traces'])}")
     for case in payload["cases"]:
-        if not case["passed"]:
+        if case.get("classification"):
+            print(f"SKIPPED: {case['id']} ({case['classification']}) scored={case['scored_value']}")
+        elif not case["passed"]:
             print(f"FAILED: {case['id']} ({case['kind']}) scored={case['scored_value']} expected={case['expected']}")
     print(f"{payload['passed']}/{payload['total']} cases passed ({args.persona}, mode={payload.get('mode') or 'resolver'})")
     return 0 if payload["passed"] == payload["total"] else 1

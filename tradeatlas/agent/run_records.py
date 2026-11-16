@@ -55,6 +55,7 @@ class RunRecord(BaseModel):
     failure_reason: Optional[str] = None
     tool_calls: List[ToolCallRecord] = Field(default_factory=list)
     token_usage: Optional[TokenUsage] = None
+    model_touches: int = 0  # model requests this run made (usage accounting / daily caps)
 
 
 def code_version() -> str:

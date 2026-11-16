@@ -26,16 +26,41 @@ def retry_trace():
     return load_trace(TRACES / "coverage_retry.json")
 
 
-# --- Model configuration (task 3.1) ---
+# --- Model configuration (task 3.1 + registry contract) ---
+
+def _registry_test_env(monkeypatch):
+    """A deterministic registry entry + gateway envs over whatever the real .env loaded."""
+    from tradeatlas.agent import model_registry as registry
+
+    monkeypatch.setattr(
+        registry, "MODEL_REGISTRY",
+        [registry.ModelEntry(key="test", provider_type="openai_compat", model="test-model-verbatim",
+                             route="groq", rpm_limit=30)],
+    )
+    monkeypatch.setenv("CF_ACCOUNT_ID", "acct-test")
+    monkeypatch.setenv("CF_GATEWAY_ID", "gw-test")
+    monkeypatch.setenv("CF_AIG_TOKEN", "tok-test")
+
 
 def test_model_id_env_var_contract(monkeypatch):
     monkeypatch.delenv(MODEL_ENV_VAR, raising=False)
     with pytest.raises(RuntimeError, match=MODEL_ENV_VAR):
         get_model_id()
+    _registry_test_env(monkeypatch)
     monkeypatch.setenv(MODEL_ENV_VAR, "test-model-verbatim")
     assert get_model_id() == "test-model-verbatim"
-    monkeypatch.setenv("OPENAI_API_KEY", "sk-test-dummy")  # construction needs a key; no network
-    assert build_chat_model().model_name == "test-model-verbatim"
+    model = build_chat_model()  # registry-resolved construction; no network
+    assert model.model_name == "test-model-verbatim"
+    assert model.openai_api_base.endswith("/groq")  # gateway routing is mandatory
+    assert model.default_headers["cf-aig-authorization"] == "Bearer tok-test"
+    assert model.max_retries == 1 and model.request_timeout == 300.0
+
+
+def test_build_chat_model_resolves_by_registry_key_and_keeps_raw_id(monkeypatch):
+    _registry_test_env(monkeypatch)
+    monkeypatch.setenv(MODEL_ENV_VAR, "test")  # the registry KEY, not the model id
+    model = build_chat_model()
+    assert model.model_name == "test-model-verbatim"  # records/traces keep the raw id
 
 
 def test_conforming_run_returns_validated_answer(tmp_path, anomaly_trace):
@@ -49,6 +74,9 @@ def test_conforming_run_returns_validated_answer(tmp_path, anomaly_trace):
     assert record.answer["figures"][0]["source_tool"] == "detect_price_anomalies"
     assert record.prompt_version == "v1"
     assert record.model_id == "scripted-fixture"
+    # Model requests = the trace's recorded turns + the structured-response call,
+    # which never enters state messages (langgraph returns it as a separate key).
+    assert record.model_touches == len(anomaly_trace["model_messages"]) + 1
     (call,) = record.tool_calls
     assert call.tool == "detect_price_anomalies" and call.latency_ms is not None
     assert record.token_usage.total_tokens == 450 + 1672  # summed from the scripted usage metadata
@@ -68,6 +96,9 @@ def test_nonconforming_final_output_fails_the_run(tmp_path, anomaly_trace):
     # The tool call executed before the failure — its telemetry must survive in the record.
     (call,) = record.tool_calls
     assert call.tool == "detect_price_anomalies" and call.latency_ms is not None
+    # The transcript was lost mid-flight (the scripted structured call raised inside
+    # invoke) — the record counts only what its captured transcript shows, here none.
+    assert record.model_touches == 0
 
 
 # --- Missing argument: no silent substitution (task 3.2) ---

@@ -8,6 +8,7 @@ retry budget and is deliberately absent here. Model id comes from pinned configu
 import os
 from typing import Any, List, Optional, Tuple
 
+from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableLambda
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
@@ -35,12 +36,13 @@ RECURSION_LIMIT = 25
 
 
 def get_model_id() -> str:
-    """The pinned chat-model id from configuration; clear error naming the variable when unset."""
+    """The pinned model selector from configuration; clear error naming the variable when unset."""
     model_id = os.environ.get(MODEL_ENV_VAR)
     if not model_id:
         raise RuntimeError(
-            f"Set {MODEL_ENV_VAR} to the chat model id for live agent runs "
-            f"(e.g. 'gpt-4.1-mini'); offline tests use scripted replay instead."
+            f"Set {MODEL_ENV_VAR} to a model registry key or id for live agent runs "
+            f"(e.g. 'groq'; see tradeatlas/agent/model_registry.py); "
+            f"offline tests use scripted replay instead."
         )
     return model_id
 
@@ -53,7 +55,8 @@ class _AgentChatModel(ChatOpenAI):
     requires (`additionalProperties: false` is unsatisfiable — Groq 400s outright).
     Sending the JSON-schema dict with strict=False is accepted across providers;
     the model output is then validated client-side against the Pydantic class, so
-    an unvalidated answer is still never emitted (the M3-a contract).
+    an unvalidated answer is still never emitted (the M3-a contract). The Google
+    route's mirror subclass lives in model_registry.py (_GoogleAgentChatModel).
     """
 
     def with_structured_output(self, schema: Any, **kwargs: Any) -> Any:
@@ -65,14 +68,20 @@ class _AgentChatModel(ChatOpenAI):
         return super().with_structured_output(schema, **kwargs)
 
 
-def build_chat_model(model_id: Optional[str] = None) -> ChatOpenAI:
-    """Build the live chat model for the pinned id (requires provider credentials).
+def build_chat_model(model_id: Optional[str] = None) -> Any:
+    """Build the live chat model for the pinned selector, through the model registry.
 
-    Per-request latency is bounded (timeout + bounded retries) so a hung provider
-    call fails and is recorded instead of stalling a benchmark for hours — while
-    leaving room for reasoning models whose legitimate turns run 1-2 minutes.
+    The selector (registry key or raw model id) must resolve to an ENABLED
+    entry; routing (Cloudflare AI Gateway), auth (BYOK vs provider key), call
+    parameters, and the per-entry timeout all come from that entry — model
+    choice is a reviewed registry decision, never an implicit env default.
+    Construction is bounded (timeout + max_retries=1) so a hung provider call
+    fails and is recorded instead of stalling a benchmark for hours.
     """
-    return _AgentChatModel(model=model_id or get_model_id(), timeout=300.0, max_retries=1)
+    from tradeatlas.agent.model_registry import build_model_for_entry, resolve_model_entry  # deferred: registry lazily imports this module's _AgentChatModel
+
+    entry = resolve_model_entry(model_id or get_model_id())
+    return build_model_for_entry(entry)
 
 
 def build_agent(chat_model: Any, recorder: Optional[ToolCallRecorder] = None) -> Any:
@@ -115,17 +124,25 @@ def run_agent(
             config={"recursion_limit": RECURSION_LIMIT},
         )
         state_messages = state.get("messages", [])
+        # The structured-response touch is a real model request but never enters
+        # state messages (langgraph returns it as a separate key) — runs that reach
+        # it count it explicitly so usage accounting and daily caps see every request.
+        structured_call_happened = True
         structured = state.get("structured_response")
         answer = structured if isinstance(structured, AgentAnswer) else AgentAnswer.model_validate(structured)
     except Exception as exc:  # recorded, never raised past the run boundary
         failure = f"{type(exc).__name__}: {exc}"
+        structured_call_happened = False
 
     if model_id is None:
         if chat_model is not None:
             model_id = getattr(chat_model, "model_name", None) or "unspecified-chat-model"
         else:
             try:
-                model_id = get_model_id()
+                # built via build_chat_model → name the raw model id, not the selector key
+                from tradeatlas.agent.model_registry import resolve_model_entry
+
+                model_id = resolve_model_entry(get_model_id()).model
             except RuntimeError:
                 model_id = f"unset:{MODEL_ENV_VAR}"  # failure_reason already records the cause
     record = RunRecord(
@@ -139,6 +156,8 @@ def run_agent(
         failure_reason=failure,
         tool_calls=build_tool_call_records(state_messages, recorder),
         token_usage=sum_token_usage(state_messages),
+        model_touches=sum(1 for m in state_messages if isinstance(m, AIMessage))
+        + (1 if structured_call_happened else 0),
     )
     if trace_path is not None and answer is not None:
         from tradeatlas.agent.replay import save_trace  # deferred: replay imports are loader-side

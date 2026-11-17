@@ -335,6 +335,18 @@ def build_model_for_entry(entry: ModelEntry, settings: Optional[GatewaySettings]
     raise ValueError(f"Unsupported provider_type: {entry.provider_type}")
 
 
+def _ensure_trailing_user_turn(messages: Any) -> Any:
+    """Gemini rejects requests whose LAST turn is a model turn — and langgraph's
+    structured-response call re-sends the full conversation, which ends with the
+    agent's own answer. Appending the user turn that requests the structured
+    output makes the request valid without touching any prior turn."""
+    from langchain_core.messages import HumanMessage
+
+    if isinstance(messages, list) and messages and type(messages[-1]).__name__ == "AIMessage":
+        return list(messages) + [HumanMessage(content="Return the final structured answer now.")]
+    return messages
+
+
 class _GoogleAgentChatModel(ChatGoogleGenerativeAI):
     """ChatGoogleGenerativeAI with the agent's structured-output contract.
 
@@ -343,12 +355,17 @@ class _GoogleAgentChatModel(ChatGoogleGenerativeAI):
     genai's default method is already 'json_schema' (Gemini's native
     responseJsonSchema); the explicit setdefault documents the contract and
     guards against default drift, and the client-side model_validate wrapper
-    keeps the M3-a guarantee — an unvalidated answer is never emitted.
+    keeps the M3-a guarantee — an unvalidated answer is never emitted. The
+    trailing-user-turn mapper is Gemini-specific: its API refuses requests
+    ending with a model turn, which is exactly the shape of langgraph's
+    structured-response call (proven by the vertex smoke test).
     """
 
     def with_structured_output(self, schema: Any, **kwargs: Any) -> Any:
         if isinstance(schema, type) and issubclass(schema, BaseModel):
             kwargs.setdefault("method", "json_schema")
             inner = super().with_structured_output(schema.model_json_schema(), **kwargs)
-            return inner | RunnableLambda(lambda value: schema.model_validate(value))
+            return RunnableLambda(_ensure_trailing_user_turn) | inner | RunnableLambda(
+                lambda value: schema.model_validate(value)
+            )
         return super().with_structured_output(schema, **kwargs)

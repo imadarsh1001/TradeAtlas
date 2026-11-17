@@ -52,7 +52,7 @@ INTER_CASE_DELAY_ENV = "TRADEATLAS_INTER_CASE_DELAY"
 DEFAULT_DELAY_S = 45.0
 MAX_TRANSPORT_ATTEMPTS = 3
 RETRY_BACKOFF_S = 5.0
-TRACING_TOGGLE_ENV = "LANGSMITH_TRACING"
+TRACING_TOGGLE_ENVS = ("LANGSMITH_TRACING", "LANGSMITH_TRACING_V2", "LANGCHAIN_TRACING_V2")
 
 _report_cache: Dict[str, Any] = {}
 
@@ -68,17 +68,20 @@ def _no_tracing():
     """Force observability off for the block's duration (the run-observability contract).
 
     Replay and CI never emit traces — even when the operator's environment has
-    LangSmith toggled on. The operator's env is restored on exit.
+    LangSmith toggled on (current and legacy toggle names both covered). The
+    operator's env is restored on exit, exceptions included.
     """
-    original = os.environ.get(TRACING_TOGGLE_ENV)
-    os.environ[TRACING_TOGGLE_ENV] = "false"
+    originals = {name: os.environ.get(name) for name in TRACING_TOGGLE_ENVS}
+    for name in TRACING_TOGGLE_ENVS:
+        os.environ[name] = "false"
     try:
         yield
     finally:
-        if original is None:
-            os.environ.pop(TRACING_TOGGLE_ENV, None)
-        else:
-            os.environ[TRACING_TOGGLE_ENV] = original
+        for name, original in originals.items():
+            if original is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = original
 
 
 def _cached_report() -> Dict[str, Any]:
@@ -169,25 +172,16 @@ def _successful_calls(record: Any) -> List[Any]:
     return [c for c in record.tool_calls if c.latency_ms is not None and c.error is None]
 
 
-def _canonical_key(tool: str, args: Dict[str, Any]) -> Optional[str]:
-    from tradeatlas.agent.tools import canonical_tool_args  # deferred: tools resolves services
-
-    canonical = canonical_tool_args(tool, args)
-    return json.dumps(canonical, sort_keys=True) if canonical is not None else None
-
-
 def _selector_agrees(tool: str, call_arguments: Dict[str, Any], selector: Dict[str, Any]) -> bool:
     """A figure's selector agrees with an executed call when, on every argument the
     call meaningfully set (non-default), the figure's selector states the same
     value. Record-level extra keys in the figure's selector (market, variety,
     grade — data a model cites from the envelope's records) are permitted; a
     CONTRADICTED value is not. None-valued canonical defaults are skipped."""
-    canonical = _canonical_key(tool, call_arguments)
+    canonical = _canonical_args(tool, call_arguments)
     if canonical is None:
         return False
-    import json as _json
-
-    for key, value in _json.loads(canonical).items():
+    for key, value in canonical.items():
         if value is None or value is False:
             continue
         if key in selector and selector[key] != value:
@@ -747,13 +741,13 @@ def main() -> int:
         return 0
     if not args.persona:
         parser.error("persona is required unless --history")
+    if args.quality and not args.agent:
+        parser.error("--quality runs on live evidence only (add --agent)")  # fail BEFORE burning the suite
     case_ids = [c.strip() for c in args.case_ids.split(",") if c.strip()] if args.case_ids else None
     payload = run_suite(args.persona, mode="live" if args.agent else "replay", case_ids=case_ids, delay_seconds=args.delay)
     if args.quality:
         from evals import quality  # deferred: CI/replay never import the judged layer
 
-        if payload.get("mode") != "live":
-            parser.error("--quality runs on live evidence only (add --agent)")
         quality_result = quality.run_quality(args.persona, payload)
         print(
             f"quality layer: {len(quality_result['cases'])} scored by {quality_result['judge_model']} "

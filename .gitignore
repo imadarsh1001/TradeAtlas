@@ -12,3 +12,4 @@ evals/results/
 # Agent run records are regenerated per run (see tradeatlas/agent/run_records.py)
 evals/runs/
 .zcode/
+.deepeval/

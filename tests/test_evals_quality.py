@@ -167,3 +167,49 @@ def test_quality_layer_never_imported_outside_the_flag():
         capture_output=True, text=True,
     )
     assert result.returncode == 0, result.stderr
+
+def test_quality_flag_requires_live_mode_pre_validated(tmp_path, monkeypatch, capsys):
+    """--quality without --agent is rejected BEFORE the suite runs (no wasted replay)."""
+    from evals import runner as runner_mod
+
+    ran = {"suite": False}
+
+    def exploding_suite(*args, **kwargs):
+        ran["suite"] = True
+        raise AssertionError("the suite must not run when --quality misuse is rejected")
+
+    monkeypatch.setattr(runner_mod, "run_suite", exploding_suite)
+    monkeypatch.setattr("sys.argv", ["runner", "buyer", "--quality"])
+    with pytest.raises(SystemExit):
+        runner_mod.main()
+    assert ran["suite"] is False
+
+
+def test_live_runs_inherit_the_operator_tracing_env(tmp_path, monkeypatch):
+    """Live mode (even simulated) never strips the operator's opt-in — only replay does."""
+    monkeypatch.setenv("LANGSMITH_TRACING", "true")
+    from evals import ledger, runner as runner_mod
+    from tradeatlas.agent.replay import scripted_model
+
+    trace = {
+        "version": 1, "question": "q",
+        "model_messages": [
+            {"role": "ai", "content": "done.", "tool_calls": [], "usage_metadata": {"input_tokens": 1, "output_tokens": 1, "total_tokens": 2}},
+        ],
+        "structured_response": {"summary": "unavailable for Punjab", "figures": []},
+    }
+    suite_path = tmp_path / "mini.json"
+    suite_path.write_text(json.dumps({"version": 1, "cases": [
+        {"id": "mini-live-trace", "persona": "buyer", "question": "q", "kind": "agent-abstention",
+         "target": "agent", "args": {}, "expected": {"unavailability_signal": "unavailable"}}
+    ]}), encoding="utf-8")
+    monkeypatch.setattr(ledger, "RUN_LEDGER_PATH", tmp_path / "run_ledger.jsonl")
+    monkeypatch.setattr(ledger, "USAGE_PATH", tmp_path / "usage_daily.json")
+    payload = runner_mod.run_suite("buyer", suite_path=suite_path, results_dir=tmp_path / "res",
+                                   mode="live", model_factory=lambda: scripted_model(trace),
+                                   traces_dir=tmp_path / "traces", delay_seconds=0)
+    assert payload["cases"][0]["passed"] is True
+    import os
+
+    assert os.environ.get("LANGSMITH_TRACING") == "true"  # live inherits the operator's env
+

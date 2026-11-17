@@ -19,7 +19,7 @@
 ## 4. Judged quality layer
 
 - [x] 4.1 Add `deepeval` to the dev dependency group; `uv lock`
-- [x] 4.2 `evals/quality.py`: `GatewayJudgeModel(DeepEvalBaseLLM)` wrapping a registry-resolved model (`TRADEATLAS_JUDGE_MODEL` → resolve → build, lazy deepeval import); judged metrics (summary relevance G-Eval, answer-vs-evidence faithfulness vs executed tool payloads); per-case scores written to `evals/quality/` paired with the deterministic outcome; CLI `--quality` flag; non-gating by construction (results computed before the layer runs)
+- [x] 4.2 `evals/quality.py`: `GatewayJudgeModel(DeepEvalBaseLLM)` wrapping a registry-resolved model (`TRADEATLAS_JUDGE_MODEL` → resolve → build; deepeval imported at module scope in quality.py, which the runner imports only under --quality); judged metrics (summary relevance G-Eval, answer-vs-evidence faithfulness vs executed tool payloads); per-case scores written to `evals/quality/` paired with the deterministic outcome; CLI `--quality` flag; non-gating by construction (results computed before the layer runs)
 - [x] 4.3 Tests with a fake judge (no network): scores recorded and paired; judged scores cannot alter the results payload; unknown/disabled judge selector fails with a named error; pytest/replay never construct a judge
 
 ## 5. Observability

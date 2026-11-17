@@ -30,6 +30,7 @@ except ImportError:  # pragma: no cover - older deepeval
 JUDGE_ENV_VAR = "TRADEATLAS_JUDGE_MODEL"
 RUNS_DIR = Path(__file__).resolve().parent / "runs"
 QUALITY_DIR = Path(__file__).resolve().parent / "results" / "quality"
+GOLDEN_DIR = Path(__file__).resolve().parent / "golden"
 
 
 class GatewayJudgeModel(DeepEvalBaseLLM):
@@ -84,9 +85,6 @@ def _load_record(run_id: str, runs_dir: Optional[Path] = None) -> Optional[Dict[
     if not record_path.is_file():
         return None
     return json.loads(record_path.read_text(encoding="utf-8"))
-
-
-GOLDEN_DIR = Path(__file__).resolve().parent / "golden"
 
 
 def _suite_questions(persona: str) -> Dict[str, str]:
@@ -168,8 +166,10 @@ def run_quality(
     }
     quality_dir = Path(out_dir) if out_dir is not None else QUALITY_DIR
     quality_dir.mkdir(parents=True, exist_ok=True)
+    import uuid
+
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
-    path = quality_dir / f"{persona}-{stamp}.json"
+    path = quality_dir / f"{persona}-{stamp}-{uuid.uuid4().hex[:8]}.json"
     path.write_text(json.dumps(quality, indent=2, ensure_ascii=False), encoding="utf-8")
     quality["path"] = str(path)
     return quality

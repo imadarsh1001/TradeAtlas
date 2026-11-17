@@ -39,8 +39,9 @@ def hermetic_api_key(monkeypatch):
 
 @pytest.fixture(autouse=True)
 def no_observability_tracing(monkeypatch):
-    """Tests never emit observability traces (run-observability spec): pin the toggle off."""
-    monkeypatch.setenv("LANGSMITH_TRACING", "false")
+    """Tests never emit observability traces (run-observability spec): pin every toggle name off."""
+    for name in ("LANGSMITH_TRACING", "LANGSMITH_TRACING_V2", "LANGCHAIN_TRACING_V2"):
+        monkeypatch.setenv(name, "false")
 
 
 @pytest.fixture()

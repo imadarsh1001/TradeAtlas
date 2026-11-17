@@ -7,7 +7,6 @@ import pytest
 
 from evals.runner import (
     _pinned_args_agree,
-    _run_agent_case,  # noqa: F401  (import sanity: the policy seam stays importable)
     _signal_satisfied,
     _trajectory_failures,
     _validate_agent_case,

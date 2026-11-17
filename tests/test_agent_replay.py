@@ -29,7 +29,11 @@ def test_scripted_model_drives_messages_in_order():
     first = model._generate([]).generations[0].message
     second = model._generate([]).generations[0].message
     assert first.tool_calls[0]["name"] == "detect_price_anomalies"
-    assert "September 2020" in second.content
+    # Under create_agent+ToolStrategy the scripted model serves the LAST turn as the
+    # AgentAnswer tool call synthesized from the trace's validated structured_response
+    # (the recorded prose was the old architecture's separate-structured-call artifact).
+    assert second.tool_calls[0]["name"] == "AgentAnswer"
+    assert second.tool_calls[0]["args"]["figures"][0]["value"] == 4186.56
     with pytest.raises(RuntimeError, match="Trace exhausted"):
         model._generate([])
 

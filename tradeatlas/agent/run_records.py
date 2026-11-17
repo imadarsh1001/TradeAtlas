@@ -89,8 +89,13 @@ def sum_token_usage(messages: List[Any]) -> Optional[TokenUsage]:
     return TokenUsage(prompt_tokens=prompt, completion_tokens=completion, total_tokens=total) if seen else None
 
 
-def build_tool_call_records(messages: List[Any], recorder: Any) -> List[ToolCallRecord]:
+def build_tool_call_records(messages: List[Any], recorder: Any,
+                            structured_tool_name: Optional[str] = None) -> List[ToolCallRecord]:
     """Merge the recorder's executed calls with the run's message history.
+
+    `structured_tool_name` excludes the framework's structured-output tool call
+    (ToolStrategy emits the final answer as an artificial tool call) from the
+    telemetry: it is not an evidence-tool attempt.
 
     Every tool call the model attempted gets one record in invocation order
     (attempt_index from 1). Executed calls pair with recorder entries by
@@ -120,6 +125,8 @@ def build_tool_call_records(messages: List[Any], recorder: Any) -> List[ToolCall
     attempt = 0
     for message in messages:
         for call in getattr(message, "tool_calls", None) or []:
+            if structured_tool_name and call["name"] == structured_tool_name:
+                continue  # the structured-output call is not an evidence-tool attempt
             attempt += 1
             name = call["name"]
             canonical = canonical_tool_args(name, call["args"])

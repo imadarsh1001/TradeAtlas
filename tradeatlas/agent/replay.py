@@ -97,6 +97,25 @@ class ScriptedChatModel(BaseChatModel):
             raise RuntimeError(f"Trace exhausted: model invoked more than {len(self.recorded)} times")
         message = self.recorded[self.index]
         self.index += 1
+        # create_agent + ToolStrategy expects the FINAL model turn to be an AgentAnswer
+        # tool call (ToolStrategy adds that tool to the bound set — no response_format
+        # binding involved, verified against installed 1.5.0 source: ToolStrategy has
+        # no to_model_kwargs). The committed traces recorded the old architecture's
+        # prose artifact as the final content; the trace's validated
+        # structured_response field is the replay source of truth, so the LAST turn
+        # is synthesized into the structured tool call. Recorded messages are never
+        # mutated (replay determinism).
+        if self.index == len(self.recorded) and not getattr(message, "tool_calls", None):
+            synthetic = message.model_copy(update={
+                "content": "",
+                "tool_calls": [{
+                    "name": "AgentAnswer",
+                    "args": self.structured_response,
+                    "id": "structured-output",
+                    "type": "tool_call",
+                }],
+            })  # usage_metadata carried over — token accounting stays honest
+            return ChatResult(generations=[ChatGeneration(message=synthetic)])
         return ChatResult(generations=[ChatGeneration(message=message)])
 
     def bind_tools(self, *args: Any, **kwargs: Any) -> "ScriptedChatModel":

@@ -9,7 +9,7 @@ from langchain_core.messages import SystemMessage, ToolMessage
 from tradeatlas.agent import tools as agent_tools
 from tradeatlas.agent.answer import AgentAnswer
 from tradeatlas.agent.graph import MODEL_ENV_VAR, build_chat_model, get_model_id, run_agent
-from tradeatlas.agent.prompts import SYSTEM_PROMPT_V3
+from tradeatlas.agent.prompts import SYSTEM_PROMPT_V4
 from tradeatlas.agent.replay import load_trace, scripted_model
 from tradeatlas.models import EvidenceEnvelope
 
@@ -72,11 +72,11 @@ def test_conforming_run_returns_validated_answer(tmp_path, anomaly_trace):
     assert record.failure_reason is None
     assert answer.figures[0].value == 4186.56
     assert record.answer["figures"][0]["source_tool"] == "detect_price_anomalies"
-    assert record.prompt_version == "v3"
+    assert record.prompt_version == "v4"
     assert record.model_id == "scripted-fixture"
-    # Model requests = the trace's recorded turns + the structured-response call,
-    # which never enters state messages (langgraph returns it as a separate key).
-    assert record.model_touches == len(anomaly_trace["model_messages"]) + 1
+    # Under create_agent+ToolStrategy the structured answer IS the final main-loop
+    # model call — touches equal the trace's recorded model messages exactly.
+    assert record.model_touches == len(anomaly_trace["model_messages"])
     (call,) = record.tool_calls
     assert call.tool == "detect_price_anomalies" and call.latency_ms is not None
     assert record.token_usage.total_tokens == 450 + 1672  # summed from the scripted usage metadata
@@ -91,7 +91,11 @@ def test_nonconforming_final_output_fails_the_run(tmp_path, anomaly_trace):
     assert answer is None  # an unvalidated answer is never emitted
     assert record.answer is None
     assert record.failure_reason is not None
-    assert "summary" in record.failure_reason  # the validation error names the missing field
+    # Under create_agent+ToolStrategy the malformed structured turn is fed back into
+    # the loop as a validation-error tool message (a framework-level retry) until the
+    # scripted source exhausts — the failure records that exhaustion, and the invalid
+    # answer is still never emitted.
+    assert "Trace exhausted" in record.failure_reason
     assert list(tmp_path.glob("*.json")), "a failing run must still write its run record"
     # The tool call executed before the failure — its telemetry must survive in the record.
     (call,) = record.tool_calls
@@ -150,7 +154,7 @@ def test_hostile_payload_stays_data_instruction_message_unchanged(tmp_path, anom
     assert model.received_messages, "scripted model should have seen the conversation"
     for received in model.received_messages:
         system_contents = [m.content for m in received if isinstance(m, SystemMessage)]
-        assert system_contents == [SYSTEM_PROMPT_V3]
+        assert system_contents == [SYSTEM_PROMPT_V4]
     # The hostile text did reach the model — as tool-result data, never as instructions.
     flattened = "\n".join(str(m.content) for received in model.received_messages for m in received)
     assert hostile in flattened

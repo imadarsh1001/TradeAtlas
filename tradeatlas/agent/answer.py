@@ -38,7 +38,15 @@ class AnswerFigure(BaseModel):
 
 
 class AgentAnswer(BaseModel):
-    """The agent's validated final output — never emitted unvalidated."""
+    """Deliver the final answer to the user's question.
+
+    Call this tool EXACTLY ONCE, when your evidence gathering is complete. Pass the
+    buyer-facing summary and every figure the evidence supports — each figure naming
+    its source tool and the exact selector arguments that produced it. When the
+    evidence is unavailable or reports no data, call it anyway with an EMPTY figures
+    list and a summary naming what is missing and the latest available facts with
+    their observation dates. Never invent figures; never restate another tool's data
+    as a different metric."""
 
     summary: str
     figures: List[AnswerFigure] = Field(default_factory=list)

@@ -1,21 +1,29 @@
-"""Single-agent graph: create_react_agent over the seven evidence-card tools (ADR 0002 Build 1).
+"""Single-agent graph: create_agent (langchain 1.x) over the seven evidence-card tools (ADR 0002 Build 1).
 
 The structured response validates or raises — a non-conforming final output fails the
 run (recorded) and is never emitted as an answer; retry machinery belongs to M3-d's
 retry budget and is deliberately absent here. Model id comes from pinned configuration.
+
+Framework note (migrate-agent-to-create-agent): construction moved from the deprecated
+langgraph.prebuilt.create_react_agent to langchain.agents.create_agent. The structured
+answer is produced by the final main-loop model call under ProviderStrategy(AgentAnswer,
+strict=False) — the 1:1 port of the wiretap-proven non-strict json_schema mechanism
+(langchain 1.5.0 ProviderStrategy.to_model_kwargs omits the strict key unless requested).
+run_agent's extraction still validates against AgentAnswer, so an unvalidated answer is
+never emitted. The replay contract (25 committed traces -> identical sequences/outcomes)
+is this migration's acceptance gate.
 """
 
 import os
 from typing import Any, List, Optional, Tuple
 
+from langchain.agents import create_agent
+from langchain.agents.structured_output import ToolStrategy
 from langchain_core.messages import AIMessage
-from langchain_core.runnables import RunnableLambda
 from langchain_openai import ChatOpenAI
-from pydantic import BaseModel
-from langgraph.prebuilt import create_react_agent
 
 from tradeatlas.agent.answer import AgentAnswer
-from tradeatlas.agent.prompts import PROMPT_VERSION, SYSTEM_PROMPT_V3
+from tradeatlas.agent.prompts import PROMPT_VERSION, SYSTEM_PROMPT_V4
 from tradeatlas.agent.run_records import (
     RunRecord,
     build_tool_call_records,
@@ -48,24 +56,16 @@ def get_model_id() -> str:
 
 
 class _AgentChatModel(ChatOpenAI):
-    """ChatOpenAI with the agent's structured-output contract made provider-agnostic.
+    """ChatOpenAI identity subclass for the agent's live models.
 
-    langchain-openai coerces Pydantic-class schemas to strict json_schema, which
-    providers reject for the free-form `selector` object the answer contract
-    requires (`additionalProperties: false` is unsatisfiable — Groq 400s outright).
-    Sending the JSON-schema dict with strict=False is accepted across providers;
-    the model output is then validated client-side against the Pydantic class, so
-    an unvalidated answer is still never emitted (the M3-a contract). The Google
-    route's mirror subclass lives in model_registry.py (_GoogleAgentChatModel).
+    Under create_agent the structured-output contract lives in build_agent's
+    ProviderStrategy(AgentAnswer, strict=False) — provider response_format json_schema
+    WITHOUT the strict key, the mechanism the old with_structured_output override used
+    to hand-craft (langchain-openai coerces Pydantic schemas to strict, which providers
+    reject for the free-form `selector` object). The subclass remains the registry's
+    construction target and any future per-provider overrides; the Google route's
+    mirror subclass lives in model_registry.py (_GoogleAgentChatModel).
     """
-
-    def with_structured_output(self, schema: Any, **kwargs: Any) -> Any:
-        if isinstance(schema, type) and issubclass(schema, BaseModel):
-            kwargs.setdefault("method", "json_schema")
-            kwargs.setdefault("strict", False)
-            inner = super().with_structured_output(schema.model_json_schema(), **kwargs)
-            return inner | RunnableLambda(lambda value: schema.model_validate(value))
-        return super().with_structured_output(schema, **kwargs)
 
 
 def build_chat_model(model_id: Optional[str] = None) -> Any:
@@ -87,15 +87,20 @@ def build_chat_model(model_id: Optional[str] = None) -> Any:
 def build_agent(chat_model: Any, recorder: Optional[ToolCallRecorder] = None) -> Any:
     """Assemble the single agent: pinned prompt, seven tools, validated AgentAnswer output.
 
-    The response format uses the (prompt, schema) tuple form so the structured-response
-    call — a separate model touch after the loop — is instructed by the same pinned
-    prompt as the loop calls; no model touch ever happens without it.
+    ToolStrategy(AgentAnswer) emits the structured answer as a tool call — chosen over
+    ProviderStrategy after reading installed langchain 1.5.0 source: create_agent
+    FORCE-adds strict=True for OpenAI-compatible models under ProviderStrategy
+    ("Redundantly set strict=True..."), which is exactly the wiretap-proven rejection
+    path (Groq/Gemini 400 on strict json_schema for the free-form selector).
+    ToolStrategy is plain tool calling — proven across the whole rotation. run_agent
+    validates the parsed answer against AgentAnswer, so an unvalidated answer is still
+    never emitted.
     """
-    return create_react_agent(
+    return create_agent(
         chat_model,
-        build_agent_tools(recorder),
-        prompt=SYSTEM_PROMPT_V3,
-        response_format=(SYSTEM_PROMPT_V3, AgentAnswer),
+        tools=build_agent_tools(recorder),
+        system_prompt=SYSTEM_PROMPT_V4,
+        response_format=ToolStrategy(AgentAnswer),
     )
 
 
@@ -124,15 +129,13 @@ def run_agent(
             config={"recursion_limit": RECURSION_LIMIT},
         )
         state_messages = state.get("messages", [])
-        # The structured-response touch is a real model request but never enters
-        # state messages (langgraph returns it as a separate key) — runs that reach
-        # it count it explicitly so usage accounting and daily caps see every request.
-        structured_call_happened = True
+        # Under create_agent the structured answer is emitted BY the final main-loop
+        # model call, so it is already among the captured messages — no separate touch
+        # to count (the old create_react_agent shape counted it via a flag).
         structured = state.get("structured_response")
         answer = structured if isinstance(structured, AgentAnswer) else AgentAnswer.model_validate(structured)
     except Exception as exc:  # recorded, never raised past the run boundary
         failure = f"{type(exc).__name__}: {exc}"
-        structured_call_happened = False
 
     if model_id is None:
         if chat_model is not None:
@@ -154,10 +157,10 @@ def run_agent(
         code_version=code_version(),
         answer=answer.model_dump(mode="json") if answer is not None else None,
         failure_reason=failure,
-        tool_calls=build_tool_call_records(state_messages, recorder),
+        tool_calls=build_tool_call_records(state_messages, recorder,
+                                           structured_tool_name=AgentAnswer.__name__),
         token_usage=sum_token_usage(state_messages),
-        model_touches=sum(1 for m in state_messages if isinstance(m, AIMessage))
-        + (1 if structured_call_happened else 0),
+        model_touches=sum(1 for m in state_messages if isinstance(m, AIMessage)),
     )
     if trace_path is not None and answer is not None:
         from tradeatlas.agent.replay import save_trace  # deferred: replay imports are loader-side

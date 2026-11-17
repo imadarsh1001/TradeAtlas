@@ -163,14 +163,14 @@ MODEL_REGISTRY: list[ModelEntry] = [
         provider_type="openai_compat",
         model="z-ai/glm-5.3-flash",  # dot in 5.3 (hyphenated 5-3 returns 404)
         route="custom-nvidia-nim",
-        enabled=False,  # 50-67s queue latency on NIM
+        enabled=True,  # canonical benchmark model — enabled for the M3 exit-gate campaign
         use_byok=False,
         api_key_env="NVIDIA_API_KEY",
         rpm_limit=40,
         notes="GLM-5.3-Flash (the 11/15-buyer-cases benchmark stack); reasoning_effort accepts "
-        "'low', 'high', or 'max'. Disabled on NIM due to 50-67s queue latency — enable "
-        "(with its longer timeout) only for long-context deep-reasoning runs.",
-        params={"temperature": 0.4, "max_tokens": 4096, "timeout": 60.0, "reasoning_effort": "low"},
+        "'low', 'high', or 'max'. NIM queue latency 50-67s: the entry timeout (180s) covers "
+        "its 1-2 min reasoning turns — do not lower it for this stack.",
+        params={"temperature": 0.4, "max_tokens": 4096, "timeout": 180.0, "reasoning_effort": "low"},
     ),
     ModelEntry(
         key="nvidia_nim_deepseek_4_1",
@@ -206,10 +206,10 @@ MODEL_REGISTRY: list[ModelEntry] = [
         provider_type="google_vertex",
         model="gemini-4-hydrogen",
         route="google-vertex-ai",
-        enabled=False,  # unproved in-agent; smoke first
+        enabled=True,  # owner-authorized for the rotation — protocol still gates its first SUITE on a passing smoke
         rpm_limit=60,
-        notes="Vertex AI enterprise quota; supports thinking_level='medium'. Disabled until "
-        "a live agent smoke passes (BYOK may need the no-op-credentials trick from the notebook).",
+        notes="Vertex AI enterprise quota; supports thinking_level='medium'. Enabled by owner for "
+        "the rotation; the first live smoke must pass before it runs a suite (ADR 0007).",
         params={"temperature": 0.3, "max_output_tokens": 4096, "thinking_level": "medium"},
     ),
     ModelEntry(

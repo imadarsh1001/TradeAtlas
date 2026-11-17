@@ -47,7 +47,9 @@ def test_owner_limits_are_pinned():
     assert by_key["nvidia_nim_nemotron"].daily_limit is None  # RPM-governed only
     assert by_key["nvidia_nim_nemotron"].rpm_limit == 40
     assert by_key["google_ai_studio"].enabled is False  # unproved in-agent — smoke first
-    assert by_key["google_vertex"].enabled is False
+    assert by_key["google_vertex"].enabled is True  # owner-authorized; suite use still smoke-gated
+    assert by_key["nvidia_nim_glm_5_3"].enabled is True  # canonical benchmark model
+    assert by_key["nvidia_nim_glm_5_3"].params["timeout"] == 180.0  # covers its 1-2 min turns
 
 
 def test_resolution_by_key_and_model_id_select_the_same_entry():

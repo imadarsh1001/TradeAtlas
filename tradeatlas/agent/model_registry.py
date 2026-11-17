@@ -163,13 +163,13 @@ MODEL_REGISTRY: list[ModelEntry] = [
         provider_type="openai_compat",
         model="z-ai/glm-5.3-flash",  # dot in 5.3 (hyphenated 5-3 returns 404)
         route="custom-nvidia-nim",
-        enabled=True,  # canonical benchmark model — enabled for the M3 exit-gate campaign
+        enabled=False,  # provider-unavailable in practice (18 min/case on NIM queue latency) — out of the rotation
         use_byok=False,
         api_key_env="NVIDIA_API_KEY",
         rpm_limit=40,
-        notes="GLM-5.3-Flash (the 11/15-buyer-cases benchmark stack); reasoning_effort accepts "
-        "'low', 'high', or 'max'. NIM queue latency 50-67s: the entry timeout (180s) covers "
-        "its 1-2 min reasoning turns — do not lower it for this stack.",
+        notes="GLM-5.3-Flash; reasoning_effort accepts 'low', 'high', or 'max'. NIM queue latency "
+        "50-67s made runs take 18+ min/case (provider-unavailable skips) — demoted from the "
+        "rotation 2026-11-18; its 11 recorded buyer cases remain ledger comparison evidence.",
         params={"temperature": 0.4, "max_tokens": 4096, "timeout": 180.0, "reasoning_effort": "low"},
     ),
     ModelEntry(

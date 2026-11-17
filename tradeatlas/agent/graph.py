@@ -15,7 +15,7 @@ from pydantic import BaseModel
 from langgraph.prebuilt import create_react_agent
 
 from tradeatlas.agent.answer import AgentAnswer
-from tradeatlas.agent.prompts import PROMPT_VERSION, SYSTEM_PROMPT_V1
+from tradeatlas.agent.prompts import PROMPT_VERSION, SYSTEM_PROMPT_V2
 from tradeatlas.agent.run_records import (
     RunRecord,
     build_tool_call_records,
@@ -94,8 +94,8 @@ def build_agent(chat_model: Any, recorder: Optional[ToolCallRecorder] = None) ->
     return create_react_agent(
         chat_model,
         build_agent_tools(recorder),
-        prompt=SYSTEM_PROMPT_V1,
-        response_format=(SYSTEM_PROMPT_V1, AgentAnswer),
+        prompt=SYSTEM_PROMPT_V2,
+        response_format=(SYSTEM_PROMPT_V2, AgentAnswer),
     )
 
 

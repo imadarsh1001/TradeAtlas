@@ -9,7 +9,7 @@ from langchain_core.messages import SystemMessage, ToolMessage
 from tradeatlas.agent import tools as agent_tools
 from tradeatlas.agent.answer import AgentAnswer
 from tradeatlas.agent.graph import MODEL_ENV_VAR, build_chat_model, get_model_id, run_agent
-from tradeatlas.agent.prompts import SYSTEM_PROMPT_V1
+from tradeatlas.agent.prompts import SYSTEM_PROMPT_V2
 from tradeatlas.agent.replay import load_trace, scripted_model
 from tradeatlas.models import EvidenceEnvelope
 
@@ -72,7 +72,7 @@ def test_conforming_run_returns_validated_answer(tmp_path, anomaly_trace):
     assert record.failure_reason is None
     assert answer.figures[0].value == 4186.56
     assert record.answer["figures"][0]["source_tool"] == "detect_price_anomalies"
-    assert record.prompt_version == "v1"
+    assert record.prompt_version == "v2"
     assert record.model_id == "scripted-fixture"
     # Model requests = the trace's recorded turns + the structured-response call,
     # which never enters state messages (langgraph returns it as a separate key).
@@ -150,7 +150,7 @@ def test_hostile_payload_stays_data_instruction_message_unchanged(tmp_path, anom
     assert model.received_messages, "scripted model should have seen the conversation"
     for received in model.received_messages:
         system_contents = [m.content for m in received if isinstance(m, SystemMessage)]
-        assert system_contents == [SYSTEM_PROMPT_V1]
+        assert system_contents == [SYSTEM_PROMPT_V2]
     # The hostile text did reach the model — as tool-result data, never as instructions.
     flattened = "\n".join(str(m.content) for received in model.received_messages for m in received)
     assert hostile in flattened

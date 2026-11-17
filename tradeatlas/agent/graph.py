@@ -6,12 +6,12 @@ retry budget and is deliberately absent here. Model id comes from pinned configu
 
 Framework note (migrate-agent-to-create-agent): construction moved from the deprecated
 langgraph.prebuilt.create_react_agent to langchain.agents.create_agent. The structured
-answer is produced by the final main-loop model call under ProviderStrategy(AgentAnswer,
-strict=False) — the 1:1 port of the wiretap-proven non-strict json_schema mechanism
-(langchain 1.5.0 ProviderStrategy.to_model_kwargs omits the strict key unless requested).
+answer is delivered by the final main-loop model call as an AgentAnswer tool call
+(ToolStrategy — ProviderStrategy was rejected on installed-source evidence: create_agent
+force-adds strict=True for OpenAI-compatible models, the wiretap-proven rejection path).
 run_agent's extraction still validates against AgentAnswer, so an unvalidated answer is
-never emitted. The replay contract (25 committed traces -> identical sequences/outcomes)
-is this migration's acceptance gate.
+never emitted. The replay contract (25 committed traces -> identical evidence-tool-call
+sequences/outcomes) is this migration's acceptance gate.
 """
 
 import os
@@ -55,19 +55,6 @@ def get_model_id() -> str:
     return model_id
 
 
-class _AgentChatModel(ChatOpenAI):
-    """ChatOpenAI identity subclass for the agent's live models.
-
-    Under create_agent the structured-output contract lives in build_agent's
-    ProviderStrategy(AgentAnswer, strict=False) — provider response_format json_schema
-    WITHOUT the strict key, the mechanism the old with_structured_output override used
-    to hand-craft (langchain-openai coerces Pydantic schemas to strict, which providers
-    reject for the free-form `selector` object). The subclass remains the registry's
-    construction target and any future per-provider overrides; the Google route's
-    mirror subclass lives in model_registry.py (_GoogleAgentChatModel).
-    """
-
-
 def build_chat_model(model_id: Optional[str] = None) -> Any:
     """Build the live chat model for the pinned selector, through the model registry.
 
@@ -78,7 +65,7 @@ def build_chat_model(model_id: Optional[str] = None) -> Any:
     Construction is bounded (timeout + max_retries=1) so a hung provider call
     fails and is recorded instead of stalling a benchmark for hours.
     """
-    from tradeatlas.agent.model_registry import build_model_for_entry, resolve_model_entry  # deferred: registry lazily imports this module's _AgentChatModel
+    from tradeatlas.agent.model_registry import build_model_for_entry, resolve_model_entry  # deferred: keeps the registry optional at import time
 
     entry = resolve_model_entry(model_id or get_model_id())
     return build_model_for_entry(entry)

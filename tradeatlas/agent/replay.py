@@ -2,7 +2,7 @@
 
 The trace holds the model's messages only (content, tool calls, usage metadata); the
 agent's tools execute for real against the test environment's hermetic fixtures, so a
-replay exercises the whole graph. Recording real runs (a save path) arrives with M3-b.
+replay exercises the whole graph. Real runs export traces via save_trace (the live benchmark per-case seam).
 """
 
 import json
@@ -12,7 +12,6 @@ from typing import Any, Dict, List, Optional
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage
 from langchain_core.outputs import ChatGeneration, ChatResult
-from langchain_core.runnables import RunnableLambda
 from pydantic import Field
 
 TRACE_VERSION = 1
@@ -120,13 +119,6 @@ class ScriptedChatModel(BaseChatModel):
 
     def bind_tools(self, *args: Any, **kwargs: Any) -> "ScriptedChatModel":
         return self  # scripted: tool binding is a no-op
-
-    def with_structured_output(self, schema: Any, **kwargs: Any) -> Any:
-        def _answer(_messages: Any) -> Any:
-            self.received_messages.append(list(_messages) if isinstance(_messages, list) else [_messages])
-            return schema.model_validate(self.structured_response)  # validates or raises
-
-        return RunnableLambda(_answer)
 
     @property
     def _llm_type(self) -> str:

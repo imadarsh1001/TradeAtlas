@@ -7,13 +7,13 @@ monkeypatch.
 
 import httpx
 import pytest
+from pathlib import Path
 
 from tradeatlas.agent.model_registry import (
     DEFAULT_TIMEOUT_S,
     MODEL_REGISTRY,
     GatewaySettings,
     ModelEntry,
-    _GoogleAgentChatModel,
     _strip_auth_header,
     build_model_for_entry,
     resolve_model_entry,
@@ -144,14 +144,16 @@ def test_google_entries_build_through_the_gateway(monkeypatch):
     s = settings(monkeypatch)
     ai_studio = next(e for e in MODEL_REGISTRY if e.key == "google_ai_studio")
     model = build_model_for_entry(ai_studio, settings=s)  # build works on disabled entries (smoke path)
-    assert isinstance(model, _GoogleAgentChatModel)
+    from langchain_google_genai import ChatGoogleGenerativeAI
+
+    assert isinstance(model, ChatGoogleGenerativeAI)
     assert model.model == "gemini-3.5-flash-lite"
     assert model.additional_headers["cf-aig-authorization"] == "Bearer tok-test"
 
     monkeypatch.setenv("GCP_PROJECT_ID", "proj-test")
     vertex = next(e for e in MODEL_REGISTRY if e.key == "google_vertex")
     vertex_model = build_model_for_entry(vertex, settings=s)
-    assert isinstance(vertex_model, _GoogleAgentChatModel)
+    assert isinstance(vertex_model, ChatGoogleGenerativeAI)
 
 
 def test_vertex_without_project_fails_naming_the_variable(monkeypatch):
@@ -162,35 +164,27 @@ def test_vertex_without_project_fails_naming_the_variable(monkeypatch):
         build_model_for_entry(vertex, settings=s)
 
 
-def test_google_structured_output_validates_client_side(monkeypatch):
-    """Behavioral pin of the Google structured-output contract (mirrors the
-    OpenAI-compat contract tests in test_agent_graph.py): the schema goes out
-    non-strict (method='json_schema') and invalid output never passes through."""
-    from langchain_core.runnables import RunnableLambda
-    from pydantic import BaseModel, ValidationError
-
-    class Probe(BaseModel):
-        name: str
+def test_google_model_drives_the_shared_contract(tmp_path, monkeypatch):
+    """Route-independence of the answer contract, behaviorally: a Google-built model
+    replays a committed trace through the same graph and the same run_agent validation
+    (the contract lives in graph.build_agent's ToolStrategy + run_agent extraction —
+    shared by every route since the create_agent migration). No network."""
+    from tradeatlas.agent.answer import AgentAnswer
+    from tradeatlas.agent.graph import run_agent
+    from tradeatlas.agent.replay import load_trace, scripted_model
 
     s = settings(monkeypatch)
     ai_studio = next(e for e in MODEL_REGISTRY if e.key == "google_ai_studio")
     assert "temperature" not in ai_studio.params  # notes: keep model defaults (400 INVALID_ARGUMENT)
     model = build_model_for_entry(ai_studio, settings=s)
 
-    seen_kwargs = {}
-
-    def fake_inner(self, schema, **kwargs):
-        seen_kwargs.update(kwargs)
-        return RunnableLambda(lambda value: value)  # pass the raw output through
-
-    monkeypatch.setattr(
-        "langchain_google_genai.ChatGoogleGenerativeAI.with_structured_output", fake_inner
+    trace = load_trace(Path(__file__).resolve().parent.parent / "evals" / "traces" / "anomaly_single_tool.json")
+    answer, record = run_agent(
+        trace["question"], chat_model=scripted_model(trace), model_id="gemini-4-hydrogen", runs_dir=tmp_path
     )
-    chain = model.with_structured_output(Probe)
-    assert seen_kwargs.get("method") == "json_schema"  # the native responseJsonSchema path
-    assert chain.invoke({"name": "ok"}) == Probe(name="ok")  # valid output validates
-    with pytest.raises(ValidationError):
-        chain.invoke({"wrong": "shape"})  # non-conforming output raises — never emitted
+    assert isinstance(answer, AgentAnswer)
+    assert record.model_id == "gemini-4-hydrogen"  # the Google-built model drove the shared contract
+    assert record.failure_reason is None
 
 
 def test_entry_model_dataclass_freezes():

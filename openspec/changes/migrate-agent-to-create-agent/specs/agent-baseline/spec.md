@@ -15,4 +15,4 @@ The system SHALL provide one agent that answers natural-language questions using
 
 #### Scenario: Framework migration preserves measured behaviour
 - **WHEN** the committed 25-case trace set is replayed through the migrated agent
-- **THEN** every case produces the same tool-call sequence and the same validated pass/fail outcome as recorded, and no case's outcome changes because of the migration
+- **THEN** every case produces the same evidence-tool-call sequence (the framework's structured-output tool call excepted) and the same validated pass/fail outcome as recorded, and no case's outcome changes because of the migration

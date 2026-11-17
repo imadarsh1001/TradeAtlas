@@ -10,9 +10,9 @@ retiring a model — notes carry the reason, so a disabled entry explains itself
 
 The repo .env (git-ignored) is loaded at IMPORT time (python-dotenv) so
 GatewaySettings sees real credentials in shell-less runs; tests pin their own
-env values over whatever it loaded. The agent's OpenAI-compatible chat-model
-subclass lives in graph.py (_AgentChatModel); the Google subclass below mirrors
-its structured-output contract.
+env values over whatever it loaded. The structured-output contract lives in
+graph.build_agent (ToolStrategy + run_agent validation) — model_registry builds
+plain provider clients against the gateway.
 """
 
 import os
@@ -22,10 +22,9 @@ from typing import Any, Dict, Literal, Optional
 
 import httpx
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
-from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from langchain_core.runnables import RunnableLambda
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 _ENV_PATH = ROOT_DIR / ".env"
@@ -272,19 +271,17 @@ def _resolve_provider_key(entry: ModelEntry) -> str:
 def build_model_for_entry(entry: ModelEntry, settings: Optional[GatewaySettings] = None) -> Any:
     """Build the live chat model from a registry entry (construction only — no network).
 
-    openai_compat entries build the agent's ChatOpenAI subclass against the
-    gateway route: BYOK entries send no provider Authorization (per-model httpx
-    client strips it; Cloudflare injects stored keys), non-BYOK entries carry
-    the named provider key. Google entries build the Google subclass with the
-    gateway endpoint; both keep the structured-output contract (non-strict
-    schema + client-side validation) via their subclasses.
+    openai_compat entries build a ChatOpenAI against the gateway route: BYOK
+    entries send no provider Authorization (per-model httpx client strips it;
+    Cloudflare injects stored keys), non-BYOK entries carry the named provider
+    key. Google entries build ChatGoogleGenerativeAI against the gateway endpoint.
+    The structured-output contract lives in graph.build_agent (ToolStrategy +
+    run_agent validation) — shared by every route.
     """
     cfg = settings if settings is not None else GatewaySettings()
     endpoint = f"{cfg.base_gateway_url}/{entry.route}"
 
     if entry.provider_type == "openai_compat":
-        from tradeatlas.agent.graph import _AgentChatModel  # deferred: graph imports this module
-
         params = dict(entry.params or {})
         timeout = float(params.pop("timeout", DEFAULT_TIMEOUT_S))
         if entry.use_byok:
@@ -296,7 +293,7 @@ def build_model_for_entry(entry: ModelEntry, settings: Optional[GatewaySettings]
         else:
             client = None
             api_key = _resolve_provider_key(entry)
-        return _AgentChatModel(
+        return ChatOpenAI(
             model=entry.model,
             base_url=endpoint,
             api_key=api_key,
@@ -308,7 +305,7 @@ def build_model_for_entry(entry: ModelEntry, settings: Optional[GatewaySettings]
         )
 
     if entry.provider_type == "google_ai_studio":
-        return _GoogleAgentChatModel(
+        return ChatGoogleGenerativeAI(
             model=entry.model,
             google_api_key="byok",
             client_options={"api_endpoint": endpoint},
@@ -322,7 +319,7 @@ def build_model_for_entry(entry: ModelEntry, settings: Optional[GatewaySettings]
                 f"Model entry '{entry.key}' routes through Vertex AI and requires "
                 "GCP_PROJECT_ID in the environment"
             )
-        return _GoogleAgentChatModel(
+        return ChatGoogleGenerativeAI(
             model=entry.model,
             vertexai=True,
             project=cfg.gcp_project_id,
@@ -333,39 +330,3 @@ def build_model_for_entry(entry: ModelEntry, settings: Optional[GatewaySettings]
         )
 
     raise ValueError(f"Unsupported provider_type: {entry.provider_type}")
-
-
-def _ensure_trailing_user_turn(messages: Any) -> Any:
-    """Gemini rejects requests whose LAST turn is a model turn — and langgraph's
-    structured-response call re-sends the full conversation, which ends with the
-    agent's own answer. Appending the user turn that requests the structured
-    output makes the request valid without touching any prior turn."""
-    from langchain_core.messages import HumanMessage
-
-    if isinstance(messages, list) and messages and type(messages[-1]).__name__ == "AIMessage":
-        return list(messages) + [HumanMessage(content="Return the final structured answer now.")]
-    return messages
-
-
-class _GoogleAgentChatModel(ChatGoogleGenerativeAI):
-    """ChatGoogleGenerativeAI with the agent's structured-output contract.
-
-    Mirrors graph._AgentChatModel for the Google routes (which use
-    ChatGoogleGenerativeAI, not the OpenAI-compatible client). langchain-google-
-    genai's default method is already 'json_schema' (Gemini's native
-    responseJsonSchema); the explicit setdefault documents the contract and
-    guards against default drift, and the client-side model_validate wrapper
-    keeps the M3-a guarantee — an unvalidated answer is never emitted. The
-    trailing-user-turn mapper is Gemini-specific: its API refuses requests
-    ending with a model turn, which is exactly the shape of langgraph's
-    structured-response call (proven by the vertex smoke test).
-    """
-
-    def with_structured_output(self, schema: Any, **kwargs: Any) -> Any:
-        if isinstance(schema, type) and issubclass(schema, BaseModel):
-            kwargs.setdefault("method", "json_schema")
-            inner = super().with_structured_output(schema.model_json_schema(), **kwargs)
-            return RunnableLambda(_ensure_trailing_user_turn) | inner | RunnableLambda(
-                lambda value: schema.model_validate(value)
-            )
-        return super().with_structured_output(schema, **kwargs)

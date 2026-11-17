@@ -12,10 +12,11 @@ The drop decision stays human; nothing here auto-disables a model.
 
 import json
 import os
+import random
 import tempfile
 from datetime import date
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from tradeatlas.models import utc_now_iso
 
@@ -160,6 +161,38 @@ def daily_cap_reached(
     return used_today + per_case > entry.daily_limit
 
 
+def wilson_interval(passed: int, n: int, z: float = 1.959963984540054) -> Optional[Tuple[float, float]]:
+    """Wilson score interval (95%) on a pass proportion; None when nothing executed.
+
+    Closed-form and stable at tiny n — a '3/3' claim shows honest bounds instead
+    of a naked 100%.
+    """
+    if n <= 0:
+        return None
+    p = passed / n
+    denom = 1 + z * z / n
+    centre = (p + z * z / (2 * n)) / denom
+    spread = (z / denom) * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5)
+    return (max(0.0, centre - spread), min(1.0, centre + spread))
+
+
+def bootstrap_interval(
+    flags: List[bool], draws: int = 2000, seed: int = 20261117
+) -> Optional[Tuple[float, float]]:
+    """Seeded percentile bootstrap (95%) on the mean of pass flags; None when empty.
+
+    The seed makes the interval deterministic — eval evidence must be reproducible.
+    """
+    if not flags:
+        return None
+    rng = random.Random(seed)
+    n = len(flags)
+    means = sorted(sum(rng.choices(flags, k=n)) / n for _ in range(draws))
+    lo = means[int(0.025 * draws)]
+    hi = means[min(draws - 1, int(0.975 * draws))]
+    return (round(lo, 3), round(hi, 3))
+
+
 def history_summary(ledger: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Dict[str, Any]]:
     """Per-model evidence table from the run ledger (the drop-decision input).
 
@@ -173,7 +206,7 @@ def history_summary(ledger: Optional[List[Dict[str, Any]]] = None) -> Dict[str, 
         bucket = summary.setdefault(
             row.get("model_key", "?"),
             {"model_id": row.get("model_id"), "runs": 0, "executed": 0, "passed": 0, "durations": [],
-             "touches": [], "transport_failures": 0, "skipped": 0},
+             "touches": [], "transport_failures": 0, "skipped": 0, "_flags": []},
         )
         bucket["runs"] += 1
         if row.get("failure_class") == "transport":
@@ -184,6 +217,9 @@ def history_summary(ledger: Optional[List[Dict[str, Any]]] = None) -> Dict[str, 
         bucket["executed"] += 1
         if row.get("outcome") == "passed":
             bucket["passed"] += 1
+            bucket["_flags"].append(True)
+        else:
+            bucket["_flags"].append(False)
         if row.get("duration_s") is not None:
             bucket["durations"].append(row["duration_s"])
         if row.get("model_touches"):
@@ -191,23 +227,33 @@ def history_summary(ledger: Optional[List[Dict[str, Any]]] = None) -> Dict[str, 
     for bucket in summary.values():
         durations = bucket.pop("durations")
         touches = bucket.pop("touches")
+        flags = bucket.pop("_flags")
         executed = bucket["executed"]
         bucket["pass_rate"] = round(bucket["passed"] / executed, 2) if executed else None
+        bucket["ci95"] = {
+            "bootstrap": bootstrap_interval(flags),
+            "wilson": wilson_interval(bucket["passed"], executed),
+        }
         bucket["avg_duration_s"] = round(sum(durations) / len(durations), 1) if durations else None
         bucket["avg_touches"] = round(sum(touches) / len(touches), 1) if touches else None
     return summary
 
 
 def format_history(summary: Optional[Dict[str, Dict[str, Any]]] = None) -> str:
-    """The evidence table as text: model, runs, pass rate, avg duration, avg touches, transport failures."""
+    """The evidence table as text: model, runs, pass rate with 95% bounds, averages, transport failures."""
     data = summary if summary is not None else history_summary()
-    header = f"{'model_key':<26} {'model_id':<36} {'runs':>4} {'pass':>6} {'avg_s':>7} {'touches':>8} {'transport':>9} {'skipped':>8}"
+    header = (
+        f"{'model_key':<26} {'model_id':<36} {'runs':>4} {'pass':>6} {'ci95(wilson)':>14} "
+        f"{'avg_s':>7} {'touches':>8} {'transport':>9} {'skipped':>8}"
+    )
     lines = [header, "-" * len(header)]
     for key in sorted(data):
         b = data[key]
         pass_text = f"{b['pass_rate']:.0%}" if b["pass_rate"] is not None else "-"
+        wilson = b["ci95"]["wilson"]
+        ci_text = f"{wilson[0]:.2f}-{wilson[1]:.2f}" if wilson else "-"
         lines.append(
-            f"{key:<26} {str(b['model_id']):<36} {b['runs']:>4} {pass_text:>6} "
+            f"{key:<26} {str(b['model_id']):<36} {b['runs']:>4} {pass_text:>6} {ci_text:>14} "
             f"{str(b['avg_duration_s']):>7} {str(b['avg_touches']):>8} {b['transport_failures']:>9} {b['skipped']:>8}"
         )
     if not data:

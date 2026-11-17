@@ -43,7 +43,7 @@ In live benchmark mode the runner SHALL run the real agent per case — model id
 ## ADDED Requirements
 
 ### Requirement: Trajectory invariants on agent calls
-Every agent case SHALL additionally be scored on deterministic trajectory properties derived from the run record. The duplicate-call invariant: a run that executes two successful calls with the same tool name and identical schema-canonical arguments SHALL fail the case. When the case rubric pins `expected_calls`, every pinned call (tool name and schema-canonical arguments) SHALL have been executed successfully in the run.
+Every agent case SHALL additionally be scored on deterministic trajectory properties derived from the run record. The duplicate-call invariant: a run that executes two successful calls with the same tool name and identical schema-canonical arguments SHALL fail the case. When the case rubric pins `expected_calls`, each pinned call SHALL be satisfied by an executed successful call under the agreement rule in its scenario.
 
 #### Scenario: A wasteful duplicate call fails the case
 - **WHEN** a run executes the same tool twice with identical schema-canonical arguments and both calls succeed
@@ -56,6 +56,10 @@ Every agent case SHALL additionally be scored on deterministic trajectory proper
 #### Scenario: A pinned expected call is enforced
 - **WHEN** a case pins an expected call that the run never executed successfully
 - **THEN** the case fails naming the missing call
+
+#### Scenario: A pinned call with extra executed arguments still matches
+- **WHEN** a case pins a call's meaningful arguments and the executed call set additional optional arguments without contradicting the pin
+- **THEN** the pinned call is satisfied
 
 ### Requirement: Efficiency budgets are recorded, not enforced
 When a case rubric pins `efficiency_budget`, the run's model-touch count SHALL be recorded against it and reported — but SHALL NOT affect pass/fail until calibrated against campaign data by a future reviewed change.

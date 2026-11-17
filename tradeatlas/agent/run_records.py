@@ -10,7 +10,7 @@ import subprocess
 import uuid
 from collections import deque
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from langchain_core.messages import ToolMessage
 from pydantic import BaseModel, Field
@@ -23,6 +23,10 @@ if TYPE_CHECKING:  # tools imports services; the recorder type is only needed fo
 ROOT_DIR = Path(__file__).resolve().parents[2]
 RUNS_DIR = ROOT_DIR / "evals" / "runs"
 
+# Bounded result text per executed call (the judged faithfulness metric's evidence
+# in the quality layer) — full payloads stay in the data layer, not the records.
+MAX_TOOL_RESULT_EXCERPT_CHARS = 2000
+
 
 class TokenUsage(BaseModel):
     """Token counts as reported by the model's usage metadata."""
@@ -33,13 +37,14 @@ class TokenUsage(BaseModel):
 
 
 class ToolCallRecord(BaseModel):
-    """One tool invocation: executed calls carry latency; schema-rejected ones carry the error."""
+    """One tool invocation: executed calls carry latency + a result excerpt; schema-rejected ones carry the error."""
 
     tool: str
     arguments: Dict[str, Any]
     attempt_index: int  # 1-based ordinal across the run
     latency_ms: Optional[float] = None
     error: Optional[str] = None
+    result_excerpt: Optional[str] = None  # bounded result text of an executed call (faithfulness evidence)
 
 
 class RunRecord(BaseModel):
@@ -128,16 +133,19 @@ def build_tool_call_records(messages: List[Any], recorder: Any) -> List[ToolCall
                         attempt_index=attempt,
                         latency_ms=entry["latency_ms"],
                         error=entry["error"],
+                        result_excerpt=_tool_message_text(messages, call.get("id"))[1],
                     )
                 )
             else:
+                error, excerpt = _tool_message_text(messages, call.get("id"))
                 records.append(
                     ToolCallRecord(
                         tool=name,
                         arguments=call["args"],
                         attempt_index=attempt,
                         latency_ms=None,
-                        error=_tool_message_error(messages, call.get("id")),
+                        error=error,
+                        result_excerpt=excerpt,
                     )
                 )
     for pending_queues in pending.values():
@@ -155,17 +163,23 @@ def build_tool_call_records(messages: List[Any], recorder: Any) -> List[ToolCall
     return records
 
 
-def _tool_message_error(messages: List[Any], tool_call_id: Optional[str]) -> Optional[str]:
-    """The error text of the tool message answering this call id, if it reports one."""
+def _tool_message_text(messages: List[Any], tool_call_id: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+    """The (error, result excerpt) of the tool message answering this call id.
+
+    An error-status message (or an 'Error:'-prefixed one) yields the error text and
+    no excerpt; a normal payload yields a bounded excerpt of its text — the evidence
+    the judged faithfulness metric scores the answer against.
+    """
     if not tool_call_id:
-        return None
+        return None, None
     for message in messages:
         if not isinstance(message, ToolMessage) or message.tool_call_id != tool_call_id:
             continue
         content = message.content if isinstance(message.content, str) else str(message.content)
         if message.status == "error" or content.startswith("Error:"):
-            return content
-    return None
+            return content, None
+        return None, content[:MAX_TOOL_RESULT_EXCERPT_CHARS]
+    return None, None
 
 
 def write_run_record(record: RunRecord, runs_dir: Optional[Path] = None) -> Path:

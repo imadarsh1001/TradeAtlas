@@ -25,7 +25,10 @@ dependencies = [
 package = false
 
 [dependency-groups]
-dev = ["pytest>=8"]
+dev = [
+    "deepeval>=4.3.4",
+    "pytest>=8",
+]
 
 [tool.pytest.ini_options]
 # langsmith's pytest plugin (entry point `langsmith_plugin`, transitive via

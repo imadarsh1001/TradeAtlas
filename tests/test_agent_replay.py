@@ -52,6 +52,7 @@ def test_replay_is_deterministic(tmp_path):
         dump.pop("run_id"), dump.pop("started_at"), dump.pop("ended_at")
         for call in dump["tool_calls"]:
             call.pop("latency_ms")
+            call.pop("result_excerpt")  # embeds the envelope's retrieved_at — a timestamp, exempt per the spec
         return dump
     assert scrub(a_record) == scrub(b_record)
 

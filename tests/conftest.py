@@ -37,6 +37,12 @@ def hermetic_api_key(monkeypatch):
     monkeypatch.setattr(ingest_mod, "get_api_key", lambda: "test-key")
 
 
+@pytest.fixture(autouse=True)
+def no_observability_tracing(monkeypatch):
+    """Tests never emit observability traces (run-observability spec): pin the toggle off."""
+    monkeypatch.setenv("LANGSMITH_TRACING", "false")
+
+
 @pytest.fixture()
 def isolated_cache(tmp_path, monkeypatch):
     """Point the DuckDB cache at a temp directory for test isolation."""

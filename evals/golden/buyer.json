@@ -21,9 +21,22 @@
         ],
         "summary_signals": [
           "Gujarat",
-          "quintal"
+          [
+            "quintal",
+            "qtl"
+          ]
+        ],
+        "expected_calls": [
+          {
+            "tool": "get_daily_mandi_prices",
+            "arguments": {
+              "state": "Gujarat",
+              "commodity": "Groundnut"
+            }
+          }
         ]
-      }
+      },
+      "trace": "buyer-daily-price-gujarat.json"
     },
     {
       "id": "buyer-hub-msp-rajkot",
@@ -47,8 +60,18 @@
         "summary_signals": [
           "Rajkot",
           "MSP"
+        ],
+        "expected_calls": [
+          {
+            "tool": "get_benchmark_hub_summary",
+            "arguments": {
+              "state": "Gujarat",
+              "commodity": "Groundnut"
+            }
+          }
         ]
-      }
+      },
+      "trace": "buyer-hub-msp-rajkot.json"
     },
     {
       "id": "buyer-delivered-cost-kernels",
@@ -71,8 +94,19 @@
         ],
         "summary_signals": [
           "delivered cost"
+        ],
+        "expected_calls": [
+          {
+            "tool": "calculate_delivered_cost",
+            "arguments": {
+              "commodity": "Groundnut",
+              "base_price_rs_qtl": 5123.45,
+              "freight_per_tonne": 900.0
+            }
+          }
         ]
-      }
+      },
+      "trace": "buyer-delivered-cost-kernels.json"
     },
     {
       "id": "buyer-delivered-cost-pods",
@@ -97,8 +131,20 @@
         "summary_signals": [
           "pods",
           "delivered cost"
+        ],
+        "expected_calls": [
+          {
+            "tool": "calculate_delivered_cost",
+            "arguments": {
+              "commodity": "Groundnut",
+              "base_price_rs_qtl": 5123.45,
+              "freight_per_tonne": 900.0,
+              "is_pod": true
+            }
+          }
         ]
-      }
+      },
+      "trace": "buyer-delivered-cost-pods.json"
     },
     {
       "id": "buyer-anomaly-flag-gujarat",
@@ -119,7 +165,7 @@
           }
         ],
         "summary_signals": [
-          "September 2020"
+          "2020"
         ]
       }
     },
@@ -143,7 +189,8 @@
         "summary_signals": [
           "Rajasthan"
         ]
-      }
+      },
+      "trace": "buyer-coverage-rajasthan.json"
     },
     {
       "id": "buyer-price-comparison-rajasthan",
@@ -165,10 +212,19 @@
           }
         ],
         "summary_signals": [
-          "Rajasthan",
-          "7100"
+          "Rajasthan"
+        ],
+        "expected_calls": [
+          {
+            "tool": "get_daily_mandi_prices",
+            "arguments": {
+              "state": "Rajasthan",
+              "commodity": "Groundnut"
+            }
+          }
         ]
-      }
+      },
+      "trace": "buyer-price-comparison-rajasthan.json"
     },
     {
       "id": "buyer-supply-balance-gujarat",
@@ -188,10 +244,15 @@
           }
         ],
         "summary_signals": [
-          "supply",
-          "Gujarat"
+          "Gujarat",
+          [
+            "supply",
+            "supplied",
+            "surplus"
+          ]
         ]
-      }
+      },
+      "trace": "buyer-supply-balance-gujarat.json"
     },
     {
       "id": "buyer-anomalies-rajasthan",
@@ -213,7 +274,8 @@
         "summary_signals": [
           "Rajasthan"
         ]
-      }
+      },
+      "trace": "buyer-anomalies-rajasthan.json"
     },
     {
       "id": "buyer-unsupported-commodity",
@@ -235,7 +297,8 @@
       "args": {},
       "expected": {
         "unavailability_signal": "Punjab"
-      }
+      },
+      "trace": "buyer-unsupported-state.json"
     },
     {
       "id": "buyer-missing-selector-state",

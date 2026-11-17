@@ -52,6 +52,7 @@ INTER_CASE_DELAY_ENV = "TRADEATLAS_INTER_CASE_DELAY"
 DEFAULT_DELAY_S = 45.0
 MAX_TRANSPORT_ATTEMPTS = 3
 RETRY_BACKOFF_S = 5.0
+TRACING_TOGGLE_ENV = "LANGSMITH_TRACING"
 
 _report_cache: Dict[str, Any] = {}
 
@@ -60,6 +61,24 @@ def _sleep(seconds: float) -> None:
     """Pacing/backoff sleep (module-level so tests can intercept it)."""
     if seconds > 0:
         time.sleep(seconds)
+
+
+@contextmanager
+def _no_tracing():
+    """Force observability off for the block's duration (the run-observability contract).
+
+    Replay and CI never emit traces — even when the operator's environment has
+    LangSmith toggled on. The operator's env is restored on exit.
+    """
+    original = os.environ.get(TRACING_TOGGLE_ENV)
+    os.environ[TRACING_TOGGLE_ENV] = "false"
+    try:
+        yield
+    finally:
+        if original is None:
+            os.environ.pop(TRACING_TOGGLE_ENV, None)
+        else:
+            os.environ[TRACING_TOGGLE_ENV] = original
 
 
 def _cached_report() -> Dict[str, Any]:
@@ -176,6 +195,71 @@ def _selector_agrees(tool: str, call_arguments: Dict[str, Any], selector: Dict[s
     return True
 
 
+def _signal_satisfied(signal: Any, summary: str) -> bool:
+    """A summary signal is a literal substring (must appear, case-insensitive) or a
+    list of alternative substrings (ANY one appearing satisfies it)."""
+    lowered = (summary or "").lower()
+    alternatives = signal if isinstance(signal, list) else [signal]
+    return any(str(alt).lower() in lowered for alt in alternatives)
+
+
+def _canonical_args(tool: str, arguments: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    from tradeatlas.agent.tools import canonical_tool_args  # deferred: tools resolves services
+
+    return canonical_tool_args(tool, arguments)
+
+
+def _pinned_args_agree(tool: str, pinned: Dict[str, Any], executed_arguments: Dict[str, Any]) -> bool:
+    """An expected-call pin agrees with an executed call when, on every argument the
+    pin SETS (raw keys, canonically coerced values), the executed call states the same
+    value — the executed call may set additional optional arguments, a contradicted
+    or missing pinned argument does not match. Schema defaults the pin never wrote
+    (e.g. a 1500 decortication default) are not enforced against an executed call
+    that set a different value."""
+    pinned_canonical = _canonical_args(tool, pinned)
+    executed_canonical = _canonical_args(tool, executed_arguments)
+    if pinned_canonical is None or executed_canonical is None:
+        return False
+    for key in pinned:
+        value = pinned_canonical.get(key)  # coerced form of the raw pinned value
+        if value is None or value is False:
+            continue
+        if executed_canonical.get(key) != value:
+            return False
+    return True
+
+
+def _trajectory_failures(record: Any, expected: Dict[str, Any]) -> List[str]:
+    """Deterministic trajectory checks from the run record (the Gate Layer).
+
+    1. Duplicate-call invariant: two SUCCESSFUL calls with identical (tool,
+       schema-canonical arguments) are pure waste under the evidence-card model —
+       same inputs, deterministic same output — and fail the case. A schema-
+       rejected attempt has no canonical form and never matches, so the
+       rejected-then-corrected retry pattern does not false-positive.
+    2. `expected_calls` pins: each pinned call needs an executed successful call
+       agreeing on every argument the pin sets (extras permitted).
+    """
+    failures: List[str] = []
+    calls = _successful_calls(record)
+    seen = set()
+    for call in calls:
+        canonical = _canonical_args(call.tool, call.arguments)
+        if canonical is None:
+            continue  # schema-rejected calls never executed; no canonical form
+        key = (call.tool, json.dumps(canonical, sort_keys=True))
+        if key in seen:
+            failures.append(f"duplicate call executed: {call.tool} with identical canonical arguments")
+        seen.add(key)
+    for pin in expected.get("expected_calls", []) or []:
+        tool, pinned = pin["tool"], pin["arguments"]
+        if not any(c.tool == tool and _pinned_args_agree(tool, pinned, c.arguments) for c in calls):
+            failures.append(
+                f"expected call not executed: {tool} with {json.dumps(pinned, sort_keys=True)}"
+            )
+    return failures
+
+
 def _score_agent_evidence_fidelity(record: Any, answer: Any, expected: Dict[str, Any]) -> Dict[str, Any]:
     """Every answer figure traces to an executed call (selector agreement on the
     call's meaningful keys — see _selector_agrees); expected figures appear with
@@ -208,7 +292,7 @@ def _score_agent_evidence_fidelity(record: Any, answer: Any, expected: Dict[str,
                 failures.append(f"expected figure via {exp['source_tool']} not found in answer")
     summary = (answer.summary if answer is not None else "") or ""
     for signal in expected.get("summary_signals", []):
-        if signal.lower() not in summary.lower():
+        if not _signal_satisfied(signal, summary):
             failures.append(f"summary missing signal {signal!r}")
     return {"passed": not failures, "scored_value": failures or "all assertions held"}
 
@@ -301,6 +385,24 @@ def _validate_agent_case(case: Dict[str, Any]) -> None:
     trace = case.get("trace")
     if trace is not None and not _SAFE_NAME.match(str(trace)):
         raise ValueError(f"Case '{case_id}': trace must be a safe filename within the persona's trace directory")
+    for signal in expected.get("summary_signals", []):
+        if isinstance(signal, list):
+            if not signal or not all(isinstance(alt, str) and alt for alt in signal):
+                raise ValueError(f"Case '{case_id}': any-of signal must be a non-empty list of strings")
+        elif not isinstance(signal, str) or not signal:
+            raise ValueError(f"Case '{case_id}': summary signals must be strings or lists of strings")
+    calls = expected.get("expected_calls")
+    if calls is not None:
+        if not isinstance(calls, list) or not calls:
+            raise ValueError(f"Case '{case_id}': expected_calls must be a non-empty list")
+        for pin in calls:
+            if not isinstance(pin, dict) or not pin.get("tool") or not isinstance(pin.get("arguments"), dict):
+                raise ValueError(f"Case '{case_id}': expected_calls entries need 'tool' and 'arguments'")
+            if pin["tool"] not in AGENT_TOOL_NAMES:
+                raise ValueError(f"Case '{case_id}': expected_calls names unknown tool '{pin['tool']}'")
+    budget = expected.get("efficiency_budget")
+    if budget is not None and (not isinstance(budget, int) or isinstance(budget, bool) or budget <= 0):
+        raise ValueError(f"Case '{case_id}': efficiency_budget must be a positive integer")
 
 
 def _load_fixture(path: Path) -> Dict[str, Any]:
@@ -391,16 +493,25 @@ def _run_agent_case(
         trace = load_trace(traces_root / persona / trace_rel)
         model, model_id = scripted_model(trace), "replay-verification"
         trace_path = None
+        with _no_tracing():  # run-observability: replay never emits traces, env or not
+            with _hermetic_data(case):
+                answer, record = run_agent(
+                    case["question"],
+                    chat_model=model,
+                    model_id=model_id,
+                    runs_dir=RUNS_DIR,
+                    trace_path=trace_path,
+                )
+        return answer, record, False
+    if model_factory is not None:
+        model, model_id = model_factory(), "live-benchmark(scripted)"  # simulations record what produced them
     else:
-        if model_factory is not None:
-            model, model_id = model_factory(), "live-benchmark(scripted)"  # simulations record what produced them
-        else:
-            if live_model is None or live_model_id is None:
-                # The real-live path builds once in run_suite's preflight (design D9) —
-                # a per-case build here would bypass ledger attribution.
-                raise RuntimeError("real-live case execution requires the prebuilt registry model")
-            model, model_id = live_model, live_model_id  # the record names the raw model id
-        trace_path = traces_root / persona / f"{case['id']}.json"  # live mode always exports
+        if live_model is None or live_model_id is None:
+            # The real-live path builds once in run_suite's preflight (design D9) —
+            # a per-case build here would bypass ledger attribution.
+            raise RuntimeError("real-live case execution requires the prebuilt registry model")
+        model, model_id = live_model, live_model_id  # the record names the raw model id
+    trace_path = traces_root / persona / f"{case['id']}.json"  # live mode always exports
     with _hermetic_data(case):
         answer, record = run_agent(
             case["question"],
@@ -557,10 +668,21 @@ def run_suite(
                     outcome = {"passed": False, "scored_value": f"run failed: {record.failure_reason}"}
             else:
                 outcome = AGENT_SCORERS[case["kind"]](record, answer, case["expected"])
-            results.append(
-                {"id": case["id"], "kind": case["kind"], "run_id": record.run_id, **outcome,
-                 "expected": case["expected"]}
-            )
+                trajectory = _trajectory_failures(record, case["expected"])
+                if trajectory:
+                    scored = outcome["scored_value"]
+                    outcome["scored_value"] = (list(scored) if isinstance(scored, list) else []) + trajectory
+                    outcome["passed"] = False
+            case_result = {"id": case["id"], "kind": case["kind"], "run_id": record.run_id, **outcome,
+                           "expected": case["expected"]}
+            budget = case["expected"].get("efficiency_budget")
+            if budget is not None:
+                touches = record.model_touches or 0
+                case_result["efficiency"] = {  # recorded, NOT gating — calibration pending (D4)
+                    "budget": budget, "touches": touches,
+                    "exceeded": touches > budget, "calibration": "pending",
+                }
+            results.append(case_result)
             if mode == "live" and model_factory is None:
                 # Real-run evidence only: usage counters + the drop-decision ledger.
                 touches = record.model_touches or 0
@@ -618,6 +740,7 @@ def main() -> int:
     parser.add_argument("--case-ids", default=None, help="Comma-separated case ids to run (resume a paused benchmark)")
     parser.add_argument("--delay", type=float, default=None, help="Live inter-case delay in seconds (default TRADEATLAS_INTER_CASE_DELAY or 45)")
     parser.add_argument("--history", action="store_true", help="Print the per-model ledger summary and exit")
+    parser.add_argument("--quality", action="store_true", help="Run the judged quality layer after a LIVE suite (non-gating; judge via TRADEATLAS_JUDGE_MODEL)")
     args = parser.parse_args()
     if args.history:
         print(ledger.format_history())
@@ -626,6 +749,16 @@ def main() -> int:
         parser.error("persona is required unless --history")
     case_ids = [c.strip() for c in args.case_ids.split(",") if c.strip()] if args.case_ids else None
     payload = run_suite(args.persona, mode="live" if args.agent else "replay", case_ids=case_ids, delay_seconds=args.delay)
+    if args.quality:
+        from evals import quality  # deferred: CI/replay never import the judged layer
+
+        if payload.get("mode") != "live":
+            parser.error("--quality runs on live evidence only (add --agent)")
+        quality_result = quality.run_quality(args.persona, payload)
+        print(
+            f"quality layer: {len(quality_result['cases'])} scored by {quality_result['judge_model']} "
+            f"(non-gating) -> {quality_result['path']}"
+        )
     if payload.get("missing_traces"):
         print(f"Skipped (no recorded trace): {', '.join(payload['missing_traces'])}")
     for case in payload["cases"]:

@@ -90,6 +90,14 @@ _Avoid_: Test set, QA checklist, benchmark folder
 The deterministic check that every numeric value and entity in an agent-generated briefing matches the supplied Evidence Cards before the report reaches a user.
 _Avoid_: LLM self-check, hallucination filter, fact-check prompt
 
+**Gate Layer**:
+The deterministic evaluation scorers — numeric literals, selector agreement, abstention signals, injection resistance, trajectory metrics — that alone decide milestone gates.
+_Avoid_: Judge scores, vibe check, framework defaults
+
+**Quality Layer**:
+Judged (LLM-scored) metrics recorded alongside gate evidence for depth and calibration — reported, never gating, until judge-vs-deterministic agreement is proven (ADR 0007).
+_Avoid_: Replacement scorer, second gate, auto-grader
+
 **Qualified Partial Report**:
 A report issued with explicitly named data gaps and next verification steps when full evidence is unavailable, instead of an unsupported complete answer.
 _Avoid_: Best-effort answer, partial guess, degraded report

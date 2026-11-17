@@ -49,6 +49,18 @@ CI runs replay verification only — no live model, no network, no spend. The li
 3. Skipped-vs-failed honesty: in replay mode, cases without recorded traces are disclosed (`missing_traces`) and count against the suite total — the suite stays red until the live benchmark completes the trace set. That is by design: a disclosed gap is not a pass.
 4. The M3 exit gate: golden buyer cases answered with **zero unverified figures** — every figure in every answer traces to an executed evidence-card call. Run records under `evals/runs/` (git-ignored) are the per-case evidence; exported traces under `evals/traces/<persona>/` are committed and become the replay-verification set.
 
+## Trajectory metrics (Gate Layer, deterministic)
+
+Every agent case is also scored from its run record: the **duplicate-call invariant** (two successful calls with identical tool + canonical arguments = waste, case fails; a schema-rejected attempt followed by a corrected call never trips it), optional `expected_calls` pins (required executed calls, matched by agreement on the pinned arguments — extras permitted), and optional `efficiency_budget` (max model touches — recorded with a `calibration: pending` marker, non-gating until campaign data justifies budgets). Plan adherence and plan quality join at M3-d, where a planner artifact exists to grade.
+
+## Quality layer (judged, non-gating)
+
+`--quality` after a live suite runs deepeval judges — **summary relevance** (G-Eval) and **answer-vs-evidence faithfulness** (against bounded tool-result excerpts in the run record) — with the judge resolved through the model registry via `TRADEATLAS_JUDGE_MODEL` (enabled entries, gateway-routed). Scores are written to `evals/results/quality/` paired with the deterministic outcome; they never change a gate result (ADR 0007). The recorded pairing accumulates the calibration dataset for any future judge-gating decision.
+
+## Observability
+
+Live runs may emit LangSmith traces when the operator opts in (`LANGSMITH_TRACING=true`, `LANGSMITH_API_KEY`, project convention `tradeatlas`). Tracing is telemetry, not scoring. Replay and CI force the toggle off for their duration and restore the operator's environment — zero traces, tested by tripwire.
+
 ## Threat-model note
 
 Injection cases never make product code hostile: the hostile instructions live in committed data.gov.in-shaped fixtures whose record fields (e.g. `variety`) carry the instruction text, served through the same mock-transport seam as every other eval — the data layer is hermetic in both modes, and the model is the only live component in a benchmark run. Cache-bypass abuse (`force_refresh`) is bounded mechanically by the M3-a per-run budget rather than scored as a suite case.

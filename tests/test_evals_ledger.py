@@ -394,3 +394,41 @@ def test_simulated_runs_write_nothing_to_the_ledger(tmp_path, monkeypatch):
     assert payload["cases"][0]["passed"] is True
     assert not ledger_path.exists() and not usage_path.exists()
     assert sleeps == []  # simulations never pace
+
+# --- statistical intervals (the uncertainty layer) ---
+
+def test_wilson_known_bounds():
+    lo, hi = ledger.wilson_interval(8, 10)
+    assert abs(lo - 0.4903) < 1e-3 and abs(hi - 0.9434) < 1e-3  # closed-form check
+    lo3, hi3 = ledger.wilson_interval(3, 3)
+    assert lo3 == pytest.approx(0.4386, abs=1e-3) and hi3 == 1.0  # 3/3 shows honest wide bounds
+    lo0, hi0 = ledger.wilson_interval(0, 5)
+    assert 0.0 <= lo0 <= 0.01 and hi0 < 0.491  # 0/5: lower edge, upper below half
+    assert ledger.wilson_interval(5, 0) is None
+
+
+def test_bootstrap_interval_is_deterministic_and_bounded():
+    flags = [True] * 8 + [False] * 2
+    a = ledger.bootstrap_interval(flags)
+    b = ledger.bootstrap_interval(flags)
+    assert a == b  # seeded: eval evidence must be reproducible
+    lo, hi = a
+    assert 0.0 <= lo <= 0.8 <= hi <= 1.0
+    assert ledger.bootstrap_interval([]) is None
+
+
+def test_history_summary_carries_ci95():
+    rows = [
+        {"ts": "t", "model_key": "m", "model_id": "m-id", "persona": "buyer", "case_id": "a",
+         "outcome": "passed", "duration_s": 1.0, "model_touches": 2, "total_tokens": 1, "failure_class": None},
+        {"ts": "t", "model_key": "m", "model_id": "m-id", "persona": "buyer", "case_id": "b",
+         "outcome": "failed", "duration_s": 2.0, "model_touches": 3, "total_tokens": 1, "failure_class": None},
+        {"ts": "t", "model_key": "m", "model_id": "m-id", "persona": "buyer", "case_id": "c",
+         "outcome": "daily-cap", "duration_s": 0.0, "model_touches": 0, "total_tokens": None, "failure_class": None},
+    ]
+    summary = ledger.history_summary(ledger=rows)
+    wilson = summary["m"]["ci95"]["wilson"]
+    assert wilson[0] <= summary["m"]["pass_rate"] <= wilson[1]  # the point estimate sits inside the interval
+    text = ledger.format_history(summary)
+    assert "ci95" in text and f"{wilson[0]:.2f}-{wilson[1]:.2f}" in text
+

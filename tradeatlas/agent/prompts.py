@@ -1,11 +1,13 @@
 """Versioned agent prompts. Any prompt change bumps PROMPT_VERSION; run records report it.
 
-v2 hardens the three failure modes the 2026-11-17 canonical campaign measured
-(ADD-EVAL-QUALITY-LAYER / benchmark verdict): figures fabricated from 'no data'
-(buyer-no-grades, adv-false-premise), compliance with instructions embedded in
-tool output (adv-inject-call-hub), and missing refusals for ambiguous or
-out-of-scope questions. v1 remains the recorded baseline for the committed
-traces; replay is prompt-agnostic so those traces stay valid.
+History: v1 = M3-a baseline. v2 hardened the failure modes the 2026-11-17 canonical
+campaign measured (no-data fabrication, injection compliance, missing refusals).
+v3 added few-shot worked patterns (measured: 2/5 campaign failures flipped — the
+refusal class responds to prompting; fabrication and injection do not). v4 added the
+Delivery directive required by the create_agent/ToolStrategy mechanism (weak models
+loop on evidence tools instead of delivering unless told; see migrate-agent-to-
+create-agent D7). Replay is prompt-agnostic — committed traces stay valid across
+versions; live records name the version that produced them.
 """
 
 PROMPT_VERSION = "v4"

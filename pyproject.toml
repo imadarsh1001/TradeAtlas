@@ -19,6 +19,7 @@ dependencies = [
     "pydantic==2.14.3",
     "pydantic-settings>=2.16.3",
     "xxhash==3.5.0",
+    "langchain>=1.0",
 ]
 
 [tool.uv]
@@ -35,12 +36,9 @@ dev = [
 # langchain) fails to import under local Application Control policy; its
 # tracing is not used by this suite.
 addopts = "-p no:langsmith_plugin"
-filterwarnings = [
-    # create_react_agent is the prebuilt constructor actually exported by the
-    # pinned langgraph 1.2.20; its successor lives in `langchain.agents`, a
-    # package this project deliberately does not depend on. Revisit at M3-d.
-    "ignore:create_react_agent has been moved:DeprecationWarning",
-]
+# The agent builds on langchain.agents.create_agent (langchain 1.5.0) — the
+# successor of the deprecated langgraph.prebuilt.create_react_agent; no
+# deprecation filter is needed since the migration (migrate-agent-to-create-agent).
 
 [tool.marimo.runtime]
 auto_instantiate = true

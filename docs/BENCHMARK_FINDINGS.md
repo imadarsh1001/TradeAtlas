@@ -42,7 +42,19 @@ Recorded cases include correct, buyer-grade work: the hub-MSP case answered *"Fi
 6. **Canonical set definition**: the M3 exit verdict comes from ONE model completing both suites with exported traces committed; other providers are comparison data only (artifacts outside the committed tree).
 7. **Order**: finish nvidia-glm (11 recorded → 14 remaining) → nemotron → groq-qwen → gemini solo re-run, each gated on its smoke case.
 
-   **AMENDMENT (2026-11-17, owner decision): the canonical model is now `google_vertex` (gemini-4-hydrogen) via the AI Gateway.** glm's first resumed case failed `provider-unavailable` after 18 minutes (3 × 180s timeouts against NIM queue latency — the same failure mode that disabled it), while vertex had just passed its smoke 1/1 in 30s. glm's 11 recorded buyer cases remain committed comparison evidence; vertex completes buyer 15 + adversarial 10 as the canonical set. The canonical rule itself (one model, both suites, committed traces) is unchanged.
+   ## 6. Multi-model comparison under prompt v2 (2026-11-18, full suites, gateway-routed)
+
+Prompt v2 (no-data-is-not-data, refusal contract, injection hardening) ran against the full 25-case set on three stacks; scores are the deduped ledger view (latest outcome per case, Wilson 95% CI):
+
+| Stack | Buyer | Adversarial | Total | Wilson 95% | avg case |
+|---|---|---|---|---|---|
+| **google_vertex (gemini-4-hydrogen)** | 14/15 | 7/10 | **21/25 (84%)** | 0.65–0.94 | 30.3s |
+| cf_workers_ai (glm-4.7-flash) | 8/15 | 5/10 | 13/25 (52%) | 0.33–0.70 | 44.6s |
+| groq (qwen3.8-27b) | 0/15 | 1/10 | 1/25 (5%) | 0.01–0.23 | 31.2s |
+
+Findings: **(1)** vertex's interval does not overlap workers-ai's — the strongest model is also the most reliable, and it fixed `adv-false-premise` under v2 (prompt sensitivity is real but partial: 1 of 5 v1 failures flipped; the other 4 persisted under strengthened instructions, which is the measured case for M3-c's clarification loop and M3-d's verifier). **(2)** groq's full-suite collapse (1/25) confirms the smoke warning: its server-side tool-call validation intermittently 400s runs unrecoverably (4 transport-class + 4 skipped rows here) — the stack needs a malformed-call workaround before it can benchmark at all. **(3)** glm on NIM remains provider-unavailable (18 min/case) and is demoted from the rotation. **(4)** openrouter cannot run the canonical set (50/day < 75 requests needed).
+
+**AMENDMENT (2026-11-17, owner decision): the canonical model is now `google_vertex` (gemini-4-hydrogen) via the AI Gateway.** glm's first resumed case failed `provider-unavailable` after 18 minutes (3 × 180s timeouts against NIM queue latency — the same failure mode that disabled it), while vertex had just passed its smoke 1/1 in 30s. glm's 11 recorded buyer cases remain committed comparison evidence; vertex completes buyer 15 + adversarial 10 as the canonical set. The canonical rule itself (one model, both suites, committed traces) is unchanged.
 
 Each item enters the runner only through a small, reviewed change — the protocol is documented here first so the resumption is a decision, not an accident.
 

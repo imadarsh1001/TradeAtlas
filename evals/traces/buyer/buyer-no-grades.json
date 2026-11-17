@@ -13,41 +13,41 @@
             "state": "Gujarat",
             "commodity": "Groundnut"
           },
-          "id": "call_10881968907368176084",
+          "id": "call_1562740868540331079",
           "type": "tool_call"
         }
       ],
       "usage_metadata": {
-        "input_tokens": 2492,
-        "output_tokens": 183,
-        "total_tokens": 2675,
+        "input_tokens": 2649,
+        "output_tokens": 216,
+        "total_tokens": 2865,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 149
+          "reasoning": 182
         }
       }
     },
     {
       "role": "ai",
-      "content": "[{'type': 'text', 'text': \"Based on `get_daily_mandi_prices(state='Gujarat', commodity='Groundnut')` (tier: `deep`, coverage: 2 records for `(Gujarat, Groundnut)`, observation date: `12/11/2026`, retrieved at `2026-11-17T19:14:09.697210+00:00`), two groundnut grades are reported across Gujarat mandis:\\n\\n1. **FAQ** (Variety: `G20`)\\n   - **Market:** Veraval APMC (Gir Somnath district)\\n   - **Prices (INR/quintal):** Modal \u20b97,650 (Min \u20b96,755 \u2013 Max \u20b97,890)\\n   - **Source:** `get_daily_mandi_prices(state='Gujarat', commodity='Groundnut')` (`12/11/2026`)\\n\\n2. **Local** (Variety: `Other`)\\n   - **Market:** Dahod APMC (Dahod district)\\n   - **Prices (INR/quintal):** Modal \u20b97,200 (Min \u20b97,000 \u2013 Max \u20b97,300)\\n   - **Source:** `get_daily_mandi_prices(state='Gujarat', commodity='Groundnut')` (`12/11/2026`)\\n\\n*Note: Only these two mandis reported records in the latest available data (`12/11/2026`), and no caveats were returned.*\", 'extras': {'signature': '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'}}]",
+      "content": "[{'type': 'text', 'text': \"Based on the latest available mandi records for Groundnut in Gujarat, **two grades** are reported across two mandis:\\n\\n1. **FAQ** (Variety: G20) \u2014 **Veraval APMC** (Gir Somnath district)\\n   - Modal price: **\u20b97,650/qtl** (range: \u20b96,755\u2013\u20b97,890/qtl)\\n2. **Local** (Variety: Other) \u2014 **Dahod APMC** (Dahod district)\\n   - Modal price: **\u20b97,200/qtl** (range: \u20b97,000\u2013\u20b97,300/qtl)\\n\\n### Evidence & Coverage\\n- **Source tool:** `get_daily_mandi_prices(state='Gujarat', commodity='Groundnut')`\\n- **Observation date:** 12/11/2026\\n- **Coverage & tier:** 2 records for (Gujarat, Groundnut) (`deep` tier; retrieved 2026-11-17T21:33:42Z)\", 'extras': {'signature': 'AY89a188Uwnwdq62yUwMhefOggmCQrO9sfX5QrpTSxX9ZYgyqHKs+iLvLzXeTtsV6JFCBFjd5fyv/tdmztC4O6tjBFKARKuzct5iRlTkQpE25R298H2/1stu/96vDTKoDPm0yvKVsS0KxMZkpmmSsZ5WyAZ7nly5YTOKNrO3HjGIsgqHxPkmRT/MeHl6XPA3AjncMAnMPsK1DE+ZaGPyRDxEoFDYY+4LE+dNDv+YhZo/gofiuoEg644sXjAOBECwvX7xZu4J185Lo3ZTjmc+9P9mAp8g/4oHGrn3Xq4Nut0mpTTr10j5wKqf8TfrLCwawoV62mKP1bnrJkcwbJhNYTPqElEz7TDjQDrnsvWN6PQm/tsIX5qpABgM2/Rh1pokGUBmRYH8XvG5zcsnlLWMvPcwrn27qCeyXUuS3GCDNcTgblbeAZwsScCtlAeBRUkb2ELSIGZ5rmdwlGCymI0gQPyMTHEefYW2KyPsHXzCNifp5XFc3lblzjZ4rHNtNELAqiSDEpxc88/rbcG73SGUcJgGefYaEqLe22EvP59xrnsqVmzKz8qkw0l63Fus6B0dKLWR0FWe8Ie2JK6wWiKkLy25eYqcJKrNhIB/3oIK3QEmFENRoYn80fueV34rsJFRKMwji0gRVTjJQpYfmbuQpNmHsATkE27d85KYBVWivONmJg5UjzNB/XD5y+pO+9SHF+/vX1caWdeTr533s51zGPJEX9YRz2Q9U5aDqXH8AiuaxHaJzaLKw4kbJlrwDdBTKaLXBS+ax5Hdc590q3uM4IpmzZ4NB0O33hlwPouUZMIQJOezv6Q01Ypysawq94OVD8eKR6RFHpiivvvEOfh6A5oXlOmKniPqoC057SgqPc47hS6TvyLEEdVoFtuAeyBtGvjwjeUl4YiSrQqIOcG+Dp12jKmGjrW5BItkABuWEROZExweCKoMz1JdpiYg3fn2108QG4T66BSQwRBwY6mWjKytnLUXHV/QtGUzu4ALe4ROyLc2ZKdQpoIrehH1W9fei1XQCmb9D07L9bmyG8Ku2L/0wFskACQ4wQTGldvvPuD2n0oD6alAEWY7MWww97TEbLHLmqgyPCFuVZ+AoCZwGQRiT3yodr8TVGAgbFy2B8M7VcOREu+8hswkUr4Nz1BHEQ+CksOtFLNVyvxKWh3Ig7gpomkrQc0e7/bd06fI0fMP6N3uBCxDjrMAcLmyfseS4x0lggJlkzaUBth+t0Q1S6G/UZuB8Uq3at/rtmv3Kzj5Re7+gVmX5bM1lzlY4Qx9AFyqkjoYFkyMWG1oy65oBuUbbYbtrs436NN86KUZQR7dJ+uvtGWr3iyC1piBs8YwMIr9F1lIJB+8RhBHOoVqIo6GVXOr6nh95skp4clGFpKbQ1QvHt/3RrJ9bCtxCgfB4se9JHkQC7A627kISthGP1FSWFy9Z7fBHRN1ivCpEK34kohVmQU9fkS9R2RKIiSKHsFZiUVpZqfgSUbhw09QW+OFWaqIdwPgJOFxLehpvlyqzIMQuXxILaSrWLahdAZy4vMouJIk5+it2rdwzaJW+UcVWx15dTdNcWJOsYxsdkgcdCcUnlo5U7FzIaGMm6vID1rsTysIdB7vFOn61sClmo5PdN46ZfjS1uBcXGc44kvFjz5ODNEDi9uig0O3M/YekdwqXyv7g4Jjww9bAsvUgxr/sGZ8qUW5x+HVLZqcXorF28s+FkAQMMmpOlpKnqxQ1iC4dM1dlLg8jL+7q49SS5LZZiwJ+8mfOSFkIOn2fAVkxJGtV+CNP/j4rHGQiyJWw+if+lh3qEjxlU3QLj+dJg+a9A7SyrJ5+GfsMe29VWTYDJgXgRCFpqnhiYlAv1d4J22HWY7efrYbbTjXJHKzhxiRVPBM3Lyq+L2jP1/YFP1DgTS0m1bOCLvTq7LpE1zcyUHTgxu+dVNlF45+5Xcmo0j7fItvBVL7ZvdvdRIYT00UUz9iIHKAqKzVpfBT3beOIWBxK3le'}}]",
       "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 2961,
-        "output_tokens": 841,
-        "total_tokens": 3802,
+        "input_tokens": 3151,
+        "output_tokens": 733,
+        "total_tokens": 3884,
         "input_token_details": {
-          "cache_read": 0
+          "cache_read": 595
         },
         "output_token_details": {
-          "reasoning": 498
+          "reasoning": 489
         }
       }
     }
   ],
   "structured_response": {
-    "summary": "Based on get_daily_mandi_prices(state='Gujarat', commodity='Groundnut') (tier: deep, coverage: 2 records, observation date: 12/11/2026), two groundnut grades are reported across Gujarat mandis: FAQ (variety G20) at Veraval APMC (Gir Somnath) with modal price 7650 INR/quintal (min 6755, max 7890), and Local (variety Other) at Dahod APMC (Dahod) with modal price 7200 INR/quintal (min 7000, max 7300).",
+    "summary": "Two groundnut grades are reported across Gujarat mandis as of 12/11/2026 (2 records, deep tier): FAQ (variety G20) at Veraval APMC (Gir Somnath) with a modal price of 7650 INR/quintal (range 6755-7890 INR/quintal), and Local (variety Other) at Dahod APMC (Dahod) with a modal price of 7200 INR/quintal (range 7000-7300 INR/quintal).",
     "figures": [
       {
         "value": 7650.0,
@@ -55,12 +55,7 @@
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Gujarat",
-          "commodity": "Groundnut",
-          "market": "Veraval APMC",
-          "grade": "FAQ",
-          "variety": "G20",
-          "arrival_date": "12/11/2026",
-          "metric": "modal_price"
+          "commodity": "Groundnut"
         }
       },
       {
@@ -69,12 +64,7 @@
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Gujarat",
-          "commodity": "Groundnut",
-          "market": "Veraval APMC",
-          "grade": "FAQ",
-          "variety": "G20",
-          "arrival_date": "12/11/2026",
-          "metric": "min_price"
+          "commodity": "Groundnut"
         }
       },
       {
@@ -83,12 +73,7 @@
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Gujarat",
-          "commodity": "Groundnut",
-          "market": "Veraval APMC",
-          "grade": "FAQ",
-          "variety": "G20",
-          "arrival_date": "12/11/2026",
-          "metric": "max_price"
+          "commodity": "Groundnut"
         }
       },
       {
@@ -97,12 +82,7 @@
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Gujarat",
-          "commodity": "Groundnut",
-          "market": "Dahod APMC",
-          "grade": "Local",
-          "variety": "Other",
-          "arrival_date": "12/11/2026",
-          "metric": "modal_price"
+          "commodity": "Groundnut"
         }
       },
       {
@@ -111,12 +91,7 @@
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Gujarat",
-          "commodity": "Groundnut",
-          "market": "Dahod APMC",
-          "grade": "Local",
-          "variety": "Other",
-          "arrival_date": "12/11/2026",
-          "metric": "min_price"
+          "commodity": "Groundnut"
         }
       },
       {
@@ -125,12 +100,7 @@
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Gujarat",
-          "commodity": "Groundnut",
-          "market": "Dahod APMC",
-          "grade": "Local",
-          "variety": "Other",
-          "arrival_date": "12/11/2026",
-          "metric": "max_price"
+          "commodity": "Groundnut"
         }
       }
     ]

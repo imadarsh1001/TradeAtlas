@@ -13,7 +13,7 @@
             "state": "Gujarat",
             "commodity": "Groundnut"
           },
-          "id": "call_5178572583554412920",
+          "id": "call_9963064016450878431",
           "type": "tool_call"
         },
         {
@@ -22,45 +22,45 @@
             "commodity": "Groundnut",
             "state": "Gujarat"
           },
-          "id": "call_5178572583554415751",
+          "id": "call_9963064016450875488",
           "type": "tool_call"
         }
       ],
       "usage_metadata": {
-        "input_tokens": 2489,
-        "output_tokens": 234,
-        "total_tokens": 2723,
+        "input_tokens": 2646,
+        "output_tokens": 295,
+        "total_tokens": 2941,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 171
+          "reasoning": 232
         }
       }
     },
     {
       "role": "ai",
-      "content": "[{'type': 'text', 'text': 'No Gujarat groundnut prices are reported for **today (17/11/2026)** across the monitored benchmark hubs, though older daily mandi records from **12/11/2026** are available.\\n\\n### 1. Benchmark Hub Summary (Today)\\n* **Source:** `get_benchmark_hub_summary(state=\"Gujarat\", commodity=\"Groundnut\")` (tier: `deep`, retrieved `2026-11-17T19:14:34+00:00`)\\n* **Coverage:** **0 of 4** configured hub mandis reporting (`Rajkot`, `Gondal`, `Jetpur(Dist.Rajkot)`, and `Himatnagar` all show *Not Reported Today*).\\n* **Prices:** None reported today (`no_data: true`). *(Note: the central MSP benchmark listed for reference is **6,783 INR/qtl**; per tool caveats, the absence of a report is not evidence that no trade occurred.)*\\n\\n### 2. Latest Available Daily Mandi Prices (12/11/2026)\\n* **Source:** `get_daily_mandi_prices(state=\"Gujarat\", commodity=\"Groundnut\")` (tier: `deep`, coverage: `2 records for (Gujarat, Groundnut)`, retrieved `2026-11-17T19:14:34+00:00`)\\n* **Observation Date:** `12/11/2026` (stale relative to today; no records for `17/11/2026`)\\n* **Dahod APMC (Dahod District, Local Grade):**\\n  * **Variety `Other`:** Min **7,000 INR/qtl** | Modal **7,200 INR/qtl** | Max **7,300 INR/qtl**\\n  * **Variety `G20`:** Min **7,000 INR/qtl** | Modal **7,200 INR/qtl** | Max **7,300 INR/qtl**', 'extras': {'signature': 'AY89a198kQiMhC+0sAgYNbMkRZM/lrSUBZbdhAJxa5oditsqf4/XzIgD82tZJaTOvNs2S+dc2BMyw69bDuiPIETR+R68R3m5XIe+GUGE1IvT+KoHula3XE+rwLxcGEuWLpDsF6CniP4hNov5WK4B7S939sSz2DY4GlV9SgKZ9Q+wm5aKaVL0BeLnEHKKCK0BEW7tBZtPVNBEZqzMn3R6Q5gcCeV9ORA/4le9cJyKt5Qhxg/7244qkGXyNy76R19J33yI4VdWjbbufrJzLw8fA//g8tm/TPCpiu+cVDbhmdIWtCsG3/b8Yex1QXcucvZPMl8zrvT81LlHs5+6cmwbwrTPZtU9ubD1BTEqRuMaKzAaVN1IKs5frCEMATDYCHEppxlA7iCnK1U5t0JrESVsYNhtSdx5M1ihYtj9jDDoq13QuWpMi5WaTKS94FE8zTC7NxwY86IPW7ZasFFiHWu9mF2GLlRB+GAueyUapsmDCo+YzvT6WtkXq6BVsI/9w1/zGWBZsxUM1D7y1PAAjLDbkC/Mt/KJbV7eehSD2kUgqpOOYBIpDxU6RXRRhb1RmG/Wo5l6ze4xDlLIkysNkiAzJTu84tdfAtDgeLfjqfYo5yvuZHb3F4rbasZas9Osp50RN4LKztO0guXJaVHALd9TFPvuebukILYYsa+WA4YJcUfoncdC9PJ0qMNczRJw9VvFMqu6PTi8KwbXiaGotoObwQrNvqPyQ7GnFErVfXpIqfd/Iw7QcSvRnNO1Bry6l0uUFeiVxakRYo1LU4cOBmdoWnA8JbzCqaGHyihPf9cVaUZoZaf5mQ86g9396IcUcfd27T66z1kVqMUhQTjUMqpGK2sBCs1yfVqfMP8EL4O9xvR1qWpSIBQ2K8E+YnqvsgfmCNg90pbWNj25+P/hD+/WMtEvGTGCaMn3l3BsYCmqIJ48f04JAdg4mu0mLNtp1qlrWQ9iiYzavMh03e/6hIhcTjt/bo9Mipj4Jobk2vffmTqbPGuwLTqPyr4ZdpKxMolk/n1LuhiNctVpTfJYzlpMp0MlwPfm6gUxbJCh75yVOeBJobI/yEDTUaAsC/UnqlklEqMOTyZqJpSWqtlDSC+V8PHDVaI5W7aOvsZCKhNKEVN6I6s7wMFMXPtiBCjnEYQwZqRl2JIfhXTgWG3G93wgkbydF4AOYajmdt2oijVoXiEhHDgBeGejpY/L8FS5Tfyl6CzAGt5zeOmHNmoWSXZRknLp8PnQB6v/Hnx95Psx7ZENFa9FMUjG8RnydU+pqBWQR4vz9yU7RzhOhRzeV0QSu/vVjdKbhOkmhRrQ4yQidzV7kPVIatvraWfJ3uE0gO8RWJvAHnpMKicDVxVtI9KpTa4er8HQKE1auyY3nD8q+0u8VA7zt9JiQ2vZXzN7Yr1uVsL/Zy4iZW0swh+S4KzVGjIB53dMvfz1IouZsLQRArZJ5lwLoAVjBfBN7Kga0EU7vJaNeACKOM6z0Ez898ZSbt1fLCARiJuqKN1FE4951nRkJwasS//aLgAumeg6nQryxMV3JLWpvMQqygwc0d4NdOikaINAnpDHJ1YInXL3D3J5ZQT+jkuSkhJHYaV6P/JN/xX819XmAfoQPyHu9NF93Hcemj0isJv1M3eL0RzcjBOTisKMfpRhTN4bn0LMc9nGLSLWmSYqxKdiaCmfREjIEaCKNicbLnIgkURN4Rc54gbuEqJ4StVq4DRCHRyFbb7TNxYVfDtslp6RyEO0sg6541DisXIMKxSspYknZxhG89LODPtwC/B803mnaYcJYHvOqX5Vn1LZG1C4Ivmuo9MOu6/g3YHSam3KViO/DOFaVfONA/9t/RV4clqhbY93KcJZ07+rArhh28+PUgX/zOj3JwyjKsJLvXp/JkxW+A4UIzjGD6727X2ik8Q+zyb9P/a1up1ecZ8P9P6VV8aZAah/WRJi2LyYS4i4scQvmFRQI5I7u+g59ThZJ8EP5MoXGbbKXhizBpOSgNFcQfnG02MKaNiKuekwKhku+63op8KFveOvRnyCMeBUY2Lw47u1XuxKhV6NIb9TR00pJPP3ACTcNdyM41YM+ShDSn71FlxrQUBdUaz5wxblTMyc5R61Z/tZ6/jSA+G/TROy0KkukYMDw+8cDEiztZSs92Bp89Py+mTEbvJ/9M5JRgf/dRm+noAP9IthaH29FU28ThMzAUCbpO/vFVyAUPQXH9mtVxsreZNdvWgnoKPd/1LjaENqEgCNVnUyTvrEco5vPxEGwjk4uii2p7vZ4hfndWJ/jxdOcDst2GtA0hjFY7ftp3BiJqZrG06S96Dl5zYMEd4iHxeuCyzSj99OsSebnX/rGXWw9DiBw1X+BfHlYAqKzrGjB1q198u9yR+iKrV7cJoM2d+3PBBF+XfQfZXYqorZGBbx3IQcOAxtkLJNddIBVysKLJrDXxpB2DL6FoS0iqX4Xmw31asbDIY6yrpMWiWdDxVvT26+hv2l+X+sT22zp9D4z06JU/qOCmZzbwh8peldjxhSAhp/0Ayt6c9ly/+kVp7qZrtsea5jP1/xZssv+sOUE0yZvy6Del5dWX3Kt0Byf0+due2FlqJElUzSe8ecQWyWSVLNthCWzoqLcZ01sUneYQl5+13IiplFrDxJaYQmzYKTE/ze5DLCHgR/8WGhLNKBCDDeoN7HaInJBHE+gYzYylkoB6XrnND89ocbu9ayOy0UF8xGXo8DtahZ8d2Lg5RT93yjZCCpTU0y0Ne9p7vvAqoUjL8gcvg3FGKPoAvYRa+c6MrEz7Ij90knE9rWTyBEI//NiVvPSkGa/1OjI6RdCunwfP/d4VXOVYNMNfiIIJ0C56lwoA46CCVuOeS5ejalHjM2WGkOL69I2E9djowrfmM+ghsdUayNx+I7RaRGNCafrLsYEGH70udhPJLhIuIo/6NCA9bflWxlb2FwFWbN8VllBObdzgjyzPG4nziuJTngUrJ8+zoAbAs4AdQ3gxvGhA80aiaH07KLK7dfZLCR4h1U16rXT1GNrFtOhURuuIFXkXOwriRNWz9sP8/H6BFyAoIKrNVdVankMlGN8cRo8BREqpzcpiNz0FQEdjGArl/LD2VtpBwm4ONnCnQulT0UUSeDB4d6073xOI3mH96PRUu9zBs8Udq8uHku8fYgyvYkr03kCT1abCm2jZb6ryZ9mkISxSuuqi3azQoUg4uLEv5d7Jr7efC+g2O3jpPHWUc1X2z5/9zNy9wJAyewVGDzQPhWEppEXJ0bXktIXjsMSZuWznTNie6wxQCGbHadg/d0CyAN0Hz62vA5PsN+l39fcgPzKh8HvQkGfXYifCmGPjsLORldofezXi1qPHCrYETKdX9BOpykSvN+p9E2PkV8k4gQlUHYmMLTfFiOx3GD8KLRUsHiarcC3hbJ83iUWg0TtZA5HFwfz0MOUvBg+Zb+wW2Ly4YsfY7x03k2zz1gqjGlaJ6qhr/QWtaImuF7u9EHTdk1TA+uifSU8uBtX0fjQUapoFUn+POQGYvidGIiLpXElYvJOynqdMqh+TiKgjRQ/ltShhZ7/Pu6NJlPISMXAAZI/tL4IU6ZP7vfnqb7wyajcicI0h6TmWc4ut3dDj0aOXc5mi+wTY30bXJwkky6Jgb8kMUl+JdBoUzXVN/Dxt3AqtzqU8Bvmgs5JSx8oKG7uKMcU/Ty9VNMXXXZvEcUB4DjgcrAtVLewVP594/gBHbknK8pDsJyLJ8ZOKYgp/gs4zonxcnM6qwK2iTx6syDzVslfHRWhuSPom4fp1vcGiqHC0SOkehO+cZubMmHA/1s8ZpR687UVMKpei9Y0474KQjfGwWo432WunbAR8bcbTHoGV7edO8+alwLPshH2l7UBExVlTA4wIM2qeDLP8x+NF4GYL2/XJGI+UVPE8WWzSBMjRRod4kQ8aBtuAh9qKlBmAXVVHESYnZ/2JuU4G51p30Hd47Gwy3RTWJugJglhLOV3M3YemeJk4He9Np3gdtKh1O6ntVdLiDZosMUDuhKCzukwEF/N8qm0u4Q6BvQ6aOvEaSOQ4bsv7NXDeMrEwaEu3pDrWBeGYacrlmY+26QHp1irnwg/U6tbUhLG4giMDWS5GxNDlTilz/GlmAzIAfjO76P30JwEMLVUaYFoKT61M/IeTyEU2xx6zve0HwsYteypx8EwhEqFXrQDyhwowsMbLOlZmOaP4gicfsGx3uPEzd+aQTIEdAOYDcbGKYBd+wgtT2aDn64tSGno3yICtTbdZC1p4t2aSwrKlmDRnb8UG/FlAi4/jaBxJYdIJhsFuD+Uyxjiz0teXIkD4EFW/GXsuE3FUJG1efYUQABo7lr4Ck8cmDsWzEYArIJAsh4DZCUh5Ee9Bq21FCuEefSvTe0n0oRTUG1lLgMga5lmUJkLI8KDxv7U0sq+6GRLJwsbYv+lvwgdo/XgwD6Wpf9IvE6JSu+V79QmaItOIn63ci79hjPfaSljh/7IVk9sCbNNfF3AzfWIoAALe57fYK2raQGXnoA4MuxPnnWqWQZWEbhPvO7KRnxC+Br1zOdGwfL0W/XytbsF+Iavu38O7X/UY+eyR8warFW1kwTRUE52r1HRwZ3su3cCghOIm1CflMTb7ttcJ+Dz6/518s6B/Xgr3xPCdx3t7flPozHqwyUHoaky/KK5Nk+bgeUm3qmFU9ZnXidIlCxXAjPZ1yoOSuyHkmSXmwHqXwVD1MWlOB4SENz1KROZAiVW9Mv05Mb9HSUo0X22dN2SsDZu07P9hxW4+cGkszuzQJ8GlvEA5KdzBrma2wDRDHviKeL1IFjvK4M3KObQXJDRo/Q0uIKdS8XxQdZfRpXXti3+Dt+7inckk1pWT5tQIhqTlObi0B47mTNHwIjMhXA+Z6uRE0H8T1/QMc59zqNpYqEBacq4LH43vusPPs841487TObh1m7YjTo21L3wCP6zyM+uzskDrttA66L0SI94OUmYin5RIugIDqhHn5gPkQdsxYPQAbvx0i7URsKoKe30aZhziORgnodwWQaROaMZafHMZBKI2G97OOUYtui7eL25TgHxtdm+e9kyS7mOZNzWVBIwWJg18rtzbpapknjjrLm4WLoqVZ+hcE1llbexrq0pjUJp2PgPXCcm02/zItiWQIFsXJ6fO+SBIC2LIzQAAHR9nOJcnPPXiema3VPM8UxVDJOGKkGbyX2td+Ke7Vv/SFPZBzLOuZXkbt1pNGIhQvzwc/rYWaaSaGN60rMefyE7NNByMoDdWZYjn9VoFI1rYq2FnmF/fiY8wn1SEIR7Sc4EBQFfg11dF1Wbg0QFcNORMavEhZsTqIQ5uapUrgnHf6/L/mF3TqVefqhXsJp5LIH7Glnq8K/oVQHj5neUa5JtoNzauaTia61s2qdBrWFlgWh/gPW8uz3aYFhXSah1I6JncIttGpM7Z9yveFihjpkkN6T6+8NXb97xdOSRtVz9KGTTJSNSm5GejR/ZogY0n1aqPFDtmPXtDpmNbJDhMnm5dej6ICeiE9bgmA39Yj2h5ZE1Wyd8PpnAoth7l2oxkhg5k9II49VTWC9YXbcfRncPF8fIYaczWtUJ3ElP3TVV0DUwnvT2DXsWpNF1iLnv4nGT/Uo'}}]",
+      "content": "[{'type': 'text', 'text': \"No groundnut prices are available for **today (17/11/2026)** in Gujarat across the monitored benchmark hubs or daily mandi feeds:\\n\\n* **Benchmark Hubs (`get_benchmark_hub_summary(state='Gujarat', commodity='Groundnut')`, tier: `deep`):**\\n  * **Coverage:** 0 of 4 configured hub mandis reporting (`Rajkot`, `Gondal`, `Jetpur(Dist.Rajkot)`, and `Himatnagar` are all **Not Reported Today** as of `2026-11-17T21:34:17+00:00`).\\n  * **MSP Benchmark:** \u20b96,783/qtl (central Minimum Support Price benchmark; no live modal prices are available to compute an MSP spread).\\n  * **Caveat:** Absence of a report is not evidence that no trade occurred.\\n\\n* **Latest Available Daily Mandi Prices (`get_daily_mandi_prices(state='Gujarat', commodity='Groundnut')`, tier: `deep`):**\\n  * **Coverage:** 2 records for `(Gujarat, Groundnut)`, both observed on **12/11/2026** (5 days prior to retrieval at `2026-11-17T21:34:16+00:00`):\\n    * **Dahod APMC (Dahod, Local grade, `Other` variety) \u2014 12/11/2026:** Min \u20b97,000/qtl | Modal \u20b97,200/qtl | Max \u20b97,300/qtl\\n    * **Dahod APMC (Dahod, Local grade, `G20` variety) \u2014 12/11/2026:** Min \u20b97,000/qtl | Modal \u20b97,200/qtl | Max \u20b97,300/qtl\", 'extras': {'signature': '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'}}]",
       "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 3576,
-        "output_tokens": 1786,
-        "total_tokens": 5362,
+        "input_tokens": 3794,
+        "output_tokens": 1715,
+        "total_tokens": 5509,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 1320
+          "reasoning": 1287
         }
       }
     }
   ],
   "structured_response": {
-    "summary": "No Gujarat groundnut prices are reported for today (17/11/2026) across the 4 monitored benchmark hubs (Rajkot, Gondal, Jetpur(Dist.Rajkot), and Himatnagar all show Not Reported Today in get_benchmark_hub_summary, tier: deep, no_data: true; absence of a report is not evidence that no trade occurred). The central MSP benchmark for Gujarat groundnut is 6783 INR/qtl. The latest available daily mandi prices from get_daily_mandi_prices (tier: deep, 2 records) are from observation date 12/11/2026 at Dahod APMC (Dahod district, Local grade) for both Other and G20 varieties: min 7000 INR/qtl, modal 7200 INR/qtl, and max 7300 INR/qtl.",
+    "summary": "No groundnut prices are reported for today (17/11/2026) in Gujarat. get_benchmark_hub_summary (tier: deep) shows 0 of 4 configured hub mandis reporting (Rajkot, Gondal, Jetpur(Dist.Rajkot), and Himatnagar are all Not Reported Today; central MSP benchmark is 6,783 INR/qtl, with the caveat that absence of a report is not evidence that no trade occurred). The latest available daily mandi records from get_daily_mandi_prices (tier: deep, 2 records) are from 12/11/2026 at Dahod APMC (Dahod district, Local grade, Other and G20 varieties), both reporting a min price of 7,000 INR/qtl, modal price of 7,200 INR/qtl, and max price of 7,300 INR/qtl.",
     "figures": [
       {
         "value": 7000.0,
-        "unit": "INR/quintal",
+        "unit": "INR/qtl",
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Gujarat",
@@ -69,7 +69,7 @@
       },
       {
         "value": 7200.0,
-        "unit": "INR/quintal",
+        "unit": "INR/qtl",
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Gujarat",
@@ -78,7 +78,7 @@
       },
       {
         "value": 7300.0,
-        "unit": "INR/quintal",
+        "unit": "INR/qtl",
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Gujarat",
@@ -87,7 +87,7 @@
       },
       {
         "value": 6783.0,
-        "unit": "INR/quintal",
+        "unit": "INR/qtl",
         "source_tool": "get_benchmark_hub_summary",
         "selector": {
           "state": "Gujarat",

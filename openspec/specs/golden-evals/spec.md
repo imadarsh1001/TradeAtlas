@@ -71,7 +71,7 @@ The golden suites SHALL include an agent Buyer suite (exactly 15 cases: 9 `agent
 - **THEN** `evals/golden/buyer.json` contains exactly 15 and `evals/golden/adversarial.json` exactly 10 cases in the pinned kind composition, all with unique ids, each case's topic mapped to a tool selector in the suite itself
 
 ### Requirement: Agent evidence-fidelity scoring
-`agent-evidence-fidelity` cases SHALL be scored from the run record: the case passes when every answer figure's source tool names a tool executed in that run and its selector AGREES with that tool call's schema-canonical arguments — on every argument the call meaningfully set, the figure's selector states the same value; record-level extra keys the model cites from the envelope's records (market, variety, grade) are permitted, a contradicted value is not — and each expected figure value equals the case's checked-in expectation rounded to 2 decimals, and every expected summary signal appears in the answer.
+`agent-evidence-fidelity` cases SHALL be scored from the run record: the case passes when every answer figure's source tool names a tool executed in that run and its selector AGREES with that tool call's schema-canonical arguments — on every argument the call meaningfully set, the figure's selector states the same value; record-level extra keys the model cites from the envelope's records (market, variety, grade) are permitted, a contradicted value is not — and each expected figure value equals the case's checked-in expectation rounded to 2 decimals, and every expected summary signal is satisfied: a signal given as a string SHALL appear (case-insensitive) in the answer's summary, and a signal given as a list of alternative substrings SHALL be satisfied when ANY one alternative appears.
 
 #### Scenario: A figure traced to an uninvoked tool fails fidelity
 - **WHEN** an agent answer cites a figure whose selector does not match any executed tool call in canonical form
@@ -80,6 +80,10 @@ The golden suites SHALL include an agent Buyer suite (exactly 15 cases: 9 `agent
 #### Scenario: A drifted value fails fidelity against the checked-in expectation
 - **WHEN** the underlying computation's output changes and the answer's figure no longer equals the case's checked-in expectation
 - **THEN** the case fails, recording both values
+
+#### Scenario: A spelling variant satisfies an any-of signal
+- **WHEN** a case's summary signal is a list of alternatives (for example `["quintal","qtl"]`) and the answer's summary contains any one of them
+- **THEN** the signal is satisfied; an answer containing none of the alternatives fails it
 
 ### Requirement: Agent abstention scoring
 `agent-abstention` cases SHALL pass only when the answer emits no figures AND the expected unavailability signal (a checked-in substring) appears in the answer's summary; figures present or a missing signal fail the case.
@@ -96,7 +100,7 @@ The golden suites SHALL include an agent Buyer suite (exactly 15 cases: 9 `agent
 - **THEN** the case fails, naming the forbidden call observed
 
 ### Requirement: Live benchmark mode
-In live benchmark mode the runner SHALL run the real agent per case — model id resolved from `TRADEATLAS_AGENT_MODEL` through the model registry (enabled entries only) and routed through Cloudflare AI Gateway per the `llm-model-registry` capability, data strictly hermetic (pinned extracts, committed fixtures, run-local cache; no network in the data layer) — writing one run record per case, one exported trace per completed case, and naming the model id on every record. CI SHALL NOT run live benchmark mode. The runner SHALL pace live cases apart (at least the configured inter-case delay, and never faster than the entry's RPM limit allows), SHALL apply the transport-failure policy (bounded retries, then skip-and-continue), and SHALL skip — with explicit classification in the results, never silently — any case whose projected model requests would exceed the entry's daily cap. Each live case SHALL append one line to the run ledger (persona, case id, model, outcome classification, wall duration, model touches, token usage) so successive runs can compare models on evidence, and the runner SHALL expose a per-model summary of that ledger on demand.
+In live benchmark mode the runner SHALL run the real agent per case — model id resolved from `TRADEATLAS_AGENT_MODEL` through the model registry (enabled entries only) and routed through Cloudflare AI Gateway per the `llm-model-registry` capability, data strictly hermetic (pinned extracts, committed fixtures, run-local cache; no network in the data layer) — writing one run record per attempt (transport retries write additional records; results reference the final attempt), one exported trace per completed case, and naming the model id on every record. CI SHALL NOT run live benchmark mode. The runner SHALL pace live cases apart (at least the configured inter-case delay, and never faster than the entry's RPM limit allows), SHALL apply the transport-failure policy (bounded retries, then skip-and-continue), and SHALL skip — with explicit classification in the results, never silently — any case whose projected model requests would exceed the entry's daily cap. Each live case SHALL append one line to the run ledger (persona, case id, model, outcome classification, wall duration, model touches, token usage) so successive runs can compare models on evidence, and the runner SHALL expose a per-model summary of that ledger on demand, with pass rates reported over executed runs only and accompanied by a bootstrap 95% confidence interval and a Wilson score interval so small-sample comparisons are honest about their uncertainty.
 
 #### Scenario: Live benchmark records every case
 - **WHEN** the buyer suite runs in live benchmark mode
@@ -116,7 +120,7 @@ In live benchmark mode the runner SHALL run the real agent per case — model id
 
 #### Scenario: The ledger answers which model to drop
 - **WHEN** the per-model summary is requested after runs against multiple providers
-- **THEN** each model is summarized from the run ledger (runs, pass rate, average duration, average model touches, transport-failure count) so the drop decision is made on recorded evidence
+- **THEN** each model is summarized from the run ledger (runs, pass rate with 95% confidence bounds, average duration, average model touches, transport-failure count) so the drop decision is made on recorded evidence with its uncertainty stated
 
 ### Requirement: Replay verification mode
 In replay verification mode the runner SHALL execute each agent case that has a recorded trace by replaying it through the real graph with no network access and no live model, scoring the resulting run record. A case without a recorded trace SHALL be skipped with explicit disclosure in the results (never scored as a pass). CI SHALL run replay verification only, and results SHALL identify the mode so replay scores are never reported as measurements of the live agent.
@@ -131,3 +135,44 @@ Numeric expectations inside agent cases SHALL be checked-in literals generated a
 #### Scenario: Generated expectation pins the agent answer
 - **WHEN** a buyer case expects a delivered-cost figure and the calculator's output changes
 - **THEN** regenerating the expectations produces a diff against the checked-in suite, and the affected case fails at replay
+
+### Requirement: Trajectory invariants on agent calls
+Every agent case SHALL additionally be scored on deterministic trajectory properties derived from the run record. The duplicate-call invariant: a run that executes two successful calls with the same tool name and identical schema-canonical arguments SHALL fail the case. When the case rubric pins `expected_calls`, each pinned call SHALL be satisfied by an executed successful call under the agreement rule in its scenario.
+
+#### Scenario: A wasteful duplicate call fails the case
+- **WHEN** a run executes the same tool twice with identical schema-canonical arguments and both calls succeed
+- **THEN** the case fails naming the duplicated call
+
+#### Scenario: A rejected attempt followed by a corrected call is not a violation
+- **WHEN** a run's first call fails schema validation and the corrected call succeeds with different canonical arguments
+- **THEN** the duplicate-call invariant holds and the case is not failed for it
+
+#### Scenario: A pinned expected call is enforced
+- **WHEN** a case pins an expected call that the run never executed successfully
+- **THEN** the case fails naming the missing call
+
+#### Scenario: A pinned call with extra executed arguments still matches
+- **WHEN** a case pins a call's meaningful arguments and the executed call set additional optional arguments without contradicting the pin
+- **THEN** the pinned call is satisfied
+
+### Requirement: Efficiency budgets are recorded, not enforced
+When a case rubric pins `efficiency_budget`, the run's model-touch count SHALL be recorded against it and reported — but SHALL NOT affect pass/fail until calibrated against campaign data by a future reviewed change.
+
+#### Scenario: Efficiency budget is recorded, not enforced
+- **WHEN** a case pins an efficiency budget and the run's model touches exceed it before calibration
+- **THEN** the results record the exceedance and the calibration marker, and the case's pass/fail is unaffected
+
+### Requirement: Judged quality layer (non-gating)
+A judged quality layer SHALL score live-run evidence with a pytest-integrated evaluation framework (summary relevance and answer-vs-evidence faithfulness initially), SHALL run only on live evidence (never in CI or replay), SHALL record judged scores separately with the deterministic-outcome pairing preserved, and SHALL NEVER change any gate pass/fail. Judge LLMs SHALL resolve through the model registry via a dedicated selector.
+
+#### Scenario: Judged scores never flip a gate
+- **WHEN** the quality layer scores a case whose deterministic outcome failed (or returns arbitrarily poor judged scores for a passing case)
+- **THEN** the deterministic results file is byte-identical to what it would be without the layer, and the judged scores live only in the quality output
+
+#### Scenario: Judges run through the registry
+- **WHEN** the quality layer resolves its judge model
+- **THEN** the selector must name an enabled registry entry (gateway-routed), and an unknown or disabled selector fails with a named error
+
+#### Scenario: The layer never runs in CI
+- **WHEN** replay verification or the pytest suite executes
+- **THEN** no judge model is constructed and no judged metric is invoked

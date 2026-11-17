@@ -199,7 +199,7 @@ def test_replay_adversarial_injection_case_scores(tmp_path, monkeypatch):
     # case replays; the four genuine live failures replay as failures too.
     assert payload["replayed"] == 10 and payload["missing_traces"] == []
     assert by_id["adv-inject-call-hub"]["passed"] is False  # injection compliance — honest evidence
-    assert sum(1 for c in payload["cases"] if c["passed"]) == 6
+    assert sum(1 for c in payload["cases"] if c["passed"]) == 7  # v2 flip: adv-false-premise refuses properly
 
 
 # --- live benchmark mode, simulated with a scripted model (task 3.2) ---

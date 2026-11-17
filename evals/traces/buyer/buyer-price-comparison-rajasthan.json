@@ -1,105 +1,93 @@
 {
   "version": 1,
   "question": "And what are groundnut prices looking like in Rajasthan today?",
-  "model_id": "z-ai/glm-5.3-flash",
+  "model_id": "gemini-4-hydrogen",
   "model_messages": [
     {
       "role": "ai",
-      "content": "",
+      "content": "[]",
       "tool_calls": [
         {
           "name": "get_daily_mandi_prices",
           "args": {
-            "state": "Rajasthan",
-            "commodity": "Groundnut"
+            "commodity": "Groundnut",
+            "state": "Rajasthan"
           },
-          "id": "e8713146-60e7-4070-8bf4-c71409f41bfa",
+          "id": "call_8812560298358454464",
           "type": "tool_call"
         },
         {
           "name": "get_benchmark_hub_summary",
           "args": {
-            "state": "Rajasthan",
-            "commodity": "Groundnut"
+            "commodity": "Groundnut",
+            "state": "Rajasthan"
           },
-          "id": "7ee0159b-be36-4ea8-ab72-4fd3364046c1",
+          "id": "call_8812560298358454743",
           "type": "tool_call"
         }
       ],
       "usage_metadata": {
-        "input_tokens": 2471,
-        "output_tokens": 158,
-        "total_tokens": 2629,
+        "input_tokens": 2297,
+        "output_tokens": 238,
+        "total_tokens": 2535,
         "input_token_details": {
-          "cache_read": 1920
+          "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 111
+          "reasoning": 175
         }
       }
     },
     {
       "role": "ai",
-      "content": "Here's what the evidence shows for groundnut in Rajasthan:\n\n**Bikaner APMC (G20, FAQ grade) \u2014 arrival date 12/11/2026**\n- Modal price: **\u20b97,100/qtl** (range: \u20b96,900\u2013\u20b97,300)\n- Source: `get_daily_mandi_prices(state=Rajasthan, commodity=Groundnut)`\n\n**Vs. MSP benchmark** (from `get_benchmark_hub_summary`, same selectors):\n- Central MSP benchmark: \u20b96,783/qtl\n- Spread: **+\u20b9317/qtl above MSP** \u2014 flagged as \"Premium to MSP (Firm Market)\"\n\n**Coverage caveats:**\n- Only **1 of 4 monitored hub mandis** reported today (Bikaner). Lunkaransar, Sridungargarh, and Pugal Road Grain are \"Not Reported Today\" \u2014 so treat this as a single-market reading, not a statewide picture.\n- The latest arrival is dated **12/11/2026**, while retrieval was 14 Nov 2026 (~19:31 UTC) \u2014 the quote is about two days behind \"today.\"\n\nBoth envelopes are labelled deep-tier with no data caveats. If you want a wider Rajasthan view, I can pull the 7-day spot series for Bikaner via the AGMARKNET feed \u2014 just note that's a thin-tier source (numeric IDs only).",
+      "content": "[{'type': 'text', 'text': '### Rajasthan Groundnut Prices\\n\\n**Summary & Data Freshness**\\n* **Latest Available Observation Date:** 12/11/2026 (retrieved 2026-11-17 UTC; no newer daily records are available for today).\\n* **Coverage & Tier:** 1 of 4 monitored hub mandis reporting (`tier: deep` across both `get_daily_mandi_prices(state=\"Rajasthan\", commodity=\"Groundnut\")` and `get_benchmark_hub_summary(state=\"Rajasthan\", commodity=\"Groundnut\")`).\\n\\n---\\n\\n### Mandi Price & MSP Comparison\\n\\n* **Bikaner APMC (Bikaner District \u2014 Variety: G20, Grade: FAQ, Arrival Date: 12/11/2026)**\\n  * **Modal Price:** \u20b97,100/qtl \u2014 `get_daily_mandi_prices(state=\"Rajasthan\", commodity=\"Groundnut\")`, `get_benchmark_hub_summary(state=\"Rajasthan\", commodity=\"Groundnut\")`\\n  * **Price Range (Min \u2013 Max):** \u20b96,900 \u2013 \u20b97,300/qtl \u2014 `get_daily_mandi_prices(state=\"Rajasthan\", commodity=\"Groundnut\")`, `get_benchmark_hub_summary(state=\"Rajasthan\", commodity=\"Groundnut\")`\\n  * **Central MSP Benchmark:** \u20b96,783/qtl \u2014 `get_benchmark_hub_summary(state=\"Rajasthan\", commodity=\"Groundnut\")`\\n  * **MSP Spread:** +\u20b9317/qtl (*Premium to MSP (Firm Market)*) \u2014 `get_benchmark_hub_summary(state=\"Rajasthan\", commodity=\"Groundnut\")`\\n\\n* **Non-Reporting Hub Mandis (Bikaner District)**\\n  * **Lunkaransar, Sridungargarh, and Pugal Road Grain:** Not Reported Today (3 of 4 configured hubs) \u2014 `get_benchmark_hub_summary(state=\"Rajasthan\", commodity=\"Groundnut\")`\\n\\n---\\n\\n### Caveats\\n* The MSP spread compares the mandi modal price to the central Minimum Support Price benchmark (`get_benchmark_hub_summary(state=\"Rajasthan\", commodity=\"Groundnut\")`).\\n* State-wide visibility is currently limited to a single reporting mandi (Bikaner APMC) from 12/11/2026.', 'extras': {'signature': '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'}}]",
       "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 3091,
-        "output_tokens": 511,
-        "total_tokens": 3602,
+        "input_tokens": 3133,
+        "output_tokens": 1149,
+        "total_tokens": 4282,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 215
+          "reasoning": 635
         }
       }
     }
   ],
   "structured_response": {
-    "summary": "Groundnut quotes for Rajasthan are thin but firm \u2014 a single hub reported.",
+    "summary": "For Groundnut in Rajasthan, the latest available observation date is 12/11/2026 (retrieved 2026-11-17 UTC; deep tier). Only 1 of 4 monitored hub mandis reported: Bikaner APMC (Variety: G20, Grade: FAQ) recorded a modal price of INR 7100/qtl (range INR 6900-7300/qtl), trading at a +INR 317/qtl premium over the central MSP benchmark of INR 6783/qtl (Firm Market). Lunkaransar, Sridungargarh, and Pugal Road Grain did not report.",
     "figures": [
       {
         "value": 7100.0,
-        "unit": "INR/qtl",
+        "unit": "INR/quintal",
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Rajasthan",
-          "commodity": "Groundnut",
-          "market": "Bikaner APMC",
-          "variety": "G20",
-          "grade": "FAQ",
-          "arrival_date": "12/11/2026"
+          "commodity": "Groundnut"
         }
       },
       {
         "value": 6900.0,
-        "unit": "INR/qtl (min)",
+        "unit": "INR/quintal",
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Rajasthan",
-          "commodity": "Groundnut",
-          "market": "Bikaner APMC",
-          "variety": "G20",
-          "grade": "FAQ",
-          "arrival_date": "12/11/2026"
+          "commodity": "Groundnut"
         }
       },
       {
         "value": 7300.0,
-        "unit": "INR/qtl (max)",
+        "unit": "INR/quintal",
         "source_tool": "get_daily_mandi_prices",
         "selector": {
           "state": "Rajasthan",
-          "commodity": "Groundnut",
-          "market": "Bikaner APMC",
-          "variety": "G20",
-          "grade": "FAQ",
-          "arrival_date": "12/11/2026"
+          "commodity": "Groundnut"
         }
       },
       {
         "value": 6783.0,
-        "unit": "INR/qtl (MSP benchmark)",
+        "unit": "INR/quintal",
         "source_tool": "get_benchmark_hub_summary",
         "selector": {
           "state": "Rajasthan",
@@ -108,7 +96,25 @@
       },
       {
         "value": 317.0,
-        "unit": "INR/qtl premium over MSP",
+        "unit": "INR/quintal",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 1.0,
+        "unit": "hubs",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 4.0,
+        "unit": "hubs",
         "source_tool": "get_benchmark_hub_summary",
         "selector": {
           "state": "Rajasthan",

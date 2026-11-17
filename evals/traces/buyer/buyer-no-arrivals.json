@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "question": "How many tonnes of groundnut arrived at Rajkot APMC last week?",
+  "model_id": "gemini-4-hydrogen",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "[]",
+      "tool_calls": [
+        {
+          "name": "get_daily_mandi_prices",
+          "args": {
+            "commodity": "Groundnut",
+            "state": "Gujarat",
+            "market": "Rajkot"
+          },
+          "id": "call_8689705450707211894",
+          "type": "tool_call"
+        },
+        {
+          "name": "get_spot_weekly_prices",
+          "args": {
+            "state_id": 11,
+            "commodity_id": 10,
+            "market_id": 60
+          },
+          "id": "call_8689705450707213159",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2300,
+        "output_tokens": 588,
+        "total_tokens": 2888,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 510
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "[{'type': 'text', 'text': \"I cannot report how many tonnes of groundnut arrived at Rajkot APMC last week. None of the available evidence tools provide arrival volume (tonnage) data for Rajkot APMC, and the daily mandi price snapshot returned no records.\\n\\n### What the evidence shows\\n- **Daily Mandi Prices \u2014 `get_daily_mandi_prices(state='Gujarat', commodity='Groundnut', market='Rajkot')`** (tier: `deep`):\\n  - Returned **0 records** (`no_data: true`, retrieved `2026-11-17T18:40:56Z`).\\n  - *Caveat:* Absence of a report in this snapshot is not evidence that no trade occurred.\\n- **Rolling 7-Day Spot Prices \u2014 `get_spot_weekly_prices(market_id=60, state_id=11, commodity_id=10)`** (tier: `thin`):\\n  - This endpoint reports **prices (`Rs./Quintal`) only**, not arrival quantities/tonnes.\\n  - For the window `2026-11-04` to `2026-11-10`, it shows prices only on `2026-11-04`\u2014**7850 Rs./Quintal** (`Rajkot APMC - Bold`) and **8050 Rs./Quintal** (`Rajkot APMC - G20`)\u2014and **`NR`** (non-reporting) from `2026-11-05` through `2026-11-10`.\\n  - *Caveat:* Thin-tier live data from AGMARKNET 2.0 without the deep-tier verification set; coverage has not been verified.\", 'extras': {'signature': 'AY89a18leKifNGkIRLuOZwonS/aU+bHfUpfz9QPUUFa1Xc5Qjdg8vvXctTuZeK8IR0yD4iK5R6dZfRmH0WJm+baY4oHlkZ1bMq/gFoigbQV2YWBRlKwcTJyVR/WgHV6PYIUbm2j3SYdg8JJzyTdyB4Mv8GXupebgaTFqPbFHEWE6kDek10sZyxysMK6FRiAOQyU+09VGKBoEXXf44dP7oVDh2828S8LzQ/NBTsCaR/T2pRKlgSk/piKD3+7EToaR/6mbpBn/5EkD+I+f/RTNaJpYYDP+gLB4T2rdq3eHPZVNh5LcMd00y4Jw9Hm/BYcTXImc7Tm8Ot5QRlP0uPbGWg0741n9+xpMHBAz/Ya/gn5++iClJA+IGRxkFPYxAKL23ckNn63VbF6mRMJKK5cvR58RZvRJW4YpQAR0kOGMIakWcZRS+e8Cigk23ya5qz0vRXGZlyMdbFN+t20nqh9FVCNPDTbS3bmIzckEnfzzbeAlbed70CbQB3Lk/SEVEHpzkZ6poJ25keBDMkLQua/FaTUxNZdGET/T4xm6rDVIDWO1I1Qov0oh0AoaBcWA65SJnrbzyebS91rUwWNXbheYTysOia+4USdeG+YW6vEVm/wvYk76HLrPViVpZlnWqNxkjtgzx9qGX3LzTQUsg7O1KlklEvcRTWWtABw8s2CyvKgYLne/xiUTxEncinbnnV1Nw+oJw60t4dyPC9m+EO15oS3euM0gFkWGYkYfckwWDZdGRPesiRqPJex4GRzFk7kmxhbign5RJ8g5rKQ3xdBgRF8vOlqrZL12dN1fDr8KVVK3GPbrx/DLlnuigPaBFn67lY3hdr9oUVwfGkgToHq05nA/PjsuNX//BEp8tq2gFog6KrVrb78dSZV6dbSSGAHsJqB6gS8VDXKDvRbTeA08IYjswwe2T8v/YUS+S5gDT4a4VRkyWnvPTuoCTtF5aBjJFh9fQ21X3s1I5BPNmkiyidGUCdOihUqO5PTU8dF1iTUeELLX46URKsNGaz/Atz/L6AskSAT57CbSs5ul9oZD1GAub097FkNm3QGZ51ofo/lwqpwYGBdL/cosiiXAav4GBV3AGhPv4nnkuJG3bYBzwxEZtDQ0aIGAxOi2P1l6g3pmejOc2Xv3HPEcyqwnhAWxQQvt25hjHhyk9TLSA0ElePtXVnkoz72f0nTqmMyQ+Hz1/LBAeZ9OiRCB/YBYTJsAkE6O4GRIWYc1MlleJ25FtKhdsyBPJXjfoROg2CCrpgqVy9V81Io7ml3jErY5iedK0fbgjnmTUQArQ3BOR4H4u0CG0Um0ZWlLOTrswZSA7zND5+Q50MLmV+aBw4CI6U1CqJpiaJ59UDKfnymF5sn/s1pGvPt/F3v4H8Pb7EubkcvNGdOfA6aYl7ovKQT7TjV09dinGZ5PKw8bgC3QWGDxbsdy6Y/bit095dEh+gtwWjy7/j1MuGBViPRcmJBh8eSkoC+nYjsSdi3/vzBfzsCGa2jQpSg4hmFJKJRRfIzr9Uv9fOfEA2RnE/4a8k5rqi7JqW1m54otr4J7WKBLSQrojzZiCnSLMNOoAEH7SpJ7/1oV6/snLiBwtnyfvQt4urU0EZX+j11t2d2bBgdLFKeicaidVKIwsxMwjjYVP0tCWF1lQG+o3RyuIa6EewPUiBAcarH8k060jiDTKBXrwQAcEfNlmIDNDKZfCIuOqhOmFJw0mjFw9Ioy6079BnEreCZcr/+e49HAYM7TZkYj086ibOMAk/vb9dAS7zNgROkMiAPRp8/rC7BQ/LJjUDh1eOjUIq3LmDmxPs5XPhfM3UpQLV8+16mP3/AtuoqPlLJ/clfxqOqr0/j0fXO6XBhP/sx05VD3G+9HP2veETIf3bnKZT11Yt1cE9wAoYqruAnG3pnwF2WTBOHM/P32RXni03EKFWg8b6lOXMl6mGsGFmxHX1fmI6EB23iyNNWRJK2KBrJTKmxhnU4W5idB7Z2gQdtyiRKTId8rWE2ODJ4qv3ZVnwA5HRhRksPADH7sKkVlQ8XrvIBhu4f0k03ru4pNS3c8j4L/Fkb+HZCclK6wR3XMcBYRYYJYeBNfmHp2Xy6zSUNxKBPj2WK9o9kRtmVC80wWoBYKKL/Grevo1x7acpfixGuNNoV1DDTs4PcDkobg0YEqiXANDEfGbSms35LNfcxLqkuoFIwAe3QJvNJWVzKoxdWYmp0net4qz4LMwEmo2kaLh17aD4OmzudkfbiIPFa9m3JdsK/aa2T5VyAEfiz8zDwDbwVfVU6Gq5zWOZWVH7yAwvnQog/AoiTMxTdUwzmFQ5t4gm2orYpajjnwksTDy/XVtjUQeW41cy5rT72n54Zd98H+UHCFXHbsTl4TGcLaVz+ihrk3+1QZwOux3KrkL6Ts+1vrIqz/cbBm3WimQ4UYcTivWMWqW9/FCb4B/8RH4Zg6jxijn+/t9vNPd6kHXVDoD3YVq/Ma9/hhZ3ZtKbD9lPAjKgIIA8yI0nHAcYNWegIvLKt8A8Jzyo9gPnI8PiwHg3JX91KxgeSB4gC5Uz3fRivENDH1fIeoPVOS5deu1FzdkwRr4taopa6NCQ3rO2YnRi2RXAuc1plNaHrIxc+0n+gp3La5RtUDGGYNZqbOZwXV19R2edPZnCN9234n2lWQG5VDYviO+5yJWlZgfinevUjJnwWvqxaQYEcN3owrxTp5kMS69hf9TjeGSr0YnkKP9/1FLGu9PZeShG1+QvBqNTZ/JLX25ZVaVbKBo1RTpP7pXjJ5in+nflbsrFwq7XSXLEo1yF4K6Sk3AGhUA/wOu0NLb9LoebWL7nN37kY+A1e/ZHF6XLfG9hTElSsHo9KLNL5I2p9RRMqUjFhtD2mbSDz+kZk6t0F/xBjI4fEy0mBEVdMxhzZ3YosJjR7vgnRaL8pY9RaigHLIO76zgXln0EnGrpGxR4OH+Rmzs94NDZdUlsc+uVA7QvokORmSTm3tmN38VYdo6TF14V7ZfV/nSHFP8SB6A6s8AQzzadKbkDEdupvm2SKBGrTi3UJj+0U3ZytnLEZmrtdlqndQtkkbhMujUlikG+8DaTXGL5dVKgYsVBK7fW/KBNu3ZVT0IAG5D/Dl8sfJsj+R6M9vJQZ1MKNZShcjTLGIfjc+HDE1031M/Cp3RmFD4TSOJZHp6oQlz3mRUJ2hyH1AQRFSPVsQTFPD2V6dt5t/PZAE8RlhrMyNiRum/NbDsZKm6Iyt+gc/iEqzpQ6dfy46RPNiFmXHteIJ5sqj7Kg7U60rNl65/AVlcbBX7sHHN70UUbrm1p0q/Iqdv+2EwJq+16KZqfdX8sRIB9Uo1aIbFj+xjRbORcUzDXrqHqyCH3+iErPp3B6EVSQ1k2EW+rxrho1dqVscX28j2ZRS/jq/iWLgebt5RmOnlA1QjCDAYSE+3nZ0tT/jUViTsPvPlJfSmbVYCqgbLgVu/24C6YMBXsSw/7iNh4Oy5OyuB4Ml8jgH+yqK8t2wSa+E/c1ykRsWOR+kL5wXYIzTN+tMv1yb7xSesV24sOMEtWgB+sAcnMulhQO/IGqh194kQfyXMw9vREgGVv1qXpfFjRdHM9ixAKBElLgGqXgKqbSweo/15cqFe9mHtox8z0ksYQEBXtJ1X+X0tHwv2+YU/jQBv5ehQBoevgOdmc+TotPaZH/C4q3mmQFhW+MM3irfuEGUkcq1Ox/Nnx2kJzqNKH+fDv1VtQgA691TLl3io5Dpov9HXvPX2VMUXFHfO/VHmp3tTB5s4eDg3wfcInQkt5DfeBmC9+pgpg=='}}]",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 3766,
+        "output_tokens": 1236,
+        "total_tokens": 5002,
+        "input_token_details": {
+          "cache_read": 1696
+        },
+        "output_token_details": {
+          "reasoning": 851
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "Cannot report how many tonnes of groundnut arrived at Rajkot APMC last week because no arrival volume (tonnage) data is available from the evidence tools. Deep-tier get_daily_mandi_prices(state='Gujarat', commodity='Groundnut', market='Rajkot') returned 0 records (no_data: true; caveat: absence of a report is not evidence that no trade occurred). Thin-tier get_spot_weekly_prices(market_id=60, state_id=11, commodity_id=10) only reports spot prices in Rs./Quintal for 2026-11-04 to 2026-11-10 (showing quotes only on 2026-11-04 and NR from 2026-11-05 to 2026-11-10, with coverage unverified), not arrival quantities.",
+    "figures": []
+  }
+}

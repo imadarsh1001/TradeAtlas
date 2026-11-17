@@ -432,3 +432,14 @@ def test_history_summary_carries_ci95():
     text = ledger.format_history(summary)
     assert "ci95" in text and f"{wilson[0]:.2f}-{wilson[1]:.2f}" in text
 
+def test_history_summary_dedupes_rerun_rows():
+    """A re-run appends rows for the same case; the summary counts the LATEST outcome once."""
+    def row(case_id, outcome, ts):
+        return {"ts": ts, "model_key": "m", "model_id": "m-id", "persona": "buyer",
+                "case_id": case_id, "outcome": outcome, "duration_s": 1.0, "model_touches": 2,
+                "total_tokens": 1, "failure_class": None}
+    rows = [row("a", "failed", "t1"), row("a", "passed", "t2"), row("b", "failed", "t3")]
+    summary = ledger.history_summary(ledger=rows)
+    assert summary["m"]["runs"] == 2 and summary["m"]["executed"] == 2  # 2 cases, not 3 rows
+    assert summary["m"]["passed"] == 1  # case a's latest outcome (passed) counted, not both
+

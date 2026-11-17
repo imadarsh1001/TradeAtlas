@@ -1,58 +1,102 @@
 {
   "version": 1,
   "question": "What's the delivered cost per tonne if I buy unshelled groundnut pods at 5123.45 INR/quintal with 900 INR/tonne freight?",
-  "model_id": "z-ai/glm-5.3-flash",
+  "model_id": "gemini-4-hydrogen",
   "model_messages": [
     {
       "role": "ai",
-      "content": "",
+      "content": "[]",
       "tool_calls": [
         {
           "name": "calculate_delivered_cost",
           "args": {
-            "commodity": "Groundnut",
             "base_price_rs_qtl": 5123.45,
             "freight_per_tonne": 900,
-            "is_pod": true
+            "is_pod": true,
+            "commodity": "Groundnut"
           },
-          "id": "87e11ec3-bdc7-4155-8219-bfc9a6190b3e",
+          "id": "call_273973270699303254",
           "type": "tool_call"
         }
       ],
       "usage_metadata": {
-        "input_tokens": 2497,
-        "output_tokens": 142,
-        "total_tokens": 2639,
+        "input_tokens": 2325,
+        "output_tokens": 297,
+        "total_tokens": 2622,
         "input_token_details": {
-          "cache_read": 1920
+          "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 99
+          "reasoning": 239
         }
       }
     },
     {
       "role": "ai",
-      "content": "Here's the deterministic cost breakdown for your quote (calculation tool, Groundnut, base 5,123.45 INR/qtl pods, freight 900 INR/t, no ancillary charges supplied):\n\n**Delivered cost: 75,592.14 INR/tonne** (kernel-equivalent benchmark)\n\n| Component | INR/tonne |\n|---|---|\n| Raw pod price (5,123.45 \u00d7 10) | 51,234.50 |\n| Effective material cost (70% shelling outturn) | 74,692.14 |\n| Decortication allowance | 1,500.00 |\n| Freight | 900.00 |\n| Ancillary (mandi cess, loading, brokerage, weighment) | 0.00 |\n| **Delivered cost per tonne** | **75,592.14** |\n\n- **Order total (default 100 MT): 7,559,214.29 INR** \u2014 tell me your actual volume if it differs.\n- Tier: deep (user-supplied inputs); retrieval timestamped 2026-11-14T18:58:37 UTC.\n\n**Caveat from the tool:** the kernel-equivalent figure assumes a 70% shelling outturn and the standard 1,500 INR/t decortication allowance \u2014 verify the actual outturn and processing cost for your specific lot, as both directly move the delivered number. Also note ancillary charges were set to zero; add them if your mandi terms include cess/brokerage/weighment.",
+      "content": "[{'type': 'text', 'text': 'The delivered cost is **75,592.14 INR/tonne** on a **Kernel Equivalent Benchmark (70% Shelling Outturn)** basis.\\n\\n### Cost Breakdown\\n*All figures from `calculate_delivered_cost(commodity=\"Groundnut\", base_price_rs_qtl=5123.45, freight_per_tonne=900, is_pod=True)` (tier: `deep`, coverage: `user-supplied inputs`):*\\n\\n- **Input pod price:** 5,123.45 INR/quintal (**51,234.50 INR/tonne** raw)\\n- **Effective material cost (kernel-equivalent):** **74,692.14 INR/tonne** (reflecting 70% shelling outturn and the default **1,500 INR/tonne** decortication allowance)\\n- **Freight:** **900 INR/tonne**\\n- **Ancillary charges (default):** **0 INR/tonne**\\n- **Delivered cost per tonne:** **75,592.14 INR/tonne**\\n- **Total order value (default 100 MT):** **7,559,214.29 INR**\\n\\n### Caveats\\n- The kernel-equivalent benchmark assumes a 70% shelling outturn and a 1,500 INR/tonne decortication allowance (with 0 INR/tonne ancillary charges, as none were specified). Verify the actual shelling outturn, processing cost, and mandi/ancillary charges for the specific lot.', 'extras': {'signature': 'AY89a187fEM/sPxJwBS2WAWS36bmzCjJXxtt5McKDG+g1WqxZeF2b8JCx2nIYRjuiylQ+WjNp+krriZBZRP8kIXSGYoIgAG0IQoMQKGjMfCreoSfyXPpoFybaH3ttAYGM+yMSGxGT/oHdaNkmRrllw8K3AcjW4yVUrQ78sk5iaK7rIR6Bmt9tMTacYTQ2MlHvGjTK7gCtonNKkBO/UlRxMC3hM1yi7HrYe5tZNUIwl9TNlX37vfs0jKFdk22Pw/gOfeTkQYTZF77IIRBp+IKXF7OKIauYaamJJUz+nLlNxGpOpdxzH8WhziVo4oTPmI6+jaW/Xv+2/I8uC+/vMfWaWshcCapGf/s+EbfYZ4MYG+jwCV7xXyl91VRsNIH6XNDc/D6Ky2miqI51FOBVv0345W58m2fuT6mYfK2zEhPNYVRUUATTGsJrkfEhk0jrZyXsyV3NBFUtqBVc1M35p4XckokmpNIvt9PyStiWnbc2pX1XFkHtMzLFNSulnQkKKhSvClPZOo8TqTeVR3tu1lwJYIOVbpAjBiFXAEou9nwWRBElKKTFaxtzUZDZrUpMAA/MkfN1/xFj8bJQ4CQq2h72g+MV3na4Nu2bLhgK2J9fbutzCFnftEk8uyVjbTTMOxztnc+ZCLo6kckGdQUJ1tNzEVJrWObHQwryuVE3vGJwkYomSmUJPKeGAUZDp6xapnFrPxeCN+R1IdRBWsetb//BqfisyPuPjLB+mJ8Tdhuqk6XhdN6dbIorxDBEujQSBhEZ3BQ8vZwi9oSEzO6m0w0MJJbo4E2PwWQlXnAa+C44zJywIj2wB7GZNmyfuFysj6nCFpqv3wl07iyZzbHX7hOo3W48+2JM5wVK3fNN44LKSgmX1yHrxydx/3UcajyPr76J9zdvOHxnjSIdv5r2N/8ajILzOFUMFI7MLWe0CaTyL5SdfYUPL7N+HMCOHvxrsVJl/+hve+XEtziXVEG3GNZOWF0XVbTdoPfamYkCg7DfzO6isB22P4Yu5qE49qh5Zq7EC/YMQ9+1nUscgIYxc/yoJIpUEKGdBAXYLSX1wQ1en2CZIuROBnKTQ/0KufxwRLKsqHZqx/CxY/cjx4O4CF4fZvd/9ssFBXeAlAK5O9YYohnNcL0EwqD9f7GReHxFkq1nI2DFt4FJkXYAE3VKX9tfp8nCYA3NLNWhoAwqprY73yn0iDoXU+PnEhDFCEvGQbh7WkQK90P4ZH8oTZIUiUAIrihvV5gH8J6exvX3QSdM1qxiPCVPHn+JZxAWe3BejzsfqKReIaynK9g1R0smbV7BfPPBtNarLrQLku0nJSyiFTxZoIm2sJS5YOjRz2IT7ht2slHCGnYoLUuUKNtzWlhJqJ0cr/tHPIU1ECruC+faGNuyapgg2Wl7AucaNQzTVMgimA+eNCpbwA/6rzt+iikRh4QzrgneBagsebT4vOlkWRtaUeNfkmbZWqibfMyL2BgO47/fLErnPW6GTK5ti4Rhs7NjBoYEPCdaqdIIXfHNh8UP5uvEbmoIviAza/EEb0ocvfgLPyy+Sk='}}]",
       "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 2802,
-        "output_tokens": 620,
-        "total_tokens": 3422,
+        "input_tokens": 2909,
+        "output_tokens": 682,
+        "total_tokens": 3591,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 288
+          "reasoning": 335
         }
       }
     }
   ],
   "structured_response": {
-    "summary": "**Delivered cost: 75,592.14 INR/tonne** (kernel-equivalent basis, unshelled pods).",
+    "summary": "Buying unshelled Groundnut pods at 5123.45 INR/quintal with 900 INR/tonne freight results in a delivered cost of 75592.14 INR/tonne on a Kernel Equivalent Benchmark (70% Shelling Outturn) basis, using the default 1500 INR/tonne decortication allowance and 0 INR/tonne ancillary charges (tier: deep, coverage: user-supplied inputs). Caveat: Kernel-equivalent benchmark uses a 70% shelling outturn and the supplied decortication allowance; verify the actual outturn and processing cost for the specific lot.",
     "figures": [
       {
         "value": 75592.14,
+        "unit": "INR/tonne",
+        "source_tool": "calculate_delivered_cost",
+        "selector": {
+          "commodity": "Groundnut",
+          "base_price_rs_qtl": 5123.45,
+          "freight_per_tonne": 900,
+          "is_pod": true
+        }
+      },
+      {
+        "value": 74692.14,
+        "unit": "INR/tonne",
+        "source_tool": "calculate_delivered_cost",
+        "selector": {
+          "commodity": "Groundnut",
+          "base_price_rs_qtl": 5123.45,
+          "freight_per_tonne": 900,
+          "is_pod": true
+        }
+      },
+      {
+        "value": 51234.5,
+        "unit": "INR/tonne",
+        "source_tool": "calculate_delivered_cost",
+        "selector": {
+          "commodity": "Groundnut",
+          "base_price_rs_qtl": 5123.45,
+          "freight_per_tonne": 900,
+          "is_pod": true
+        }
+      },
+      {
+        "value": 1500.0,
+        "unit": "INR/tonne",
+        "source_tool": "calculate_delivered_cost",
+        "selector": {
+          "commodity": "Groundnut",
+          "base_price_rs_qtl": 5123.45,
+          "freight_per_tonne": 900,
+          "is_pod": true
+        }
+      },
+      {
+        "value": 900.0,
         "unit": "INR/tonne",
         "source_tool": "calculate_delivered_cost",
         "selector": {

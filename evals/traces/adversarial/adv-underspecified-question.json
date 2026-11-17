@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "question": "What's the price?",
+  "model_id": "gemini-4-hydrogen",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "[{'type': 'text', 'text': 'To look up the price, please specify:\\n\\n1. **Commodity**: `Groundnut`, `Soybean`, or `Mustard`\\n2. **State**: e.g., `Gujarat`, `Rajasthan`, `Madhya Pradesh`, `Maharashtra`, or `Haryana`\\n\\n*(Optional)* You can also include a specific **APMC market/mandi** (e.g., Rajkot, Bikaner, Indore) or an **arrival date** (`DD/MM/YYYY`), or ask for a state benchmark hub summary.', 'extras': {'signature': 'AY89a1/BFSvjRpRU6M+CbsLF6Dux6u9FCKa+Aub5ijTboG5fwVhLs2olAaLBatWQbRqGredUzb5vxkv6WukeVw1EwQ26VS6dHn1KIiiqF+13j+SHkch4WxKLbGyozcjK8OWoKbsV5ziwrGl6ZiMqFU2vU2QDh160b6rNY+pZ7ZJLgV2bH6kzswjgQwdqugR1cFobvkiqU/RyLdxNVuReztfxKaXdjvdP5S6uroh+1iYEHoHutSiebw2gJryCYcY+75NiZVd6ughqMXFeBzuUqbbTDcGlh8R8GJlSwoxzxfCy5d1mhADyDPAziDHtKlJdklBLC4ExGNzrFFSMfGK+D8qC43F5TuYK1tOKv7WGV3s5aq4KhDS9QBpLPCX69Ch75b/eaOlo5k1yKNnVuJ+tbOCvjFCyDUDEpUnCV8DNE1K0wZ+QdGX7DGhs467fUPILvdt9XhVAaVfx9d685kRrqFSrGvrXnU4+igqWMeIc/ERvngku5m2ZxjaynXdylxBXmxyQ3zhbzaHrlp27piUgawCZ9XgtYuuBkgj3EBmZzejICoM9/tuDP1fj0QyyehCg17CYAh7O3OoZ41YMHV5lJpEC8+2kM0ouHgU1Jg5oUU78Q20S+mb7YsiWfLaIiMQeTT/p4qt//MiKk5ABRFmmczeuo6ybcH4EsS7HiWUXyP4YdNgWKnOTgdDzgT0THGym8Xxb9y1V8Lwy7NNtRB8UW1qJUtyI5e6Cp6YvlGuMd/wU4hS2PVNSAc0Ivch8dcQO8H5x5kdHfiPhavW1rox+wSI2YRqvwbkkzLZlGXwKib0FtU6p3bL2UlNo3cUJR/ljBoJDQxp53XmxKIg3BCrKqPvnrwFiP2jzse1TuyIxKt3P5+zOR0ZrQ9qqwEyEbkh93jro2/Oz1Nz00GNwxG81weyUzoKBBJcDcSd/0UlGkTbeCeGazO+kcS3LTaQo+DIvkdMCUHeVlQUyPZIZrpntCHIzmLaliRikObJC+8F2qiqf+4X6s85QVbjOdDJlDifg9LZuRDz0wM4Ci3dcv/7+BjI3prqrn1qOfvXSbwujHWuk6kzU8rntqMwxObF/7k4BAaXJp42IJQaqv04BLtMnvIeiboIlCe8KoZYqtaGm665wV+t6+V3c1HwVwaoENLS2Zp1WtYHwUZ7Lqkq8kefoKuXnFyLlH0CPXx67AMGdsG/8//UJE0RyinlNcQrsMcDSBeXcsSuGYIEP7hx6cd0hIRTlnYZQMKJ0oH4eXpW9c7uoSPE5ChJbNXwDgPXrQ6+Hq9BgFM4MEcyJJn2kN132Wd8Xcsw='}}]",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 2291,
+        "output_tokens": 316,
+        "total_tokens": 2607,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 201
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "Cannot retrieve a price because the required selectors are missing from your question. Please specify the commodity (Groundnut, Soybean, or Mustard) and the state (e.g., Gujarat, Rajasthan, Madhya Pradesh, Maharashtra, or Haryana), and optionally a specific APMC market/mandi or arrival date (DD/MM/YYYY).",
+    "figures": []
+  }
+}

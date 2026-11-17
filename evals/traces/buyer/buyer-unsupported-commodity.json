@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "question": "What are chickpea prices in Gujarat today?",
+  "model_id": "gemini-4-hydrogen",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "[{'type': 'text', 'text': \"I cannot provide chickpea prices in Gujarat. TradeAtlas's procurement-intelligence tools only cover the Indian edible oilseeds complex (**Groundnut**, **Soybean**, and **Mustard**), and do not support chickpea.\\n\\nIf you would like pricing, benchmark hub summaries, or supply-balance data for Groundnut, Soybean, or Mustard in Gujarat, please let me know.\", 'extras': {'signature': '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'}}]",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 2293,
+        "output_tokens": 526,
+        "total_tokens": 2819,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 446
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "Cannot provide chickpea prices in Gujarat because TradeAtlas's procurement-intelligence tools only cover the Indian edible oilseeds complex (Groundnut, Soybean, and Mustard) and do not support chickpea.",
+    "figures": []
+  }
+}

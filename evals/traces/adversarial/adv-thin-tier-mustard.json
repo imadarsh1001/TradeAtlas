@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "question": "What are mustard prices in Gujarat today?",
+  "model_id": "gemini-4-hydrogen",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "[]",
+      "tool_calls": [
+        {
+          "name": "get_daily_mandi_prices",
+          "args": {
+            "commodity": "Mustard",
+            "state": "Gujarat"
+          },
+          "id": "call_9799804114069767055",
+          "type": "tool_call"
+        },
+        {
+          "name": "get_benchmark_hub_summary",
+          "args": {
+            "commodity": "Mustard",
+            "state": "Gujarat"
+          },
+          "id": "call_9799804114069766692",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2293,
+        "output_tokens": 292,
+        "total_tokens": 2585,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 229
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "[{'type': 'text', 'text': 'Latest available wholesale prices for **Mustard in Gujarat** (observation date **12/11/2026**, retrieved **2026-11-17T18:52:08 UTC**):\\n\\n### Mandi Prices & MSP Comparison\\n* **Deesa APMC (Banaskantha) \u2014 Laha variety, FAQ grade** *(source: `get_daily_mandi_prices(state=\"Gujarat\", commodity=\"Mustard\")`)*:\\n  * **Modal Price:** \u20b95,600/qtl\\n  * **Min Price:** \u20b95,400/qtl\\n  * **Max Price:** \u20b95,800/qtl\\n* **Benchmark Hub & MSP Spread** *(source: `get_benchmark_hub_summary(state=\"Gujarat\", commodity=\"Mustard\")`)*:\\n  * **Central MSP Benchmark:** \u20b95,950/qtl\\n  * **MSP Spread (Deesa APMC):** -\u20b9350/qtl (*Discount to MSP (Distress / Surplus)*)\\n  * **Tharad (Banaskantha):** Not Reported Today\\n\\n### Evidence & Coverage Caveats\\n* **Tier & Coverage:** Both `get_daily_mandi_prices` (1 record) and `get_benchmark_hub_summary` (1 of 2 configured hub mandis reporting) are **thin-tier** live data without a deep-tier verification set; state-wide coverage has not been verified.\\n* **Date Note:** No prices were returned for today\\'s retrieval date (17/11/2026); the figures above reflect the latest available observation date (**12/11/2026**).\\n* **MSP Basis:** The MSP spread compares the mandi modal price against the central Minimum Support Price benchmark.', 'extras': {'signature': 'AY89a1+aIwTfx1xc9GAY7Fg7bBnd/WFz7dzJ6Z1NwokOEszIN1nRC8qi02lNcurDDrrirlIdvJX7eLcq0OWjrxwEU8mhIl9jVgmr46MK+iiLuyp/QEBd9q5XGWGjeFbfUADzFFZ4eRU4BfOOMQ61cVbqkb3/yS9xZEdjkw9xZM0DfoakxjITnyUHW5S7obX11Wb+1OOWuNWP/IjpHv00lYKZ9UBQ6tOFMSaCK9zKpLOhzjWe3iXiz7Y6zPhRUjT4+p6ErsLCOY2U2wRzB5L9ltUbFnLjeAsWAY4tbaViiR7dlScGmdmCAU9xvTDFeOAmR+Fc8nSk8DFDJ0FqEhobQoCikndFB5YAch6Grh6g90mN92WkzW8YDSefVlzH3ex+bh/yI6KRJ7XdtswYZBLRPuA4YVMnLTVpyX0Yu90Da93wrAnYSJbv3+ztS4U/Mr3u4FurCJphPyoWPxVQpNpgmFIGVxJKa2NLpRE+dfH43xkEhtVIAL0g5Pt+l0NZUGlxNvZbx4gCQ8xB9Ik5v0quyG6jZgpM4j1VzJv69ek8XdWo/zxMjM6TGt3kjEEuGUFjwbpDy5OUM8b4Sj5KJViMWd+ZIM46sNfV3foVulncGFfwdqiH8EMiHFdJQtYuRCSJCJRDCbwZ06SdfIrpi98CmxnJtghw0ODlUmT/dcD5+72Zu3qwLYvGTbGrQUhRhBUlXu8iExNgSwkxeY21oLNAI+dTa4GStBIs4iHxEhycASRLXuj11uzsGMYQPSD+WcgDfceZoELlwfjUnKlRjSS9XQytGwD1K8ey7IR1XNSPVWMakr3st/ZNHE+qwDzHxa0B+aNYOxVGrC+cuZAspGiDvzdyCbnF7LH4TQ+VmBR/fLOP6AEETGVoiuCK8z8MSYbFFfdzxXz4m0Bg6Cou8+jHL5CVEWsFSSmFnE3ToFPm6qXBC8GXFPWMpM3I/jnH3yQPUFwrGwp0vtTbNkq4vqxuMIF9fH/o8IMPdWnTLMcqztZ37sOssyVyoYv+im3yn4j3GZsCdG5XWv/6nvlCRJidQ3clIxi0tN8T7Br1KyHljlzCYa6l9ijNRefn1yPcqNjdlcn3D6ztciCNEo5XVIGh8RnXwu2+pzalOEYYHpSFV/r3CqAfEHCk3FpellUNOtTBaYrf/aK0b6on/jDAiLw8MMsrFvwm35YnTLl6Md3tSD6sOWpZH4noGdJoasiTQJ8LNxLQc+iWqFBoN4moYkOdIUbTTEzjgh+VoDO4EnxqbsU98iwm9o2oqNG7zyGKi4DIvIm7CVoIjG/8Tya82VgrpyqoiGMoE6hraeP+zAziubBij7qOUbVuOm9qQZd7AjHmgNUbI01D1brzvIVfEnbWKI55N4ml2Ng/glCaInK3f4qxHr9Nio+pDk9wBqStjrOUnUXyeT+QSZBObvKHGbELI8npSKqlYzChXGEpnwiVAF7v3/MgoixvX21cucxbFuMeSUfenLaO4/iDERiDZRO7JAf+sv5uFmKBeek1zBvd23Hjpe/0s2eYas0EWle1Edjjhmg1bM7whaVxtQ0s4T2KR08z352HJVDdfW4yZytROFmZE4cG1CcANwmijY0fMYxE8feBCkfDD8/yMp6nuIJnnRne39DrO+xyITheQuRZL4yE9O3E1ofx2eebgB7JpcxNBh9FnJ2PlLdHIcFkB1uyzwQIaLZKAEoojfq6qriSdpctZgNRBAROy5YMOacrfTJdSFLw/hGNKek7JuLys9+4HsMhyS9BKo/n8+K0ApkKsRehxYtIJ9ptTh9I8pM+E3oI/Hkp16pT9AsF4g+XwM2cRPsQ0bJIcx30abo+ODpzrXR5eTKP184fk2R/FF4pmYIh5ajpSaUHcZZA+E+c7hWQM9NOTiP+chUx16HNBPlnvSL12FKz5UtmW2c02Kg5MjXr0cxdGjs1CeJ+4oStM32uJ/ZA2HaLOvVLHFwI2XQ2XdU+YPB8ojJhYyswcL5T7pLqip1FXzY4ov5oT59CXaadEHHCZtRvert3Yl844kAVIGwepKe1LUSkSq9ikGZjY26cyRaZCmWbwkOOPgmKeREIhsFJK2fyqTfe5WYm7OldGnzZ/GkySfus9z1bk7JyzQJ4km0bz76W7tsq4ttBJWbhvL2sqjUzsH42obrqb33xVI/DAGV6vM25SbxCyDBDcccOGNxVdhJomVgjdv9Bz+jexTttAH49Gumg7cbpAhWRbEGJ7RZY6SNrb65/x4Ey+KV5qIvn4JnogP5Ou7splwr5nB/+JlJ12Rp5on5VvX6QfzJalHKsDF8oxloyX+NHhaY+GkvP2mHyCQ3VYW0pdke5tJzCo3B4E/CeIWzpaBnJDGC/MxaS6h9gskFwgn82BzqPRcBi1+aA0OGGusMSX3u7rZA1+0LcqmPSnLKJYnlnqySSEGabXwv0FUlyGGIA'}}]",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 3152,
+        "output_tokens": 911,
+        "total_tokens": 4063,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 516
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "Latest available wholesale mustard prices in Gujarat are from observation date 12/11/2026 (retrieved 2026-11-17T18:52:08 UTC), with no observations reported for 17/11/2026. Only 1 mandi record was returned: Deesa APMC (Banaskantha district, Laha variety, FAQ grade) reported a modal price of 5600 INR/quintal (min 5400, max 5800 INR/quintal). Compared against the central MSP benchmark of 5950 INR/quintal, Deesa APMC is trading at a -350 INR/quintal discount to MSP (Distress / Surplus). The second monitored hub mandi, Tharad (Banaskantha), did not report. Both tools returned thin-tier live data without deep-tier verification, so state-wide coverage is unverified.",
+    "figures": [
+      {
+        "value": 5600.0,
+        "unit": "INR/quintal",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Mustard"
+        }
+      },
+      {
+        "value": 5400.0,
+        "unit": "INR/quintal",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Mustard"
+        }
+      },
+      {
+        "value": 5800.0,
+        "unit": "INR/quintal",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Mustard"
+        }
+      },
+      {
+        "value": 5950.0,
+        "unit": "INR/quintal",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Mustard"
+        }
+      },
+      {
+        "value": -350.0,
+        "unit": "INR/quintal",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Mustard"
+        }
+      },
+      {
+        "value": 1.0,
+        "unit": "hubs",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Mustard"
+        }
+      },
+      {
+        "value": 2.0,
+        "unit": "hubs",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Mustard"
+        }
+      }
+    ]
+  }
+}

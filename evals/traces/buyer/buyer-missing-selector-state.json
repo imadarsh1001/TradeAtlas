@@ -1,38 +1,27 @@
 {
   "version": 1,
   "question": "What are groundnut prices today?",
+  "model_id": "gemini-4-hydrogen",
   "model_messages": [
     {
       "role": "ai",
-      "content": "",
+      "content": "[{'type': 'text', 'text': \"To check today's groundnut prices, I need to know which **state** you are interested in (for example: **Gujarat**, **Rajasthan**, **Madhya Pradesh**, **Maharashtra**, or **Haryana**).\\n\\nOptionally, if you have a specific APMC mandi/market in mind (such as Rajkot or Bikaner), please share that as well.\", 'extras': {'signature': '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'}}]",
+      "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 100,
-        "output_tokens": 20,
-        "total_tokens": 120
-      },
-      "tool_calls": [
-        {
-          "name": "get_daily_mandi_prices",
-          "args": {
-            "commodity": "Groundnut"
-          },
-          "id": "c1",
-          "type": "tool_call"
+        "input_tokens": 2292,
+        "output_tokens": 627,
+        "total_tokens": 2919,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 547
         }
-      ]
-    },
-    {
-      "role": "ai",
-      "content": "I can pull current groundnut prices, but I need to know which state you're sourcing in \u2014 Gujarat or Rajasthan? The daily price tool needs a state.",
-      "usage_metadata": {
-        "input_tokens": 100,
-        "output_tokens": 20,
-        "total_tokens": 120
       }
     }
   ],
   "structured_response": {
-    "summary": "I can pull current groundnut prices, but I need to know which state you're sourcing in \u2014 the daily price tool requires a state (Gujarat or Rajasthan are the deep-coverage states).",
+    "summary": "Cannot retrieve today's groundnut prices because the required state selector is missing. Please specify a state (e.g., Gujarat, Rajasthan, Madhya Pradesh, Maharashtra, or Haryana) and optionally a specific APMC mandi/market.",
     "figures": []
   }
 }

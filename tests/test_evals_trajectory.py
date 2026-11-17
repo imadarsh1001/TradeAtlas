@@ -163,7 +163,7 @@ def test_suite_validation_accepts_any_of_and_trajectory_rubrics():
 def test_committed_suite_pins_validate():
     """The committed buyer suite (with pins + bindings) validates under the new rubric shapes."""
     cases = json.loads((EVALS / "golden" / "buyer.json").read_text(encoding="utf-8"))["cases"]
-    assert sum(1 for c in cases if c.get("trace")) == 11
+    assert sum(1 for c in cases if c.get("trace")) == 15  # canonical vertex traces: fully bound
     assert sum(1 for c in cases if c["expected"].get("expected_calls")) == 5
     for case in cases:
         _validate_agent_case(case)

@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "question": "What are groundnut prices in Gujarat today?",
+  "model_id": "gemini-4-hydrogen",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "[]",
+      "tool_calls": [
+        {
+          "name": "get_daily_mandi_prices",
+          "args": {
+            "commodity": "Groundnut",
+            "state": "Gujarat"
+          },
+          "id": "call_14315238843952312234",
+          "type": "tool_call"
+        },
+        {
+          "name": "get_benchmark_hub_summary",
+          "args": {
+            "state": "Gujarat",
+            "commodity": "Groundnut"
+          },
+          "id": "call_14315238843952308627",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2294,
+        "output_tokens": 214,
+        "total_tokens": 2508,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 151
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "[{'type': 'text', 'text': 'There are **no Groundnut price reports for today (17/11/2026)** in Gujarat across the monitored benchmark hubs, and the most recent daily mandi records available are from **12/11/2026**.\\n\\n### 1. Daily Mandi Prices\\n*Source: `get_daily_mandi_prices(state=\"Gujarat\", commodity=\"Groundnut\")` \u2014 Tier: `deep`, Coverage: `2 records for (Gujarat, Groundnut)`, Retrieved: `2026-11-17T18:47:50.015214+00:00`, Observation Date: `12/11/2026`*\\n\\n* **Dahod APMC (Dahod District)** \u2014 Arrival Date: `12/11/2026` (5 days prior to retrieval)\\n  * **Variety: Other (Grade: Local):** Min **\u20b97,000/qtl** | Modal **\u20b97,200/qtl** | Max **\u20b97,300/qtl**\\n  * **Variety: G20 (Grade: Local):** Min **\u20b97,000/qtl** | Modal **\u20b97,200/qtl** | Max **\u20b97,300/qtl**\\n\\n### 2. Benchmark Hub Summary\\n*Source: `get_benchmark_hub_summary(state=\"Gujarat\", commodity=\"Groundnut\")` \u2014 Tier: `deep`, Coverage: `0 of 4 configured hub mandis reporting for (Gujarat, Groundnut)`, Retrieved: `2026-11-17T18:47:50.060883+00:00`*\\n\\n* **Reporting Status:** `no_data: true` \u2014 **0 of 4** monitored hubs reported today:\\n  * Rajkot (Rajkot): Not Reported Today\\n  * Gondal (Rajkot): Not Reported Today\\n  * Jetpur(Dist.Rajkot) (Rajkot): Not Reported Today\\n  * Himatnagar (Sabarkantha): Not Reported Today\\n* **MSP Benchmark:** **\u20b96,783/qtl** (central Minimum Support Price benchmark for comparison; no live modal prices available today to compute MSP spread).\\n* **Caveat:** Absence of a report in this snapshot is not evidence that no trade occurred.', 'extras': {'signature': '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'}}]",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 3361,
+        "output_tokens": 1341,
+        "total_tokens": 4702,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 818
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "No Groundnut price reports are available for today (2026-11-17) across Gujarat's 4 monitored benchmark hubs (Rajkot, Gondal, Jetpur(Dist.Rajkot), and Himatnagar; all Not Reported Today, no_data=true, tier=deep). Absence of a report is not evidence that no trade occurred. The central MSP benchmark is 6783 INR/qtl. The most recent daily mandi records available are from 12/11/2026 at Dahod APMC (tier=deep, 2 records for Other and G20 varieties, Local grade), showing a minimum price of 7000 INR/qtl, modal price of 7200 INR/qtl, and maximum price of 7300 INR/qtl.",
+    "figures": [
+      {
+        "value": 7000.0,
+        "unit": "INR/qtl (Dahod APMC min_price, 12/11/2026)",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 7200.0,
+        "unit": "INR/qtl (Dahod APMC modal_price, 12/11/2026)",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 7300.0,
+        "unit": "INR/qtl (Dahod APMC max_price, 12/11/2026)",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 6783.0,
+        "unit": "INR/qtl (msp_benchmark_inr_qtl)",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 0.0,
+        "unit": "hubs_reporting_today",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 4.0,
+        "unit": "hubs_monitored",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      }
+    ]
+  }
+}

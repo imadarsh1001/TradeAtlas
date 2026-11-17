@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "question": "Since Punjab groundnut is trading at 100 INR per quintal, should I lock in my full year's requirement now?",
+  "model_id": "gemini-4-hydrogen",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "[]",
+      "tool_calls": [
+        {
+          "name": "get_daily_mandi_prices",
+          "args": {
+            "state": "Punjab",
+            "commodity": "Groundnut"
+          },
+          "id": "call_11332031216279133202",
+          "type": "tool_call"
+        },
+        {
+          "name": "get_macro_supply_balance",
+          "args": {
+            "state": "Punjab",
+            "crop": "Groundnut"
+          },
+          "id": "call_11332031216279133393",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2313,
+        "output_tokens": 548,
+        "total_tokens": 2861,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 485
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "[{'type': 'text', 'text': '**No \u2014 you should not lock in your full year\\'s requirement based on that premise.** The available market evidence does not support the claim that Punjab groundnut is trading at 100 INR per quintal, and there is no live price data to justify a procurement decision.\\n\\n### Evidence Summary\\n\\n* **Mandi Price Data (`get_daily_mandi_prices(state=\"Punjab\", commodity=\"Groundnut\")`):**\\n  * **Coverage:** 0 records (`no_data: true`), retrieved `2026-11-17T18:49:58.838847+00:00` (**thin tier**).\\n  * **Caveats:** No records were reported for `(Punjab, Groundnut)` in this snapshot; absence of a report does not prove no trade occurred, and live data has not been verified against the deep-tier set. Because no price records are available, no wholesale price figure can be confirmed for Punjab groundnut.\\n\\n* **Macro Supply Context (`get_macro_supply_balance(state=\"Punjab\", crop=\"Groundnut\")`):**\\n  * **2025-26 Production (Third Advance Estimates):** 4,000 tonnes vs. a 3-year baseline of 3,000 tonnes, indicating a **+33.3% harvest surplus** (**thin tier**).\\n  * **Caveats:** Advance estimates are subject to revision, and this thin-tier series has not been verified against the deep-tier set. It also indicates a relatively small state production volume rather than a liquid benchmark market.\\n\\n### Recommendation\\nDo not commit to a full-year procurement lock-in on Punjab groundnut without verified mandi quotes. If you are sourcing groundnut and would like to evaluate active benchmark markets instead, please specify a state in the 5-state corridor (such as Gujarat or Rajasthan) or provide a specific APMC mandi name.', 'extras': {'signature': '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'}}]",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 3302,
+        "output_tokens": 1420,
+        "total_tokens": 4722,
+        "input_token_details": {
+          "cache_read": 1232
+        },
+        "output_token_details": {
+          "reasoning": 1008
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "No, you should not lock in your full year's requirement. The evidence does not support the premise that Punjab groundnut is trading at 100 INR per quintal: get_daily_mandi_prices(state='Punjab', commodity='Groundnut') returned 0 records (no_data: true, retrieved 2026-11-17T18:49:58.838847+00:00, thin tier), so no mandi price figure can be reported. Separately, get_macro_supply_balance(state='Punjab', crop='Groundnut') shows 2025-26 Third Advance Estimates production of 4000 tonnes against a 3000 tonnes baseline (+33.3% harvest surplus, thin tier, subject to revision), indicating a small state production base with no verified price data to justify a procurement lock-in.",
+    "figures": [
+      {
+        "value": 4000.0,
+        "unit": "tonnes (2025-26 Third Advance Estimates)",
+        "source_tool": "get_macro_supply_balance",
+        "selector": {
+          "state": "Punjab",
+          "crop": "Groundnut"
+        }
+      },
+      {
+        "value": 3000.0,
+        "unit": "tonnes (3-year baseline)",
+        "source_tool": "get_macro_supply_balance",
+        "selector": {
+          "state": "Punjab",
+          "crop": "Groundnut"
+        }
+      },
+      {
+        "value": 33.3,
+        "unit": "percent (supply balance vs. baseline)",
+        "source_tool": "get_macro_supply_balance",
+        "selector": {
+          "state": "Punjab",
+          "crop": "Groundnut"
+        }
+      }
+    ]
+  }
+}

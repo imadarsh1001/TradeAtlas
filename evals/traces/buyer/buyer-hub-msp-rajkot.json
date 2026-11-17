@@ -1,92 +1,86 @@
 {
   "version": 1,
   "question": "How does the Rajkot groundnut quote compare against MSP right now \u2014 is the market firm or distressed?",
-  "model_id": "z-ai/glm-5.3-flash",
+  "model_id": "gemini-4-hydrogen",
   "model_messages": [
     {
       "role": "ai",
-      "content": "",
+      "content": "[]",
       "tool_calls": [
-        {
-          "name": "get_daily_mandi_prices",
-          "args": {
-            "state": "Gujarat",
-            "commodity": "Groundnut",
-            "market": "Rajkot"
-          },
-          "id": "f1a8534b-f812-420a-9f04-a827fca7bd2b",
-          "type": "tool_call"
-        },
         {
           "name": "get_benchmark_hub_summary",
           "args": {
-            "state": "Gujarat",
-            "commodity": "Groundnut"
+            "commodity": "Groundnut",
+            "state": "Gujarat"
           },
-          "id": "bf68dd31-8c1a-40ce-8bbd-14e233228197",
+          "id": "call_5116058521411817461",
           "type": "tool_call"
-        }
-      ],
-      "usage_metadata": {
-        "input_tokens": 2480,
-        "output_tokens": 132,
-        "total_tokens": 2612,
-        "input_token_details": {
-          "cache_read": 0
         },
-        "output_token_details": {
-          "reasoning": 77
-        }
-      }
-    },
-    {
-      "role": "ai",
-      "content": "",
-      "tool_calls": [
         {
-          "name": "get_macro_supply_balance",
+          "name": "get_daily_mandi_prices",
           "args": {
-            "state": "Gujarat",
-            "crop": "Groundnut"
+            "market": "Rajkot",
+            "commodity": "Groundnut",
+            "state": "Gujarat"
           },
-          "id": "94b14138-c2c3-46b4-951f-de80b5cd67f9",
+          "id": "call_5116058521411813444",
           "type": "tool_call"
         }
       ],
       "usage_metadata": {
-        "input_tokens": 3193,
-        "output_tokens": 199,
-        "total_tokens": 3392,
+        "input_tokens": 2306,
+        "output_tokens": 278,
+        "total_tokens": 2584,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 176
+          "reasoning": 208
         }
       }
     },
     {
       "role": "ai",
-      "content": "**Rajkot is trading firm \u2014 a modest premium to MSP \u2014 but the firmness is narrow, not market-wide.**\n\n**Rajkot vs MSP (as of 12/11/2026, G20 FAQ):**\n- Rajkot APMC modal price: **\u20b96,900/qtl** (range \u20b96,700\u20137,100) \u2014 from `get_daily_mandi_prices` (Gujarat, Groundnut, market=Rajkot)\n- MSP benchmark: **\u20b96,783/qtl** \u2014 from `get_benchmark_hub_summary` (Gujarat, Groundnut)\n- **Spread: +\u20b9117/qtl (~+1.7%) \u2192 flagged \"Premium to MSP (Firm Market)\"**\n\n**Caveats a buyer should weigh:**\n- **The firmness is thin at the edges.** Rajkot's own minimum (\u20b96,700) sits *below* MSP \u2014 only the modal/max is above it. Nearby **Gondal APMC modal is \u20b96,700, i.e. \u20b983 *below* MSP**, flagged \"Distress / Surplus\" in the same hub summary. So the firm reading is specific to Rajkot's modal trades, not the district.\n- **Partial coverage:** only 2 of 4 monitored Gujarat hubs reported today (Jetpur, Himatnagar: not reported), per `get_benchmark_hub_summary`.\n- **Macro picture points the other way:** `get_macro_supply_balance` (Gujarat, Groundnut) shows a 2025-26 Third Advance Estimate of **6.267 MT vs a 3-year baseline of 4.799 MT \u2014 a +30.6% harvest surplus**. Heavy expected arrivals typically cap premiums; note advance estimates get revised.\n\n**Bottom line:** At the quote level, Rajkot is firm (+\u20b9117 over MSP), but with a supply surplus of ~31%, distressed pricing one mandi over, and half the hubs silent, I'd read this as firmness on quality-lotted lots rather than broad market strength \u2014 worth tightening arrival/quality specs before paying the premium.",
+      "content": "[{'type': 'text', 'text': 'Based on the latest available mandi data (observation date **12/11/2026**, retrieved `2026-11-17T18:23:21Z`), **Rajkot APMC** is trading at a **premium to MSP**, indicating a **firm market** at that mandi:\\n\\n* **Rajkot APMC Quote (Groundnut, G20, FAQ):**\\n  * **Modal Price:** **\u20b96,900/qtl** (Range: **\u20b96,700 \u2013 \u20b97,100/qtl**) \u2014 *Source:* `get_daily_mandi_prices(state=\"Gujarat\", commodity=\"Groundnut\", market=\"Rajkot\")` and `get_benchmark_hub_summary(state=\"Gujarat\", commodity=\"Groundnut\")`.\\n* **MSP Comparison:**\\n  * **Central MSP Benchmark:** **\u20b96,783/qtl** \u2014 *Source:* `get_benchmark_hub_summary(state=\"Gujarat\", commodity=\"Groundnut\")`.\\n  * **MSP Spread:** **+\u20b9117/qtl** (**Premium to MSP (Firm Market)**) \u2014 *Source:* `get_benchmark_hub_summary(state=\"Gujarat\", commodity=\"Groundnut\")`.\\n\\n### Wider Hub Context & Evidence Notes\\n* **Nearby Hub Divergence:** While Rajkot APMC is firm, **Gondal APMC** (also in Rajkot district, G20, FAQ, `12/11/2026`) is trading at a modal price of **\u20b96,700/qtl** (**-\u20b983/qtl** vs. MSP, **Discount to MSP (Distress / Surplus)**) \u2014 *Source:* `get_benchmark_hub_summary(state=\"Gujarat\", commodity=\"Groundnut\")`.\\n* **Evidence Tier & Coverage:** Both `get_benchmark_hub_summary(state=\"Gujarat\", commodity=\"Groundnut\")` and `get_daily_mandi_prices(state=\"Gujarat\", commodity=\"Groundnut\", market=\"Rajkot\")` are **deep-tier**. However, only **2 of 4** configured Gujarat hub mandis reported for `12/11/2026` (Jetpur(Dist.Rajkot) and Himatnagar did not report), and the latest available observation date is **12/11/2026** (5 days prior to retrieval).\\n* **Caveat:** MSP spread compares the mandi modal price to the central Minimum Support Price benchmark (`get_benchmark_hub_summary`).', 'extras': {'signature': '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'}}]",
       "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 3430,
-        "output_tokens": 801,
-        "total_tokens": 4231,
+        "input_tokens": 3852,
+        "output_tokens": 1318,
+        "total_tokens": 5170,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 358
+          "reasoning": 764
         }
       }
     }
   ],
   "structured_response": {
-    "summary": "**Firm at Rajkot: modal \u20b96,900/qtl is a +\u20b9117 (+1.7%) premium to MSP \u20b96,783 \u2014 not distressed.** But the firmness is thin at the edges and supply context is bearish.",
+    "summary": "On observation date 12/11/2026 (retrieved 2026-11-17T18:23:21Z, deep tier), Rajkot APMC groundnut (G20, FAQ) is trading at a modal price of 6,900 INR/qtl (range 6,700-7,100 INR/qtl), which is a +117 INR/qtl premium above the central MSP benchmark of 6,783 INR/qtl, indicating a firm market at Rajkot APMC. For wider Rajkot-district context, Gondal APMC is trading at 6,700 INR/qtl (-83 INR/qtl discount to MSP, indicating distress/surplus), while only 2 of 4 configured Gujarat hub mandis reported on 12/11/2026 (Jetpur(Dist.Rajkot) and Himatnagar did not report). Caveat: MSP spread compares the mandi modal price to the central Minimum Support Price benchmark.",
     "figures": [
       {
         "value": 6900.0,
+        "unit": "INR/qtl",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut",
+          "market": "Rajkot"
+        }
+      },
+      {
+        "value": 6700.0,
+        "unit": "INR/qtl",
+        "source_tool": "get_daily_mandi_prices",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut",
+          "market": "Rajkot"
+        }
+      },
+      {
+        "value": 7100.0,
         "unit": "INR/qtl",
         "source_tool": "get_daily_mandi_prices",
         "selector": {
@@ -114,12 +108,21 @@
         }
       },
       {
-        "value": 30.6,
-        "unit": "pct",
-        "source_tool": "get_macro_supply_balance",
+        "value": 6700.0,
+        "unit": "INR/qtl",
+        "source_tool": "get_benchmark_hub_summary",
         "selector": {
           "state": "Gujarat",
-          "crop": "Groundnut"
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": -83.0,
+        "unit": "INR/qtl",
+        "source_tool": "get_benchmark_hub_summary",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
         }
       }
     ]

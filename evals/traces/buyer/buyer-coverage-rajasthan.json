@@ -1,11 +1,11 @@
 {
   "version": 1,
   "question": "How complete is the Rajasthan groundnut price history before I rely on it for comparisons?",
-  "model_id": "z-ai/glm-5.3-flash",
+  "model_id": "gemini-4-hydrogen",
   "model_messages": [
     {
       "role": "ai",
-      "content": "",
+      "content": "[]",
       "tool_calls": [
         {
           "name": "check_series_coverage",
@@ -13,45 +13,45 @@
             "state": "Rajasthan",
             "commodity": "Groundnut"
           },
-          "id": "33e9da4a-ecb3-4fe8-be5e-f0cdb580c5e3",
+          "id": "call_803163074379171818",
           "type": "tool_call"
         }
       ],
       "usage_metadata": {
-        "input_tokens": 2476,
-        "output_tokens": 210,
-        "total_tokens": 2686,
+        "input_tokens": 2302,
+        "output_tokens": 194,
+        "total_tokens": 2496,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 189
+          "reasoning": 163
         }
       }
     },
     {
       "role": "ai",
-      "content": "Rajasthan groundnut history is in strong shape \u2014 **deep tier, no gaps** \u2014 with one structural caveat worth knowing before you compare across it.\n\n**Coverage (per check_series_coverage, state=Rajasthan, commodity=Groundnut):**\n- **94 observed months**, **0 missing months**, longest gap **0**\n- Latest month in the series: **2026-10**; staleness vs. the extract's own last month: **0 months**\n\n**The one caveat \u2014 a series break:**\n- The history splits into **82 months pre-break** and **12 months post-break** (94 total). The tool treats these as separate segments, so trend statistics are computed **within-segment only**. In practice: year-over-year or trend comparisons that straddle the break point are less trustworthy than comparisons made within the recent 12-month segment.\n\n**Data-handling note:** this is a pinned snapshot \u2014 staleness is measured against the extract's own last month, not the wall clock \u2014 so \"0 stale\" means current relative to the extract, not verified as of today.\n\n**Bottom line:** safe to rely on for recent-window comparisons (within the last 12 months, post-break segment). For anything referencing the older 82-month history, keep the break in mind and avoid blending pre- and post-break observations into a single trend.",
+      "content": "[{'type': 'text', 'text': 'The pinned Rajasthan Groundnut price history is complete across its covered range, with a **deep** evidence tier (`check_series_coverage(state=\"Rajasthan\", commodity=\"Groundnut\")`).\\n\\n### Coverage Summary\\n*Source: `check_series_coverage(state=\"Rajasthan\", commodity=\"Groundnut\")` (retrieved `2026-11-17T18:27:50.540748+00:00`, tier: `deep`)*\\n\\n- **Observed months:** 94 months total\\n- **Missing months / gaps:** 0 missing months; longest gap is 0 months\\n- **Segment split:** 82 pre-break months and 12 post-break months\\n- **Latest month & trailing staleness:** `2026-10`, with 0 months of trailing staleness\\n\\n### Caveats to Keep in Mind\\n- **Pinned snapshot:** Statistics use within-segment changes only (across the 82 pre-break and 12 post-break months), so avoid comparing pre-break and post-break levels as a single continuous series without accounting for the break.\\n- **Staleness baseline:** The 0-month staleness figure is measured against the extract\\'s own last month (`2026-10`), not against the current wall-clock date.', 'extras': {'signature': 'AY89a18NsVDUGqN5Zxm/UDzRp+0esJsi8jl64ZewPhNId/9jY3m1h4Of4LLJj75l6CxPv3uvV+IzRh5FhCCHZyOneJX7WKetg1aKNqOTJWDId73s2J7hg0Uh/fjP94I5jnJ205yFaxXp6MPwc9ERTP8onpj5PzAc9f+7+0Cyt7NovU7aegL6oREco0VzvTvnjjntkDUa6wiyVyD/17B8QNg8GxSEyUuh1ujAUvdOwxG3egaaxYI+jJefmhrD9CSPmFlGg07KUtevayd85xZHo3Sd/Ar0KbmS4OS4RA8sI1QBvsXE2pwvYSchNE9HGbbkyayHRYSF7c6KeAaGmNl1e+J0ONYtzcugrIu6GADQTNutkqYW3cvBwEejh4PBXGD9sZVE3LE3RMp2PYsecBXAIxC1M+9u7d+aGJpFedvWgRBPHatD6eUXZHOnioFlDXmy2/QCoVRVicor7F8vey0e1eXBLN/AfbQAKnpYHwsLOchwgTf0dPpMsut1gAbCcnzduu7PUl1zeE27NQqGsPw81bOqBv/yeziIoPyqGIQon2WJgEnymCctXhoUdfZ/lWSnGSiOCaFsfK4v5dVtUT1PTC5pb2KsoWkVzjVCMXAr1F+B353qNRihLgvCAHhg2gfs6hf+IyfMl27f9TJcJPyoy2J51hiziL03LVPhk4/iYtymnYFZfA06Hc6TQUHSUOovYI8CYr/Yoz5Jq/RMjKBjhUQ7FCoxms39DjK47NCvomIIsCjkOkw3C2KG+OPqLM/JHwRSVWoMWUJjGBPrS1dZlXWmL6cpLayyKUPtX4BFA8lDffwft7VD2ezyeks8dx3Te1joYtYhpumgzdhYrzg/QqpYDjJShjx/OoTzJicYPqf5VeYfHi7xn06KYOpOjbFOp7p0w8Dwz7RTUMKkJjATUTWjvT/nbV8a2VMjrGsn5HJpPLV/8YFepU9x/DIP6EjXYOplV3KPLKbJzN0NRrB2iNNxg/I078epROYM6uNmVKkMdnHSmvpVR0XF8FdXD8MT9KNcHJhLUhYwqDHh4W2YCP0B/D60FFmZdQ8XzI3Qk3DoW7sm14lzLiJyzqiD4IOsUbSAgc1nYJtp0IsJL1rWssXoeNtELg5rNMjpLDfu+Te89RAjV3jL3ZZSX6+E1HNCS2o7OZGtxiQReHZJ1rrxt7Dxs0t9PJOSszKh+6glr7Q3bB0YTkxM4ls2ayhUIocerIQXts6NW3riosEbNccikofYkhymkKUrwBb/d8hV9kZBVQ69iJHkrgdhh1kkEvtIwtZrujkOvEMxJ+PMCYveD2/tcFzqBSDvY79xz59jZjBSPyid2ygjilJNX32EunorC1vZAhdNNEGGcd6EDjpk/MP3D/i4B3W9ojpZkhLPVaLKAu64lFm76j11Z6/+4So7/NjycnoLKo4WGhhlP2LcvBiR2iBKisIOwpSyumJRtH0D3RHZQcZ3+pftED2bU19dFGHUamSaD72bfHvGorFHd255UZ0c9D3mpQ98Rjr0jLq1j4+axL51efERyaK/UgIhPSpv4fcVZzKLwKYQP/aQFXLiXrdRnf3PlwOjNLE2O40g1JAr4WinKlRi4FEK70Ok3YnF3TG3d4Us+A7Q2AlP3OA2Mg/UPBJSTs+zqmC4vPqJkj/wids/iu4xeD3jLWQi4yZzfqu4/nU9840VRzjn7oKWRIBxbwSNjE79HwOKIaI3m38RhmZ3bIaOi5bcYqqVtAyK3v8H0dKbOycK3HWMAYLOWbmADEVb4Mulj3y6JMEc9X00EaonhGdiSUKt79MQZCXwikSLf+Rb3IGFkrBm1ZM42WIaaPUl7GS42DE08f6/lAQs0kF4'}}]",
       "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 2670,
-        "output_tokens": 483,
-        "total_tokens": 3153,
+        "input_tokens": 2692,
+        "output_tokens": 650,
+        "total_tokens": 3342,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 206
+          "reasoning": 359
         }
       }
     }
   ],
   "structured_response": {
-    "summary": "Rajasthan groundnut coverage is deep-tier and complete \u2014 94 consecutive months with no gaps \u2014 but note the series break: 82 pre-break months vs. only 12 post-break months.",
+    "summary": "The Rajasthan Groundnut price history is complete across its covered range with a deep evidence tier (check_series_coverage(state='Rajasthan', commodity='Groundnut')). It contains 94 observed months, 0 missing months, a longest gap of 0 months, and a latest month of 2026-10 with 0 months of trailing staleness. The series is split into 82 pre-break months and 12 post-break months. Caveats: this is a pinned snapshot where statistics use within-segment changes only, and staleness is measured against the extract's own last month (2026-10) rather than the wall clock.",
     "figures": [
       {
         "value": 94.0,
-        "unit": "observed months",
+        "unit": "months",
         "source_tool": "check_series_coverage",
         "selector": {
           "state": "Rajasthan",
@@ -60,16 +60,7 @@
       },
       {
         "value": 0.0,
-        "unit": "missing months",
-        "source_tool": "check_series_coverage",
-        "selector": {
-          "state": "Rajasthan",
-          "commodity": "Groundnut"
-        }
-      },
-      {
-        "value": 0.0,
-        "unit": "longest gap (months)",
+        "unit": "months",
         "source_tool": "check_series_coverage",
         "selector": {
           "state": "Rajasthan",
@@ -78,7 +69,7 @@
       },
       {
         "value": 82.0,
-        "unit": "pre-break months",
+        "unit": "months",
         "source_tool": "check_series_coverage",
         "selector": {
           "state": "Rajasthan",
@@ -87,7 +78,7 @@
       },
       {
         "value": 12.0,
-        "unit": "post-break months",
+        "unit": "months",
         "source_tool": "check_series_coverage",
         "selector": {
           "state": "Rajasthan",
@@ -96,7 +87,7 @@
       },
       {
         "value": 0.0,
-        "unit": "months of staleness (latest month 2026-10)",
+        "unit": "months",
         "source_tool": "check_series_coverage",
         "selector": {
           "state": "Rajasthan",

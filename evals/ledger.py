@@ -201,6 +201,12 @@ def history_summary(ledger: Optional[List[Dict[str, Any]]] = None) -> Dict[str, 
     happened as model measurements, so counting them would skew the evidence.
     """
     rows = ledger if ledger is not None else read_ledger()
+    # Re-runs append (crash-safety by design) — the summary counts each case ONCE,
+    # its latest outcome, so a duplicated campaign pass cannot skew the evidence.
+    latest: Dict[Tuple[str, str, str], Dict[str, Any]] = {}
+    for row in rows:
+        latest[(row.get("model_key", "?"), row.get("persona", "?"), row.get("case_id", "?"))] = row
+    rows = list(latest.values())
     summary: Dict[str, Dict[str, Any]] = {}
     for row in rows:
         bucket = summary.setdefault(

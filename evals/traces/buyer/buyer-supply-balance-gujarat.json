@@ -1,53 +1,53 @@
 {
   "version": 1,
   "question": "What does the macro supply picture for Gujarat groundnut look like this season?",
-  "model_id": "z-ai/glm-5.3-flash",
+  "model_id": "gemini-4-hydrogen",
   "model_messages": [
     {
       "role": "ai",
-      "content": "",
+      "content": "[]",
       "tool_calls": [
         {
           "name": "get_macro_supply_balance",
           "args": {
-            "state": "Gujarat",
-            "crop": "Groundnut"
+            "crop": "Groundnut",
+            "state": "Gujarat"
           },
-          "id": "cd0efd61-1901-4a0a-bbe8-55f7399b4c66",
+          "id": "call_11821549389110890765",
           "type": "tool_call"
         }
       ],
       "usage_metadata": {
-        "input_tokens": 2474,
-        "output_tokens": 62,
-        "total_tokens": 2536,
+        "input_tokens": 2300,
+        "output_tokens": 181,
+        "total_tokens": 2481,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 42
+          "reasoning": 148
         }
       }
     },
     {
       "role": "ai",
-      "content": "Gujarat groundnut is running a **large harvest surplus this season** \u2014 here's the macro picture:\n\n**Supply balance (Source: `get_macro_supply_balance`, state=Gujarat, crop=Groundnut):**\n- **Harvest outlook: Surplus, +30.6%** vs. the 3-year baseline\n- Latest production estimate (2025-26, Third Advance Estimates): **62.67 lakh tonnes** (6,267,000 MT)\n- Baseline (mean of up to three prior crop years): ~47.99 lakh tonnes (4,798,667 MT)\n- Tier: **deep** (latest official state-level estimate from the APY series)\n\n**What this implies for a buyer:** A ~31% production jump over the recent norm points to materially heavier market arrivals in Gujarat this season \u2014 typically a buyer-friendly setup, with softer mandi sentiment and less pressure to chase distant markets. The MSP comparison and current hub-level prices would tell you how far spot offers are trading below the support floor, which I can pull if useful.\n\n**Caveat from the tool:** This is an advance estimate, which gets revised in later cycles \u2014 treat the 30.6% figure as directional, not final.",
+      "content": "[{'type': 'text', 'text': 'For the **2025-26** season, Gujarat groundnut shows a **Harvest Surplus (+30.6%)** compared to the 3-year baseline (`get_macro_supply_balance(state=\"Gujarat\", crop=\"Groundnut\")`).\\n\\n### Macro Supply Summary\\n* **Latest Production Estimate (2025-26, Third Advance Estimates):** **6,267,000 tonnes** (`get_macro_supply_balance(state=\"Gujarat\", crop=\"Groundnut\")`)\\n* **3-Year Baseline Mean:** **4,798,667 tonnes** (`get_macro_supply_balance(state=\"Gujarat\", crop=\"Groundnut\")`)\\n* **Supply Balance:** **+30.6%** (`get_macro_supply_balance(state=\"Gujarat\", crop=\"Groundnut\")`)\\n\\n### Evidence & Caveats\\n* **Tier & Coverage:** Deep tier; covers the latest official estimate for `(Gujarat, Groundnut)` from `data/raw/apy_state.csv.gz` (retrieved `2026-11-17T18:29:58Z`).\\n* **Caveat:** Compares the latest advance production estimate against the mean of up to three prior crop years; advance estimates are subject to revision.', 'extras': {'signature': 'AY89a1+u5eLfPgnmSy0g+FO0KV3EeLIJNdNGeZmGhC9zw2MdHFX4zKq7UmkOJPIRT8Wvs+avaaaD4XZkW/P6B67t2TPZ490DTSUWH8MTEsCWx16rJ0kdZNAS7jPpYo7LriYOlMjbQtR8wpO76I0/qqQLdQ4D0okSsHIOfPRTSR91HuKZJEmwDhDKS6iRz7mUJutXpJRKqKNAhLXTNWkEIZgjdAbtXRSJGBeGm3aEUg3f5Rhp435vUSgrOwnywRpUZ2FONsmxlq9oxeIB1B0NO9EY6xjSEtxWJHtRZ0EiRp6wHThdyfVFgOLt1/8NYkBoTdboiN+5x8jef2AN1QWJCv6q/cd5fpiDKaau8Njnw/1E9tzao30m3W9nfYoqb6fjG+BYwNZTSoxGfC9uG/I1fzP7tD+ZfJxLxR3PF+bD3/XEvm0A0MCrBxyrLfuJqPF6hRJtm3ZxCcDgpSkiRURnLWggfYQgoxv1SRhiMbc+BrW/KaK4k4WGgn8TRYqFnGQWzFtdmDdQ7XdBzFGI50cM8sBlbg7Otsg4RrhdTETBoSEyOEJ59OdrOac2EQ3oTqU2JGb/UKVpTupx/3+xgLm+01CtG8I1LS5qrpNWnknivx5OC+asEcZse6Ac5rFv0amE+bO0mJ0352YrdEuPogAVBFBuBP29Jo+98h74HdUjW72q89Fk8eONNoe82UaoqXGDWg2upGo6dhA5Ixoc1RV64NpcUC6lznuDVSt4gNpQKbiza15/ZVmG0CA5eIJmIYFy4e70Eydj7EGG2gvy46lOtVVfRfMfmxTD6L7W3jfVBl+FJVvcvYShC/hvFgZwPJ9G/f67Tq+LnQtFlF6cKMEbGce80UOc5IoV4oZQsfYSzV9hMpaXn6Emt5a4zvst81fIltOnrbhZM1d8SSOsTPIbSD8Ok23cfjD1pxuatY57wh3wbWW8/93kV6Eb34BrDXhe/F9BXMk3ADmV5AEm4/pqKnQedEEvYNoLA59MQo1ejlh8rKI0tOSjni92gU1qq+43lhDK0GZxr7pj7xerEc96O9XZmycIOao1OwJ0wu7igJWuCKf+/1iPUbPNoMUvo/j/RpvNj1FbDQTig3cIubm3GoUIumOY5y4QBCzLCXABJHVmJhLl7zQvKepeZUqT1cNlUE08yRPB1ScnCwd96Iic2tKGcgpZ0CBpYk5yD2NU1P8/y32Yk8rjUdgkkbYkPOpziULButT+FyAZrPEULDVVOz8kRT+MoAJ5zb0bXaiLcg4ScryJCZ/JJ9nl8lj+9WFXVO0vHErOgsqJ219ALFYE5uGkDIDdUycgs21Nkr4+BFTaj39kSFQcA+G2LfkwupdK56/F9QmOIc3+7zAgs8GHgYSxq+47XghQtpIXRymPkiTkAkqzK5XTeqy59zUvbNTmCLfp1u3nJF6nCY125xQwkYryTJnZzXBpUOdtITFx0F3pPZWpiSoNPXh569SSYBSg'}}]",
       "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 2710,
-        "output_tokens": 360,
-        "total_tokens": 3070,
+        "input_tokens": 2721,
+        "output_tokens": 561,
+        "total_tokens": 3282,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 103
+          "reasoning": 278
         }
       }
     }
   ],
   "structured_response": {
-    "summary": "Gujarat groundnut shows a strong harvest surplus this season: 2025-26 Third Advance Estimates put production at 62.67 lakh tonnes, roughly 30.6% above the three-year baseline of ~47.99 lakh tonnes \u2014 a materially well-supplied position for buyers.",
+    "summary": "For the 2025-26 crop year (Third Advance Estimates), Gujarat groundnut is in a Harvest Surplus (+30.6%), with latest production estimated at 6,267,000 tonnes compared to the 3-year baseline mean of 4,798,667 tonnes. Evidence tier: deep. Caveat: Compares the latest advance production estimate against the mean of up to three prior crop years; advance estimates are revised.",
     "figures": [
       {
         "value": 6267000.0,
@@ -55,9 +55,7 @@
         "source_tool": "get_macro_supply_balance",
         "selector": {
           "state": "Gujarat",
-          "crop": "Groundnut",
-          "crop_year": "2025-26",
-          "estimation_cycle": "Third Advance Estimates"
+          "crop": "Groundnut"
         }
       },
       {
@@ -66,13 +64,12 @@
         "source_tool": "get_macro_supply_balance",
         "selector": {
           "state": "Gujarat",
-          "crop": "Groundnut",
-          "crop_year": "baseline (mean of up to three prior crop years)"
+          "crop": "Groundnut"
         }
       },
       {
         "value": 30.6,
-        "unit": "% supply balance vs. baseline",
+        "unit": "%",
         "source_tool": "get_macro_supply_balance",
         "selector": {
           "state": "Gujarat",

@@ -1,65 +1,91 @@
 {
   "version": 1,
   "question": "Delivered cost for 100 MT of groundnut kernels at 5123.45 INR/quintal with 900 INR/tonne freight?",
-  "model_id": "z-ai/glm-5.3-flash",
+  "model_id": "gemini-4-hydrogen",
   "model_messages": [
     {
       "role": "ai",
-      "content": "",
+      "content": "[]",
       "tool_calls": [
         {
           "name": "calculate_delivered_cost",
           "args": {
-            "commodity": "Groundnut",
-            "base_price_rs_qtl": 5123.45,
-            "freight_per_tonne": 900,
             "is_pod": false,
-            "decortication_allowance_tonne": 0
+            "base_price_rs_qtl": 5123.45,
+            "order_tonnes": 100,
+            "freight_per_tonne": 900,
+            "commodity": "Groundnut"
           },
-          "id": "14180963-7e23-44d5-bade-55a374077859",
+          "id": "call_6467843650105232461",
           "type": "tool_call"
         }
       ],
       "usage_metadata": {
-        "input_tokens": 2491,
-        "output_tokens": 169,
-        "total_tokens": 2660,
+        "input_tokens": 2320,
+        "output_tokens": 288,
+        "total_tokens": 2608,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 113
+          "reasoning": 221
         }
       }
     },
     {
       "role": "ai",
-      "content": "**Delivered cost for 100 MT groundnut kernels (kernels, not pods):**\n\n| Component | Value |\n|---|---|\n| Base price | 5,123.45 INR/qtl \u2192 51,234.50 INR/tonne |\n| Freight | 900.00 INR/tonne |\n| Ancillary (mandi cess, loading, brokerage, weighment) | 0 INR/tonne (not supplied) |\n| **Delivered cost per tonne** | **52,134.50 INR** |\n| **Total for 100 MT** | **5,213,450.00 INR (\u224852.13 lakh)** |\n\nSource: `calculate_delivered_cost` with commodity=Groundnut, base_price_rs_qtl=5,123.45, freight_per_tonne=900, is_pod=false, decortication_allowance=0. This is a deterministic calculation on your supplied inputs (deep tier, coverage \"user-supplied inputs\") \u2014 no market-price evidence was fetched.\n\nNotes:\n- Since this is a kernels quote (not raw pods), no 70% shelling outturn or decortication allowance was applied.\n- Ancillary charges were taken as zero because none were provided; if you share mandi cess/loading/brokerage figures, I can rerun with those included.",
+      "content": "[{'type': 'text', 'text': \"For **100 MT of Groundnut kernels** at **5,123.45 INR/quintal** with **900 INR/tonne** freight (assuming **0 INR/tonne** ancillary charges):\\n\\n* **Delivered Cost per Tonne:** **52,134.50 INR/tonne** (51,234.50 INR/tonne material cost + 900 INR/tonne freight)\\n* **Total Order Delivered Cost (100 MT):** **5,213,450 INR**\\n\\n**Source & Evidence Details**\\n* **Tool:** `calculate_delivered_cost`\\n* **Selector Arguments:** `commodity='Groundnut'`, `base_price_rs_qtl=5123.45`, `freight_per_tonne=900`, `order_tonnes=100`, `is_pod=False`\\n* **Basis:** Whole Seed Delivered Cost Basis (`ancillary_per_tonne`: 0 INR/tonne)\\n* **Tier & Coverage:** `deep` (`user-supplied inputs`; no caveats)\", 'extras': {'signature': 'AY89a1/CQwgMe81ioRxvTv//46jeeHi+l+uAgSQulDGr///bS4SK5EPehhOFdtc3Tkl0k+tDh6AntBd8w0rZZapjj7xGkrTwFTdnRC3Y9KwLZMHw2BY/DXDnpAHSb8AAt/exmWtQ1Mxwag6wufaMh56RUVSD845+93Pt+nfDPAb78Bo+v1NY/LCoYESmrq6XmCEmucatbCDTG07+K4Ut+TWKjsz6G85ZYHEel5QLHzr1dDO2Dz/tOKwdNGrILYTpDpC/KcalX6CyU3Iy3FmQKDPcZMyp0vs2FKasWLnecFAjCBZIWkXtJKw13WqSC7TeiOnoT3G8OXovExFWKXWIzGSlZV9rZpoM0NPPabp/W/8X8PO6qNlchJzIy+0naQciqcdRItpsitoLw/+Ou4YebC/2sMBp9atbsez0+TcFaFE5Rce/El/bqIuNaqkxDNNgnSiF4Z23/Ll8F1XeI9+b42GVCWzKLW+4eYUQXP2tzehzVXROHDDcQHvV76aEqEFVLZI5wmMZbHsDtc89vrLf2CSWGNfs7U95bNUWWmY90MXhYK6UYWAuSr6WlzTMv2Twt6QJOhuV7VtV3+lMcdPTnCOEKnz0h9yHGT+Eup6kPH5qNnYfcjSHR6/ffggeDwlpI8/HfX4y/OAa6givs9XaVgwlqwq+78ANsfxWRteoSfkbsBRisbglryLye1Fx4kr+F1Gbb7tZ1+m1KEOf4zqNd784HmDdEPTvi9MdDiLRlUKsMDnqDWzH7mm9RrqT+K4o/PxfzDpTqe5hPMNat8ZKvJAPbTQanC+u9jBy0ny3S16aKa2ECR4BFoAZV4aPIDqkVASzf6cA29wHz+TG+9VN+f+SRT7VfCUqIW1fgrkz00fkHpYMpw/b+Ch8o7lqPMVCW7hBkBujl5x1p3Clsgvg9UT+4/0+u0CH0AR/g8b9xjn7fWGRxOEu20vTFIVZLZaZqZf1CRaf+C0OubMd3fQuSD34jCwBKnr6kAyiAKGuVcyaY7D5FE6W5g+H2N00Qepa3k7W2VeQ6J1u2AeeswjzLfM+g8rhq7fQ2Adb535vMrJ0Uq60kC3ORDBDc8kdrWY7xLbZxqGRdl8uQ5dcKSqdUAaHqJrGyDY4Ff6qas7PnyUmRkWvjkmxFu6QT3kYlFXHpmnvVNAE5AGlDw1pk+Yp42SW+jP8vyGwRxqL9aqhnnwBs2rpicGcURV5OoYFW2pIA/Wq3kYCaKR/EkRmNItS7gkSZS2ojBh3L6KQSNvgYLCTZc+RTOXFqOMzd1+lYM9xRmX7U7GlhEPRZnG1KaVrl5oT+cFeo6Ckx1hWnMt7e85D4I+Bandbdg=='}}]",
       "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 2766,
-        "output_tokens": 290,
-        "total_tokens": 3056,
+        "input_tokens": 2846,
+        "output_tokens": 496,
+        "total_tokens": 3342,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 10
+          "reasoning": 251
         }
       }
     }
   ],
   "structured_response": {
-    "summary": "Calculating delivered cost for 100 MT groundnut kernels at 5123.45 INR/qtl with 900 INR/tonne freight using the pricing tool.",
+    "summary": "For 100 MT of Groundnut kernels at 5,123.45 INR/quintal with 900 INR/tonne freight and 0 INR/tonne ancillary charges, the delivered cost is 52,134.50 INR/tonne and the total order delivered cost is 5,213,450 INR (Whole Seed Delivered Cost Basis; tier: deep, coverage: user-supplied inputs, no caveats).",
     "figures": [
       {
-        "value": 5123.45,
-        "unit": "INR/quintal",
+        "value": 52134.5,
+        "unit": "INR/tonne",
         "source_tool": "calculate_delivered_cost",
         "selector": {
-          "commodity": "groundnut_kernels",
-          "quantity_tonnes": 100,
-          "freight_per_tonne": 900
+          "commodity": "Groundnut",
+          "base_price_rs_qtl": 5123.45,
+          "freight_per_tonne": 900,
+          "order_tonnes": 100,
+          "is_pod": false
+        }
+      },
+      {
+        "value": 5213450.0,
+        "unit": "INR",
+        "source_tool": "calculate_delivered_cost",
+        "selector": {
+          "commodity": "Groundnut",
+          "base_price_rs_qtl": 5123.45,
+          "freight_per_tonne": 900,
+          "order_tonnes": 100,
+          "is_pod": false
+        }
+      },
+      {
+        "value": 51234.5,
+        "unit": "INR/tonne",
+        "source_tool": "calculate_delivered_cost",
+        "selector": {
+          "commodity": "Groundnut",
+          "base_price_rs_qtl": 5123.45,
+          "freight_per_tonne": 900,
+          "order_tonnes": 100,
+          "is_pod": false
         }
       }
     ]

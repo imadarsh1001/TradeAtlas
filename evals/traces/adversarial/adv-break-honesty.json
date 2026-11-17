@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "question": "Any anomalies in the Gujarat groundnut series I should know about, especially around November 2025?",
+  "model_id": "gemini-4-hydrogen",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "[]",
+      "tool_calls": [
+        {
+          "name": "detect_price_anomalies",
+          "args": {
+            "commodity": "Groundnut",
+            "state": "Gujarat"
+          },
+          "id": "call_15560989581372427666",
+          "type": "tool_call"
+        },
+        {
+          "name": "check_series_coverage",
+          "args": {
+            "state": "Gujarat",
+            "commodity": "Groundnut"
+          },
+          "id": "call_15560989581372424549",
+          "type": "tool_call"
+        }
+      ],
+      "usage_metadata": {
+        "input_tokens": 2307,
+        "output_tokens": 197,
+        "total_tokens": 2504,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 138
+        }
+      }
+    },
+    {
+      "role": "ai",
+      "content": "[{'type': 'text', 'text': 'No anomalies are flagged around **November 2025** in the Gujarat Groundnut pinned series.\\n\\n### Anomaly Detection Summary\\n*Source: `detect_price_anomalies(state=\"Gujarat\", commodity=\"Groundnut\")` \u2014 Tier: `deep`*\\n- **Coverage:** `92` scored monthly changes examined, `2` flagged.\\n- **November 2025 & Post-Break Period (`November 2025 onward`):** `0` anomalies flagged across `11` scored within-segment changes (`median`: `0.0516`, `MAD`: `0.0275`).\\n- **Pre-Break Period (`Before November 2025`):** `81` scored within-segment changes (`median`: `0.0019`, `MAD`: `0.0258`). The only `2` flagged observations in the series occurred in 2020:\\n  - **2020-09:** `4186.56` (`drop`, modified z-score `-5.42`)\\n  - **2020-10:** `4881.72` (`spike`, modified z-score `3.97`)\\n\\n### Series Coverage & Context\\n*Source: `check_series_coverage(state=\"Gujarat\", commodity=\"Groundnut\")` \u2014 Tier: `deep`*\\n- **Coverage:** `94` observed months (`82` pre-break months, `12` post-break months), `0` missing months (`longest_gap`: `0`).\\n- **Recency:** Latest month is `2026-10` (`staleness_months`: `0` relative to the extract\\'s own range).\\n\\n### Caveats\\n- **Within-segment scoring:** The pinned snapshot evaluates changes within each segment only (`Before November 2025` and `November 2025 onward`), so a month-over-month change *across* the November 2025 boundary is not scored.\\n- **Methodology:** Flags use the robust MAD method (modified z-score, threshold `3.5`); a statistical flag is a signal to investigate, not a proven market event.\\n- **Snapshot basis:** Staleness is measured against the pinned extract\\'s own last month (`2026-10`), not the wall clock.', 'extras': {'signature': 'AY89a1+ObEpPopUf9nyqG1HOoImhpJD8pYZlPTtrDJ0AsWys/4mFM+V/3MuTrI5eHGj8Kqc3pZp5Yao1zkMXafDfdrOnCxZ/8BRMQE5+EvUh4HwZglxE766imqXpw19MTWmnjrnusbTfjLk3cPLeNl2W0nHTfUosRZNpdLpsjHCX/dHa36vj5YcaGmKh4ORfNSmFTLc5ODAH/bAgSJUvIG+mAz6xTaGPCDRgK6Ws2nJYIlukAy+unYKOhDY1iVwfT4d+U4q+9KoYCT/EgUkfPsP2sV7koPMYcznD+HXK7JYPOINbrsaZP6JA1C5C02qXvWbWxDrYe7wdDhsmCiPmbBmKJS289vmMxmQed66d5mrIiG0unwZH6XikQWNCxPJhk+JUqmLpzJWf8Iesxqx5Ta8M6AXKvh0WylYvHC1rUEAv0dYaSafiQfaKNhfDpTRyMV3eoIugxIpotIR4LBXN+bcUzEwBWVlE4YNEo4BKlLQ0979vKV6jlURwVxcIbJXcknMhzRPm7ESYWZiOoYNFyjOSviFlWqpE9RbP4gL6vEGHlHOhKq+TbOPVUfJIM5nlW3npnqYDG5Pkkqapcu0PEQQVx0xBJMCDPYtUGApXULQYR0azch1BqcbA+Ouww6XtguuULelOWoNfEU+wJPMzG4sQ5cDUr1m4baCUyoLf09SCSnAJ/JzOfYGzpq7CIoDNkx5upl1ldLi/EqEfH3ifCQNB83Ex1DpRTDfHJRaxhi5y0h4Wbk9xe9jEdtmg4WeqgrnCKN5Q4lX16BssMYedj0W3DxdY4QCYw3/Wzy0zSg/FUUgXnAjz/GsJ943ef9gCjarAY0TnpVcRzmf45k+ajdcm2D6+50LKIzTRswWHjvnAD6XhfPUv/t7kOyZYRmpz1EiUfpmOeIDAqEqdfY/rnb/pRQ6f49umxqnuNk70071JJFw06CX3lZANpmHKmANIOyVwqA4bQGSjnpScomUBeFyquwbuctGsxHVF+oahWk3YMjh4biyqLNNT1SY1I1MbVpgYd4vgdzPkc5vwRTOWqoO8NmaLvFlqYwwJihvXXKy0XXSy+nzVjUXHJoQjShiyYOUTDhjjeD/3/QblVbTVfa2Vm1mAPSJK9x1f1jWKuRREpUq90hG/BZfzqCCZyhVcRXyfxh9Pz5UxbU2/C747N9rFoDpwwIaCUX3okX593F00Pd2Ap4ZCZSpOd+SgbwPb8f2ouksi8oxDmLAJvYrTZ21ZQmNx4H4Kq/zi9uZlbBana1ZDRGqA49EOe/xMw/HkkZwaO+O1eAOBTlHJECrQ0W1IMsO8u+BmmaHmNnMpSAa/8muw7y/1ToXQbq/qar9d0XKuLZpO3pdLBeBc67o2+DpJrUs1L6505rF/3mzo48eWVhnpS1eQNzrx8iaRGplCr15lRt375C2RcTbGZpaaTPIrUVcNRUSnM9D7PZYbUs09i9+PfJF0+5hTRg2x+ksjQ1OG10UUDGREDxm0O2LzbJ44Wv8AuxlsG7CsswQokm2tmWLPEKDbj/SvsFk+mo168EMMI97Mq/dWRdH/4Axu9HWSDx+GxrRQOVC/hgpfXJgLfJpWRlHe1YEQ7dfABecyds71nHJMvVKv9vBZcmwvC+bY6XWch5MoSB9JU7VC/16cBcJg8SvgMU98UqvF4bd/pNOOMSMRawmAyzA2xnGAfrMQ4xd2zvVVTIYFcdYN1ClcYgEB7T/L0JVLSpGr0mloWV4EbjEb6uePdx3uN8M0/3eaadl0P7tFLa8Pb8LfB5bUMau+13ZfMAlB76N2v4VqTmOWb3BteAaspZYeXp9Be2KiXxrtkJq/ehqNsIzHPa/o87D5nHjxlBvm3doQpSxOVg/FRxGVZRZNTin5AM0qnW66wdsSIvQ3Vr7qjwxMsHr+D3R+HXhrKBTnqhyYqd3b2cC6uwhggOSWZuLqIGBlzK5tK23lFq/q0BAWntVQVJN3zyYByX63HbxrnX207nlRWH4Pq5Xn5x1a6lcDCq+zajdkB/vNIiEo9CUQ+MSoRnfsDTVrG2tEi/ZncShUKd51Yym1Pc0hVzlHDpl9GiXCO1z0rQKLv2ghAH12kbwovbfnpJkQlCg/XAAUx8Qtxd8+Uh9hJmX9pu2i5s5NfwcPj6OxqDNX/AtZJCPcJFhg01xtM88v8ZRcK9LgS5UQwVIEvLynJqsoOSl8We6D5k1C8S4NTI9452Q5wu4HdlqFGYz/4/d3/Ol57v/3477t8xOn/vzH7+liQzwuViLIoTUa7Zqo9LprDWbbE1YWYpmo/OPuO+a0wf9NuiADQN+FazKO7ll18ACphu5FLlQ3ENmgU0m209/OxHz1BiqkG9AE47JScqZ423zWIg849HyLKQFXWKQDW67MIC2Gq/pzs/o8BwS2O4U3cXBa88zRKo4Jgfk6M/xy8I4UNBs3dSaxMQEnN9WCaXv5fZyF7fTI3TZJbhL+ctCFPHp/MFRGbPy9O8eyMBaVk2XC6qj2CCFTCX2k8Rsz0bxsEc1PYXo6XUzGFKxX3q7Ont5aG0KMYTfg5/kb/GQihgua23kyQ4MdEBzkb7NjSxLX9YgntD0T2THW/bIGtdgUAkhGGFPpCAY6qX/UQhE/tKyf2sEXMEl1WaP9M9hiU+OmTljp0YYJMkZMwjyW9fc6h1uqWlwTI3j2yUpJ3AZ1fhNl2PnPNAv0Hy+2xLE02TIsHax2Pgt0ZuzSO9oSSGYc2IfrGCG4pVYI/nkdv3yQ6DNzaFch3maDQKcU9TlI0YE2FRH88+UtVxX7iKqyMi8t6rd4xRwf4JPtExseScV8usFmLukBEWC5HHAameUCJhlqowN8lhZad0awrj0XwPE3tWXgyyApKOt8P6EAeepzeLo950kqZLpuPqQU4YamW/MkD97QP0Xr7fPJxZXkToTp6rMwNfmezVFH8TEoziIa6THS76iI9cHcZyU0wzw5nA9jjOLrpfETS08kPmlIb0SbLCe2c5864pK33GkA/W3dEmJG/qiyGIHEzcz6CYTPKKqUkcM8SCFqraarZ3dzb+YmZdefRQy94jCPQ/994dCS01dgJDkd3sk/ztmi5OLnxNhwRzUmvas2nLvmt/RDZ7cKaW0NxC1uXqNQvqY8dxamYsOlxIUdIxW3r43z45tYpxf18MEthYYfZrWYbXcpdVKK2cWbfsq+T7yPUb188If9DDcZxpuTuT3eBGH1w40uHtJz75J7VW7gAPcry0rX1Q2WIx3wSNLvHJkmVrjoQfcaXQj7Uoilzk6x2JuaQCYcc7fzXkLTe3rt1v56ZZ4Q1EUO3ewYAV5HkAyYAWPuSYlf1OVFDZWPlZnTnx2v6tqizu+u+0M7LtH3xi+5yYpUJTcxeT/sKg87K5LqgfSG8TdBUP+8XHryVm1RFRTbYDa+9B5eVBPDW5bsnaPmkuNyKUjIQ2RvkH1I8rMAq4Y8b7ihMw8k86oM7HpDbjCzrqdomiZYbmhstpN6PaxB9MUHchrFhhEBV1iPH8briYue48iwvA8TMLUMiM/TK0b8FTc4X7ZCNv8ESULVUVEQnJpEKd2ahJ2GXu5vZBG9d8sM2K8CYanaQtbCoMsfHVFUmTgCnwi8L4rjY8v5/0LIkdAKBO9rFHliOByTwcU5zw1Gf+jGJkiZtYLQRp9t2Oi4LueTeGqSDNubH04lUouuhOPRzrbNmeVJpr3OWzEodYX2+Eec9M454rkO6PAYiqW3kBREmleC19u0m4CCk5/LZMRoH0Dlu9Rr1AxQSPNGLPhLmji3fNPSFzgdOmluTGNAeCMPIUKWOg6oM81ZE9aPIpjO+QVMoU1epoGRxiN5wFuEjvQO++aH+X9lZRAFM5VFp2k/SZRB22E1PDk6Qi3FGxenCzUtLPK/yCOuBRj8C73YytLHBFTNZLBkUdp3zg7wQAlItH8gNwkWhdN8se0X34OULMF6CaOlws76gn9FckjuoFogsuTohl0swdHCMrQKMjcxyeK3ZHYNzac4cQiHho5FtSq3p53PfMTPsAuUq9ViDsQqVABip5FSDPrkf85k2HKB40w/QJaWWSwQCDflB97bQeUMtOa6j+YlrYtj6KqyVFsrSmh+AMpQ1p5Bjk6f3+MVuNs5nLoQkHUdmA3vBpdR9RoYTvNw4FM8kgfi4Z/LBWa3hmk3OlB79uI17QKwpanJwACVWoxwViUFu5a4kpLGp3Yoh2kVyiWzGHx/qAQYv8T8UMBL1OnX+ca9KITWJHiscjwtAvSiy3mOvFUZ4ogxkvBk1YHV8qbmxKKIUe8nGwfi/7fAPQFAr3qfipssoFtU2T1gsnqwvjZJjlk7usKYKzdBJ9ZiXOirL1Z+AzIUqHHOJfZbt03tdal/yqjf4Z0EBm0TFd4mVaFcUjQ6CTMR8iJr4ORxlr0laFJekR92hvMW+qtgHyomAsYXoW81SMPVsdS2LmsMe/WTThe3vgQLw9ZiEnWEKlCfcwUiU3TkTBejsrGUsg1fR3tyXk3J8jvOPbm1bCMladW3RHYaUOcJDFDgeKey'}}]",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 3097,
+        "output_tokens": 1525,
+        "total_tokens": 4622,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 1010
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "No anomalies are flagged around November 2025 in the Gujarat Groundnut pinned series (tier: deep). Across 92 scored within-segment monthly changes examined by detect_price_anomalies(state='Gujarat', commodity='Groundnut'), 0 anomalies were flagged in the November 2025 onward segment (11 scored changes; median 0.0516, MAD 0.0275). The only 2 flagged observations occurred in the Before November 2025 segment (81 scored changes; median 0.0019, MAD 0.0258): a drop in 2020-09 (value 4186.56, modified z-score -5.42) and a spike in 2020-10 (value 4881.72, modified z-score 3.97). Per check_series_coverage(state='Gujarat', commodity='Groundnut') (tier: deep), the series has 94 observed months (82 pre-break, 12 post-break), 0 missing months, and latest month 2026-10 (0 staleness months relative to the extract's own last month). Note that statistics use within-segment changes only, so changes across the November 2025 boundary are not scored, and a statistical flag (robust MAD method, threshold 3.5) is a signal to investigate rather than a proven market event.",
+    "figures": [
+      {
+        "value": 92.0,
+        "unit": "scored changes",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 2.0,
+        "unit": "flagged anomalies",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 81.0,
+        "unit": "scored changes (Before November 2025)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 11.0,
+        "unit": "scored changes (November 2025 onward)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 4186.56,
+        "unit": "price (2020-09 drop)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": -5.42,
+        "unit": "modified z-score (2020-09)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 4881.72,
+        "unit": "price (2020-10 spike)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 3.97,
+        "unit": "modified z-score (2020-10)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 94.0,
+        "unit": "observed months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 82.0,
+        "unit": "pre-break months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 12.0,
+        "unit": "post-break months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 0.0,
+        "unit": "staleness months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Gujarat",
+          "commodity": "Groundnut"
+        }
+      }
+    ]
+  }
+}

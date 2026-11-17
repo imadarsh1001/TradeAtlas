@@ -1,81 +1,63 @@
 {
   "version": 1,
   "question": "Has Rajasthan groundnut shown any statistically unusual price moves lately?",
-  "model_id": "z-ai/glm-5.3-flash",
+  "model_id": "gemini-4-hydrogen",
   "model_messages": [
     {
       "role": "ai",
-      "content": "",
+      "content": "[]",
       "tool_calls": [
         {
           "name": "detect_price_anomalies",
           "args": {
-            "state": "Rajasthan",
-            "commodity": "Groundnut"
+            "commodity": "Groundnut",
+            "state": "Rajasthan"
           },
-          "id": "5587a927-d85a-4e79-8a83-2aef1b56ae77",
+          "id": "call_2160036696199364664",
           "type": "tool_call"
         },
         {
           "name": "check_series_coverage",
           "args": {
-            "state": "Rajasthan",
-            "commodity": "Groundnut"
+            "commodity": "Groundnut",
+            "state": "Rajasthan"
           },
-          "id": "d4b2a852-dae2-4747-b9f0-dfb15bca427e",
+          "id": "call_2160036696199365337",
           "type": "tool_call"
         }
       ],
       "usage_metadata": {
-        "input_tokens": 2471,
-        "output_tokens": 137,
-        "total_tokens": 2608,
+        "input_tokens": 2297,
+        "output_tokens": 287,
+        "total_tokens": 2584,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 91
+          "reasoning": 228
         }
       }
     },
     {
       "role": "ai",
-      "content": "**Short answer: No unusual moves recently.** The only statistical flag in the Rajasthan groundnut series is old \u2014 June 2024.\n\n**What the detector found** (robust MAD, modified z-score, threshold 3.5):\n- **1 flag out of 92 scored monthly changes** \u2014 June **2024** at \u20b94,937.16, a **drop** (score \u22123.69). That's ~2.4 years before the series' latest month, so nothing \"lately.\"\n- All recent months through the series' latest observation (**October 2026**) fall within normal bounds.\n\n**Data quality backing this** (from the pinned extract):\n- 94 observed months, **no missing months**, longest gap 0 \u2014 a complete series.\n- Trailing staleness: **0 months** vs. the extract's own range (latest month 2026-10).\n- Segments scored separately around the November 2025 break (82 pre-break, 12 post-break changes), so the recent 12 months were judged against their own regime.\n\n**Caveats worth keeping in mind:**\n- A statistical flag is a signal to investigate, not a proven market event \u2014 and in this case the single flag is stale anyway.\n- Staleness is measured against the extract's own last month, not the wall clock.\n\nIf you want to know what's *actually* happening in Rajasthan groundnut prices right now (mandi levels, MSP spread, or a delivered-cost quote), I can pull live wholesale data \u2014 just say the word.",
+      "content": "[{'type': 'text', 'text': \"**No.** Based on the pinned monthly price series for Rajasthan Groundnut (running through **2026-10**), there have been **no** statistically unusual price moves in the recent period (**November 2025 onward**).\\n\\n### Key Findings\\n\\n* **Anomaly Detection** (`detect_price_anomalies(state='Rajasthan', commodity='Groundnut')`, tier: `deep`):\\n  * **Recent segment (November 2025 onward):** `0` flags across `11` scored monthly changes (segment median: `0.008656`, MAD: `0.037663`).\\n  * **Full series:** Only `1` observation was flagged across `92` scored changes (`81` in the `Before November 2025` segment and `11` in `November 2025 onward`), and it occurred over two years prior to the latest month:\\n    * **2024-06:** A **drop** to **4937.16** with a modified z-score of **-3.69** (exceeding the `3.5` threshold).\\n\\n* **Series Coverage & Freshness** (`check_series_coverage(state='Rajasthan', commodity='Groundnut')`, tier: `deep`):\\n  * **Coverage:** `94` observed months (`82` pre-break months, `12` post-break months) with `0` missing months and a longest gap of `0`.\\n  * **Latest month:** `2026-10` (`staleness_months`: `0`).\\n\\n### Caveats\\n* **Method:** Flags use the robust MAD method (modified z-score, threshold `3.5`). A statistical flag is a signal to investigate rather than a proven market event.\\n* **Snapshot & Segmentation:** This analysis is based on a pinned snapshot; statistics use within-segment changes only, and staleness is measured against the extract's own last month (`2026-10`), not the wall clock.\", 'extras': {'signature': 'AY89a1+Jpid40cfGq/1hL2BVktG+lxBhDR7jDWUbdrOOJ+tHKUhpon1vqRgVjFDWC5VcS4GOr874nG/KX/eWZCMAAtDkTS6Ixzj/2OGt9Ap1f8XCCPCt0EXoadW1ja1InPOSPp/OjluK4iUjZhClMUt7FFseHmVZb3f1bHJzqeAa4VQPwOa4mmsihXBb8D5BRfZR5Mxr33c+HVrZuGCzlARagO6yFk5dXrWOabnR0FtKrXkFko3ZU/kMgfjGn4LRpVIjmBJtc0NcGzI/q0CM4g3fpPa+e6wZpeF0UTq3N5Yr5/ELluMQRaQXMscMTqUkKWWsfTlqjf/5ZcsgCSimahjezS3O7orq9vJO0Et2fdPlTUG4PBNSeptrfTFD5eMx9J56+n9gddZLdw+FSTuuJCro6CB547Z8tAjd9pSCsXJWWVW+jczHYTfCEx9ZjTBz/TWmK+482B3LwZmTHkApEG5L2i+cAGOJwP2M+EPB8HEPpqjq3r/3xb1DsW/+1OCG3bsgKdVnFZYpxtn2iIFZF6C4N4h9+cWWf89Q8ntdB+x37xhQq6eq8P5jrBw4Wi3bakKZI1lmTJX2sVeerrg+6nFYjqk4GnaGXU/VvZEZX84Kep0vzOplBUpYf642W8ZXotd8MOOsxf2NhwS+kaC/TlItE4xqVVov2HQ7zqfXXBPEXEn8b50qm6U2etZQcayPOQ5s9XASp2tzr0HIz7/N7Hr/ycELay2LBalRrpEFS5oOSQryo/VRwr/UMb0wjdhChRbtBnWSV4eoADO8984nITptghe7Nf9JFFmup7ivm1WFxDdD2VRe+DQtL9QdXvYY2t/epy9UtXAUm2MWHAVv6w4sG09R0Lw64XWMl76hf2yXqydDNlBTwQVEjT/OT7I8WzpkYsK9JYbAvtuEvTjWjL6zlBLrD0teloBCDvVpu/ksmX3jamgPuMSPA1Fk7mnBuUhMtD7YN4f1IMU+2dDdY5GnIwA6Kw68xBARf3R2V4IhRrhHCSWdpsxoOgyylCsd1VbreYx/BEFgN8lTAbOYZ8NbS6YUztMBuVyVOqlpUkbwuQtyUKE90kHIODxTdnkemfc2cey1mXYp+Sxp+wIq78AYD5R0vR0n3xc76d9cUpQXMBPysoaGScyk2BZjNJw43ZzgchF0Hz0E+gBZ4b1N0FJWTdyPt+dj8lovvJfNc7E3urdTgoyEsN2J1C7tth7j6ADQRu/s5XkE8nMSNen8SYRAR7spRfLcCkStZFoltsFfLb7+nQI4faCor8cO+dIo2YcYTl0PPx/9M5VavRXhFAsakYBNbVrCAOfmbQM+o8K+QYWOw4G8Q6skKEUOs4Kvl7otwJ2AlGdq+rxeYDjN3e1hM3OQVjfO0h4vKw6kLUBo3VxQeaFYRxu098ECtlxTcSN/GMz5r2VD1lci+bs4roCvRJjxPONzMG6yyYkzcrRahJh0dtf+BRVvrSCnH5dHCvytorYzVtTZ+55We724s+wu/rvQjIChumVum7tVs8poKzetGVZlXELLob5WLTVMvwoWaNAoPl3dNJAU3UvI2PlBvQDEMEvyuhLI3uItdwC4DxJBXFJh94UMqg4QNnqVnByOj1KWwoVYT+QlAYy/6+NlssmH0JcNARIEOoTTke2VinPr5pSUWdf4vtKe3B0XlKYi+rXySfUvhcwKnz8x30ydmI5Cvo4uz9mryvmcYJqm/HmLchEiHaAZpYKqaGPLIGfo38mgtz+HzqkO12bB/SPHRVSQjpgIr7pAF2A/CyYADKu/RCnZWOCE9L1KqZKbqtuFK0+V6RZOQ+P7jLLHO6t2vp00zowHNFBSiNwNvr4QmbUo1dacXeWTGEygdc8Vl9ydeWrlFASDIE6d0UZNBdKwEwwVmq4lI2WILKkIQZHgLIhLLurybaMZavFoy7rYylGO/LQgiEdu7N08HhmHj/LlRVAV+iNXiW051S+9bWlKNoW7oS53Cw7mKZLskySlEIzUHaEhIxuTI6hGU06dZAkFqbZaLx7ieUV0ZXQaGNcupx3aLMdogb5OYjcF4EIr9NuQF+IxpNcOi1giEypkpNDV8tSPCiW9TafNseRUtOpXSD1yDg4Xq+LuSv3LK0T32uNHQnTzt1bb6uwuswcBnWn0eVV82W08RLjH4/MCmUuOtMlQAX/K7AAlj2QOf2MAOIhmEV2XzV81oThjixV1q8HbDqryMzq9GlLwLq6BEqHINmMv6Ceq4H7hLNBtXmkyY/F8VKqAHDUZF+irBiXOyHc/CqyHOIpBFbSW+RspkJ3HhhDctI93VF2w/uRhzUWbeb1o4J374yUeNrimVQ34Af6Hsjy2N76bqv6FboPI08MCUDIss0hZncQfyghjq3jyqg7w0eAki9WuKo5RFVToymvGFpA0ZhELuJz8m+6EC5XkWRkwh6bUb2NDSMMcDWmEMP58Afi4cG7X3mq5S85NGd765/9uQ6s7gz08nEno0sAgny7sxaHiOw9RD2+n52H7KSyuJfUCCECDvLxfgdfh2kCejr5t4kJm/MnSh8hLE4ncOJhS3UK9RYgH79cg+QaxVzcW0sy1qPxeE/696a+kFKzeW7oQmKMKcIzwTiG39pznQdu+/kGgzdjhGEr4+/GvfgWV5liV9x63/bueCvxTSXYpyK0Poi1miCdsbCKgbdnxL7v2T9PnitK0guEZmas8jfic/cvLxAa/ED37UfIpHz/+RpIxcN/HMiNlfowsjPk4Dl57ubREE+sYzygWov0ufkxrp7F4YjqjA/pOXJwVFFcWIImg616GHn339DIL6ExG3myACO/psb/EPbowsi+naqYjJkKequ/wSmrBkeVAEtXdW8KFURx7OSfoil5fyHt0Z0sEY/8Sumq/A+BGwDzuOM75nrUv979kuSDREY4+Sege0EwejaBVEfUNK/Bl3SH2CdM+sNCB5f+RTPqJStOwzsAmronDHkqKzoBBOHvdY+XT40GqjL5IRd4QDvH9b7nxqVih+1uEuZg8dMVH73b/uI7XL8rWR9hFctXSQ2slkBl41AckpHjebWHNGseAUxsIuyHBqvM+jLnAvZIHXNyPXTvbvPGunpKSqOUno7yj9VoL4wLRdgNJTikYJkEJumQ3x2okvSy5THD+f2XzW+udQd97KOjAy/qYl/9poolugRV0F9GfVNdOcCFCs73B5PjxwWvhAEsALBk2+z9cP6AFZYBCI1DNck6AveoZIUlOBL5lUzdPUZBlN+KyuxL5cCS4dWnNyBtfN4DGrFbRIaw2aJeofvfXm4msS3NytCsLK2IgrvCToiQKkbQZAt9aPY7D9GF5jBMbg4/xtHyLcLyY/hs+PSHyYONHIp09Xrhm1NzQOFNWniLDDVwgfiQ5srI+BwzxrmtT7EdjTdNenDI80aDmCKxr5ABeSn+hCrDfFWQeBnxtatS4g7wJS1BeZazByh19o6NiVqM9Y57MMA9mXd3WhkXHxamuS/jlx+8qGPis8VkKm+roOHFbrOiqhHcs6NfwVCUMG/C2iQ7af3F0BB8InywdeGZA+ayRISWVHdXuHl/g4So4NzoT3r9pRCyhfZ+cSdjNCz3uq3m0wIZH0J0EE3Z/WnYUv2y6U0W/zY6YcqOzox9QbbEFwslM+zCmNsM7txCfiSNnw8NWDHodHoyY/kNhmZgZPAS+VSNlKptLKsjKuAF8bHP05AsZZl/0G8lm6c2Sbih9Q8rHhpdG1OJlkYqJoUx+mPdoPCMyT4lZVuShylSPHU7qHQ=='}}]",
       "tool_calls": [],
       "usage_metadata": {
-        "input_tokens": 3008,
-        "output_tokens": 437,
-        "total_tokens": 3445,
+        "input_tokens": 3141,
+        "output_tokens": 1281,
+        "total_tokens": 4422,
         "input_token_details": {
           "cache_read": 0
         },
         "output_token_details": {
-          "reasoning": 114
+          "reasoning": 832
         }
       }
     }
   ],
   "structured_response": {
-    "summary": "No \u2014 Rajasthan groundnut shows no statistically unusual price moves in the recent period. The series is healthy (94 months, no gaps, zero staleness), and the only flagged anomaly is old: a single drop in June 2024, well over two years before the latest observation (Oct 2026).",
+    "summary": "No statistically unusual price moves have been flagged recently for Rajasthan Groundnut. Across the pinned series through 2026-10 (94 observed months, 0 missing months, 0 staleness months relative to the extract's last month, deep tier), 0 anomalies were flagged in the recent segment (November 2025 onward, 11 scored changes). Across all 92 scored changes, only 1 observation was flagged using the robust MAD method (modified z-score threshold 3.5): a drop in 2024-06 to 4937.16 with a modified z-score of -3.69. Caveats: statistical flags are signals to investigate rather than proven market events, statistics use within-segment changes only, and staleness is measured against the pinned extract's last month rather than the wall clock.",
     "figures": [
-      {
-        "value": 0.0,
-        "unit": "flags in the most recent segment",
-        "source_tool": "detect_price_anomalies",
-        "selector": {
-          "state": "Rajasthan",
-          "commodity": "Groundnut"
-        }
-      },
-      {
-        "value": 1.0,
-        "unit": "total flags (2024-06, direction=drop, score=-3.69, value=4937.16)",
-        "source_tool": "detect_price_anomalies",
-        "selector": {
-          "state": "Rajasthan",
-          "commodity": "Groundnut"
-        }
-      },
       {
         "value": 92.0,
         "unit": "scored monthly changes examined",
@@ -87,7 +69,25 @@
       },
       {
         "value": 11.0,
-        "unit": "scored changes in the November-2025-onward segment (none flagged)",
+        "unit": "scored monthly changes (November 2025 onward)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 4937.16,
+        "unit": "flagged price value (2024-06)",
+        "source_tool": "detect_price_anomalies",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": -3.69,
+        "unit": "modified z-score (2024-06)",
         "source_tool": "detect_price_anomalies",
         "selector": {
           "state": "Rajasthan",
@@ -96,7 +96,25 @@
       },
       {
         "value": 94.0,
-        "unit": "observed months, no missing months, latest = 2026-10, staleness = 0 months",
+        "unit": "observed months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 0.0,
+        "unit": "staleness months",
+        "source_tool": "check_series_coverage",
+        "selector": {
+          "state": "Rajasthan",
+          "commodity": "Groundnut"
+        }
+      },
+      {
+        "value": 0.0,
+        "unit": "longest gap (months)",
         "source_tool": "check_series_coverage",
         "selector": {
           "state": "Rajasthan",

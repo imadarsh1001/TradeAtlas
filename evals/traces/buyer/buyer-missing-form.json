@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "question": "What's the delivered cost for 100 MT of groundnut?",
+  "model_id": "gemini-4-hydrogen",
+  "model_messages": [
+    {
+      "role": "ai",
+      "content": "[{'type': 'text', 'text': 'I cannot calculate the delivered cost for 100 MT of groundnut yet because key inputs are missing from your request:\\n\\n1. **Base wholesale price (`base_price_rs_qtl`)**: A quote in INR per quintal\u2014or a **state** (and optional **APMC mandi**) so I can look up current wholesale prices first.\\n2. **Freight cost (`freight_per_tonne`)**: Transport and logistics cost in INR per metric tonne.\\n\\nOptional details you can also include for a more accurate landed cost:\\n- **Ancillary charges (`ancillary_per_tonne`)**: Mandi cess, loading/unloading, brokerage, and weighment in INR per tonne.\\n- **Pod vs. kernel basis (`is_pod`)**: Whether the price quote is for unshelled raw pods (which applies a 70% shelling outturn) and any **decortication allowance (`decortication_allowance_tonne`)** in INR per tonne.\\n\\nPlease share the missing details (or the origin state/mandi and freight rate), and I will compute the delivered cost breakdown.', 'extras': {'signature': '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'}}]",
+      "tool_calls": [],
+      "usage_metadata": {
+        "input_tokens": 2301,
+        "output_tokens": 834,
+        "total_tokens": 3135,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "reasoning": 599
+        }
+      }
+    }
+  ],
+  "structured_response": {
+    "summary": "Cannot calculate the delivered cost for 100 MT of groundnut because required inputs are missing: (1) a base wholesale price in INR per quintal (or an origin state and optional APMC mandi to look up current wholesale prices), and (2) freight cost per metric tonne. Optional inputs such as ancillary charges per tonne, whether the quote is for unshelled raw pods or kernels, and any decortication allowance per tonne can also be provided.",
+    "figures": []
+  }
+}
